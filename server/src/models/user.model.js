@@ -44,13 +44,13 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.methods.isValidPassword = function(password) {
-  return bcrypt.compare(password, this.password);
+userSchema.methods.isValidPassword = async function(password) {
+  return await bcrypt.compare(password, this.password);
 };
 
 userSchema.pre("save", async function(next) {
-  if (!this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, process.env.BCRYPT_SALT_ROUND);
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, parseInt(process.env.BCRYPT_SALT_ROUND));
   }
   next();
 });

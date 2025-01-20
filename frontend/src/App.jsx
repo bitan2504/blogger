@@ -10,6 +10,7 @@ import Register from "./components/Register.jsx";
 
 function App() {
   const [username, setUsername] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -19,16 +20,17 @@ function App() {
           {
             withCredentials: true,
             headers: {
-              "Content-Type": "application/json",
+              "Content-Type": "application/json"
             }
           }
         );
-        console.log(foundUser.data.user);
-        if (foundUser.data.user) {
-          setUsername(foundUser.data.user.username);
+        // console.log(foundUser.data);
+        if (foundUser.data) {
+          setUser(foundUser.data);
+          setUsername(foundUser.data.username);
         }
       } catch (error) {
-        // console.error(error);
+        console.error(error);
       }
     };
     getUser();
@@ -42,9 +44,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/user">
-            <Route path="/user/profile" element={<Profile />} />
-            <Route path="/user/login" element={<Login />} />
-            <Route path="/user/register" element={<Register />} />
+            <Route path="/user/profile" element={<Profile user={user} />} />
+            <Route path="/user/login" element={<Login user={user} />} />
+            <Route path="/user/register" element={<Register user={user} />} />
           </Route>
         </Routes>
       </div>
