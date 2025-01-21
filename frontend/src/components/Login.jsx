@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Redirect from "./Redirect.jsx";
 
-const Login = ({ user }) => {
+const Login = ({ user, setUser }) => {
   const [formData, setFormData] = useState({
     uid: "",
     password: ""
@@ -21,7 +21,7 @@ const Login = ({ user }) => {
       }, 1000);
       if (countDown <= 0) {
         navigate("/user/profile");
-        return ;
+        return;
       }
     }
   }, [countDown, user]);
@@ -56,7 +56,10 @@ const Login = ({ user }) => {
             withCredentials: true,
             contentType: "application/json"
           });
-        console.log(response);
+        if (response.data.success) {
+          setUser(response.data.data);
+          navigate("/user/profile");
+        }
       } catch (error) {
         console.log(error);
       }

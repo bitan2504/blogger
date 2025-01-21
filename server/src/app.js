@@ -3,6 +3,7 @@ import cors from "cors";
 import { User } from "./models/user.model.js";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
+import ApiResponse from "./ApiResponse.js";
 
 const app = express();
 app.use(express.static("public"));
@@ -37,18 +38,23 @@ const securedCookieParserOptions = {
 const verifyJWT = async (req, res, next) => {
   const token = req.cookies?.accessToken;
   if (!token) {
-    return res.status(401).send("Unauthorized");
+    return res
+      .status(401)
+      .json(new ApiResponse(
+        401,
+        "Unauthorized Access",
+        "Unauthorized",
+        false
+      ))
+      .send("Unauthorized Access");
   }
 
   const authToken = await jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
   const user = await User.findById(authToken?._id)
-    .select("-password -refresh")
-  if (!user) {
-    return res.status(401).send("Invalid Credentials");
-  }
+    .select("-password -refresh");
   req.user = user;
   next();
-}
+};
 
 // functions
 const getUser = async () => {
@@ -61,13 +67,13 @@ const getUser = async () => {
     .select("-password -refreshToken");
 
   return user;
-}
+};
 
 // user routes
 app.get("/user/getUser", async (req, res) => {
   const token = req.cookies?.accessToken;
   if (!token) {
-    return res.status(401).json(null);
+    return res.status(201).json(null);
   }
   const authToken = await jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
   const user = await User.findById(authToken?._id)
@@ -80,16 +86,26 @@ app.post("/user/register", async (req, res) => {
   try {
     let { username, fullname, email, password, avatar, dob } = req.body;
     if (!username || !fullname || !email || !password || !dob) {
-      return res.status(400).json(
-        {
-          message: "All fields are required"
-        }
-      );
+      return res
+        .status(400)
+        .json(new ApiResponse(
+          400,
+          "All fields are required",
+          {},
+          false
+        ));
     }
 
     const foundUser = await User.findOne({ username, email });
     if (foundUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res
+        .status(400)
+        .json(new ApiResponse(
+          400,
+          "User already exists",
+          {},
+          false
+        ));
     }
 
     if (!avatar) {
@@ -99,20 +115,33 @@ app.post("/user/register", async (req, res) => {
     const user = await User.findById(newUser._id).select("-password -refreshToken");
 
     if (!user) {
-      return res.status(400).json({
-        message: "Cannot create user"
-      });
+      return res
+        .status(400)
+        .json(new ApiResponse(
+          400,
+          "Failed to register",
+          {},
+          false
+        ))
+        .send("Something wern wrong!");
     }
 
-    return res.status(200).json({
-      data: user,
-      message: "Successfully registered"
-    });
+    return res
+      .status(200)
+      .json(new ApiResponse(
+        200,
+        "User registered successfully",
+        user,
+        true
+      ));
   } catch (error) {
     console.error(error);
-    return res.status(400).json({
-      message: "Something went wrong"
-    });
+    return res.status(400).json(new ApiResponse(
+      400,
+      "Failed to register",
+      error,
+      false
+    ));
   }
 });
 
@@ -120,11 +149,14 @@ app.post("/user/login", async (req, res) => {
   try {
     let { uid, password } = req.body;
     if (!uid || !password) {
-      return res.status(400).json(
-        {
-          message: "All fields are required"
-        }
-      );
+      return res
+        .status(400)
+        .json(new ApiResponse(
+          400,
+          "All fields are required",
+          {},
+          false
+        ));
     }
 
     const foundUser = await User.findOne(
@@ -133,7 +165,14 @@ app.post("/user/login", async (req, res) => {
       });
 
     if (!foundUser || !(await foundUser.isValidPassword(password))) {
-      return res.status(400).json({ message: "User doesn't exist! Please Register.", data: foundUser });
+      return res
+        .status(400)
+        .json(new ApiResponse(
+          400,
+          "User doesn't exist! Please try Again",
+          {},
+          false
+        ));
     }
     const refreshToken = await foundUser.generateRefreshToken();
     const accessToken = await foundUser.generateAccessToken();
@@ -146,16 +185,61 @@ app.post("/user/login", async (req, res) => {
       .status(200)
       .cookie("accessToken", accessToken, securedCookieParserOptions)
       .cookie("refreshToken", refreshToken, securedCookieParserOptions)
-      .json({
-        data: user,
-        message: "Successfully logged in"
-      })
+      .json(new ApiResponse(
+        200,
+        "Successfully Logged in",
+        user,
+        true
+      ));
   } catch (error) {
     console.error(error);
-    return res.status(400).json({
-      message: "Something went wrong"
-    });
+    return res
+      .status(400)
+      .json(new ApiResponse(
+        400,
+        "Something went wrong",
+        error,
+        false
+      ));
   }
 });
+
+app.get("/user/logout", verifyJWT, async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res
+        .status(401)
+        .json(new ApiResponse(
+          401,
+          "Invalid Credentials",
+          "Unauthorized",
+          false
+        ))
+        .send("Invalid Credentials");
+    }
+    return res
+      .status(200)
+      .clearCookie("accessToken", securedCookieParserOptions)
+      .clearCookie("refreshToken", securedCookieParserOptions)
+      .json(new ApiResponse(
+        200,
+        "Successfully Logged out",
+        {},
+        true
+      ));
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(400)
+      .json(new ApiResponse(
+        400,
+        "Something went wrong",
+        error,
+        false
+      ));
+  }
+});
+
 
 export { app };

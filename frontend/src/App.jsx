@@ -28,6 +28,9 @@ function App() {
         if (foundUser.data) {
           setUser(foundUser.data);
           setUsername(foundUser.data.username);
+        } else {
+          setUser(null);
+          setUsername(null);
         }
       } catch (error) {
         console.error(error);
@@ -35,6 +38,14 @@ function App() {
     };
     getUser();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      setUsername(user.username);
+    } else {
+      setUsername(null);
+    }
+  }, [user]);
 
   return (
     <BrowserRouter>
@@ -44,9 +55,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/user">
-            <Route path="/user/profile" element={<Profile user={user} />} />
-            <Route path="/user/login" element={<Login user={user} />} />
-            <Route path="/user/register" element={<Register user={user} />} />
+            <Route path="/user/profile" element={<Profile user={user} setUser={setUser} />} />
+            <Route path="/user/login" element={<Login user={user} setUser={setUser} />} />
+            <Route path="/user/register" element={<Register user={user} setUser={setUser} />} />
           </Route>
         </Routes>
       </div>
