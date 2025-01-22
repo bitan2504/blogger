@@ -7,6 +7,7 @@ import axios from "axios";
 import Profile from "./components/Profile.jsx";
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
+import CreatePost from "./components/CreatePost.jsx";
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -58,6 +59,9 @@ function App() {
             <Route path="/user/profile" element={<Profile user={user} setUser={setUser} />} />
             <Route path="/user/login" element={<Login user={user} setUser={setUser} />} />
             <Route path="/user/register" element={<Register user={user} setUser={setUser} />} />
+            <Route path="/user/post">
+              <Route path="/user/post/create" element={<CreatePost user={user} setUser={setUser} />} />
+            </Route>
           </Route>
         </Routes>
       </div>

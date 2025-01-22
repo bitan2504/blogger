@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -37,6 +37,11 @@ const userSchema = new mongoose.Schema(
     },
     refreshToken: {
       type: String
+    },
+    posts: {
+      type: [Schema.Types.ObjectId],
+      ref: "Post",
+      default: []
     }
   },
   {

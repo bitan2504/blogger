@@ -4,6 +4,7 @@ import { User } from "./models/user.model.js";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import ApiResponse from "./ApiResponse.js";
+import Post from "./models/post.model.js";
 
 const app = express();
 app.use(express.static("public"));
@@ -69,7 +70,7 @@ const getUser = async () => {
   return user;
 };
 
-// user routes
+// user routes and controllers
 app.get("/user/getUser", async (req, res) => {
   const token = req.cookies?.accessToken;
   if (!token) {
@@ -241,5 +242,46 @@ app.get("/user/logout", verifyJWT, async (req, res) => {
   }
 });
 
+
+// post routes and controllers
+app.post("/user/post/create", verifyJWT, async (req, res) => {
+  try {
+    const user = req.user;
+    const { title, content } = req.body;
+    const newPost = await Post.create({
+      title,
+      content,
+      author: user._id
+    });
+    const createdPost = await Post.findById(newPost._id);
+
+    if (!createdPost) {
+      return res
+        .status(402)
+        .json(new ApiResponse(
+          402,
+          "Failed creating post",
+          {},
+          false
+        ))
+        .send("Something went wrong!");
+    }
+
+    const updatedUser = await User.findById(user._id);
+    updatedUser.posts = updatedUser.posts.push(createdPost._id);
+    await updatedUser.save({ validateBeforeSave: false });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(
+        200,
+        "Post created successfully",
+        createdPost,
+        true
+      ));
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 export { app };

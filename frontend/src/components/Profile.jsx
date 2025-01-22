@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Redirect from "./Redirect.jsx";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./styles/Profile.css"
 
 const Profile = ({ user, setUser }) => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const Profile = ({ user, setUser }) => {
           <h1>Profile</h1>
           <p>Welcome, {user.username}</p>
           <form onSubmit={handleLogout}>
-            <input type="submit" value="Logout" />
+            <input type="submit" value="Logout" className="submit-button" />
           </form>
         </>
       ) : (
