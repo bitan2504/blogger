@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import Redirect from "./Redirect.jsx";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./styles/Profile.css"
+import "./styles/Profile.css";
 
-const Profile = ({ user, setUser }) => {
+const Profile = ({ user, setUser, posts, setPosts }) => {
   const navigate = useNavigate();
   const [countDown, setCountDown] = useState(5);
   const pageName = "Login";
@@ -29,6 +29,10 @@ const Profile = ({ user, setUser }) => {
     }
   };
 
+  const handleShowPosts = async (e) => {
+      navigate("/user/post/show");
+  };
+
   useEffect(() => {
     if (!user) {
       setTimeout(() => {
@@ -46,6 +50,7 @@ const Profile = ({ user, setUser }) => {
         <>
           <h1>Profile</h1>
           <p>Welcome, {user.username}</p>
+          <button onClick={handleShowPosts}>Show Posts</button>
           <form onSubmit={handleLogout}>
             <input type="submit" value="Logout" className="submit-button" />
           </form>

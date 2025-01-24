@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import ApiResponse from "./ApiResponse.js";
 import Post from "./models/post.model.js";
+import { parse } from "dotenv";
 
 const app = express();
 app.use(express.static("public"));
@@ -58,7 +59,7 @@ const verifyJWT = async (req, res, next) => {
 };
 
 // functions
-const getUser = async () => {
+const getUser = async (req) => {
   const token = req.cookies?.accessToken;
   if (!token) {
     return null;
@@ -243,7 +244,7 @@ app.get("/user/logout", verifyJWT, async (req, res) => {
 });
 
 
-// post routes and controllers
+// user post routes and controllers
 app.post("/user/post/create", verifyJWT, async (req, res) => {
   try {
     const user = req.user;
@@ -283,5 +284,130 @@ app.post("/user/post/create", verifyJWT, async (req, res) => {
     console.error(error);
   }
 });
+
+app.get("/user/post/show", verifyJWT, async (req, res) => {
+  try {
+    const user = await User.findById(req.user?._id);
+    const postIds = user.posts;
+    const posts = [];
+    for (const postId of postIds.reverse()) {
+      posts.push(await Post.findById(postId));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(
+        200,
+        "Successfully posted",
+        posts,
+        true
+      ));
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+// post routes and controllers
+app.get("/post/show/:postId", async (req, res) => {
+  const postId = req.params?.postId;
+  try {
+    const user = await getUser(req);
+    if (!user) {
+      return res
+        .status(201)
+        .json(new ApiResponse(
+          201,
+          "User not logged in",
+          {},
+          true
+        ));
+    }
+
+    const findPost = await Post.findById(postId);
+    if (!findPost) {
+      return res
+        .status(404)
+        .json(new ApiResponse(
+          404,
+          "Post not found",
+          {},
+          false
+        ));
+    }
+
+    const isLiked = findPost.likes.some(like => parseInt(like) === parseInt(user._id));
+
+    return res
+      .status(200)
+      .json(new ApiResponse(
+        200,
+        "Successfully fetched post",
+        { isLiked },
+        true
+      ));
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+app.get("/post/like/toggle/:postId", verifyJWT, async (req, res) => {
+    const postId = req.params?.postId;
+    try {
+      const user = req.user;
+      if (!user) {
+        return res
+          .status(201)
+          .json(new ApiResponse(
+            201,
+            "User not logged in",
+            { isLiked: true },
+            true
+          ));
+      }
+
+      const findPost = await Post.findById(postId);
+      if (!findPost) {
+        return res
+          .status(404)
+          .json(new ApiResponse(
+            404,
+            "Post not found",
+            {},
+            false
+          ));
+      }
+
+      const isLiked = findPost.likes.some(like => parseInt(like) === parseInt(user._id));
+      if (isLiked) {
+        findPost.likes = findPost.likes.filter(like => parseInt(like) !== parseInt(user._id));
+      } else {
+        findPost.likes.push(user._id);
+      }
+      await findPost.save({ validateBeforeSave: false });
+
+      const post = await Post.findById(findPost._id);
+      if (!post) {
+        return res
+          .status(401)
+          .json(new ApiResponse(
+            401,
+            "Something went wrong",
+            {},
+            false
+          ));
+      }
+
+      return res
+        .status(200)
+        .json(new ApiResponse(
+          200,
+          "Post like toggled successfully",
+          { isLiked: !isLiked, post },
+          true
+        ));
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
 export { app };
