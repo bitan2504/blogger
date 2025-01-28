@@ -3,7 +3,6 @@ import axios from "axios";
 import PostCard from "./PostCard.jsx";
 
 function ShowPost({ posts, setPosts, user, setUser }) {
-
   useEffect(() => {
     const fetchPosts = async () => {
       const fetchedPosts = await axios.get(

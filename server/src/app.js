@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import ApiResponse from "./ApiResponse.js";
 import Post from "./models/post.model.js";
-import { parse } from "dotenv";
 
 const app = express();
 app.use(express.static("public"));
@@ -70,6 +69,39 @@ const getUser = async (req) => {
 
   return user;
 };
+
+// home page
+app.get("/home/:page", async (req, res) => {
+  const page = parseInt(req.params?.page) || 1;
+  try {
+    const posts = await Post.find({});
+    const totalPosts = posts.length;
+    if (totalPosts < (page - 1) * parseInt(process.env.PAGE_SIZE)) {
+      return res
+        .status(404)
+        .send("Page Not Found");
+    }
+
+    const ret = posts.slice(
+      (page - 1) * parseInt(process.env.PAGE_SIZE),
+      Math.max(
+        page * parseInt(process.env.PAGE_SIZE) - 1,
+        totalPosts - 1
+      )
+    ).reverse();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(
+        200,
+        "Fetched successfully",
+        ret,
+        true
+      ));
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 // user routes and controllers
 app.get("/user/getUser", async (req, res) => {
@@ -351,63 +383,63 @@ app.get("/post/show/:postId", async (req, res) => {
 });
 
 app.get("/post/like/toggle/:postId", verifyJWT, async (req, res) => {
-    const postId = req.params?.postId;
-    try {
-      const user = req.user;
-      if (!user) {
-        return res
-          .status(201)
-          .json(new ApiResponse(
-            201,
-            "User not logged in",
-            { isLiked: true },
-            true
-          ));
-      }
-
-      const findPost = await Post.findById(postId);
-      if (!findPost) {
-        return res
-          .status(404)
-          .json(new ApiResponse(
-            404,
-            "Post not found",
-            {},
-            false
-          ));
-      }
-
-      const isLiked = findPost.likes.some(like => parseInt(like) === parseInt(user._id));
-      if (isLiked) {
-        findPost.likes = findPost.likes.filter(like => parseInt(like) !== parseInt(user._id));
-      } else {
-        findPost.likes.push(user._id);
-      }
-      await findPost.save({ validateBeforeSave: false });
-
-      const post = await Post.findById(findPost._id);
-      if (!post) {
-        return res
-          .status(401)
-          .json(new ApiResponse(
-            401,
-            "Something went wrong",
-            {},
-            false
-          ));
-      }
-
+  const postId = req.params?.postId;
+  try {
+    const user = req.user;
+    if (!user) {
       return res
-        .status(200)
+        .status(201)
         .json(new ApiResponse(
-          200,
-          "Post like toggled successfully",
-          { isLiked: !isLiked, post },
+          201,
+          "User not logged in",
+          { isLiked: true },
           true
         ));
-    } catch (error) {
-      console.error(error);
     }
-  });
+
+    const findPost = await Post.findById(postId);
+    if (!findPost) {
+      return res
+        .status(404)
+        .json(new ApiResponse(
+          404,
+          "Post not found",
+          {},
+          false
+        ));
+    }
+
+    const isLiked = findPost.likes.some(like => parseInt(like) === parseInt(user._id));
+    if (isLiked) {
+      findPost.likes = findPost.likes.filter(like => parseInt(like) !== parseInt(user._id));
+    } else {
+      findPost.likes.push(user._id);
+    }
+    await findPost.save({ validateBeforeSave: false });
+
+    const post = await Post.findById(findPost._id);
+    if (!post) {
+      return res
+        .status(401)
+        .json(new ApiResponse(
+          401,
+          "Something went wrong",
+          {},
+          false
+        ));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(
+        200,
+        "Post like toggled successfully",
+        { isLiked: !isLiked, post },
+        true
+      ));
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 export { app };
