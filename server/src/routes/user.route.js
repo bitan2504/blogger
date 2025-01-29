@@ -2,8 +2,8 @@ import { Router } from "express";
 import verifyJWT from "../verifyJWT.js";
 import ApiResponse from "../ApiResponse.js";
 import { User } from "../models/user.model.js";
-import { securedCookieParserOptions } from './index.route.js';
-import Post from '../models/post.model.js';
+import { securedCookieParserOptions } from "./index.route.js";
+import Post from "../models/post.model.js";
 
 const userRoute = Router();
 
@@ -163,14 +163,26 @@ userRoute.post("/post/create", verifyJWT, async (req, res) => {
   }
 });
 
-userRoute.get("/post/show", verifyJWT, async (req, res) => {
+userRoute.get("/post/show/:page", verifyJWT, async (req, res) => {
+  const page = parseInt(req.params?.page) || 1;
   try {
     const user = await User.findById(req.user?._id);
-    const postIds = user.posts;
-    const posts = [];
-    for (const postId of postIds.reverse()) {
-      posts.push(await Post.findById(postId));
+    if (!user) {
+      return res.status(400).send("User not found");
     }
+    const fetchedPostIds = user.posts;
+
+    const totalPosts = fetchedPostIds.length;
+    const postIds = fetchedPostIds
+      .slice(
+        (page - 1) * parseInt(process.env.PAGE_SIZE),
+        Math.max(page * parseInt(process.env.PAGE_SIZE) - 1, totalPosts - 1)
+      )
+      .reverse();
+
+    const posts = await Promise.all(
+      postIds.map(async (postId) => await Post.findById(postId)).reverse()
+    );
 
     return res
       .status(200)

@@ -10,7 +10,7 @@ const PostCard = ({ post, user }) => {
       const response = await axios.get(
         `http://localhost:3000/post/show/${post._id}`,
         {
-          withCredentials: true
+          withCredentials: true,
         }
       );
       if (response.data.success) {
@@ -24,12 +24,11 @@ const PostCard = ({ post, user }) => {
     fetchLikedData();
   }, []);
 
-
   const toggleLiked = async (e) => {
     const response = await axios.get(
       `http://localhost:3000/post/like/toggle/${post._id}`,
       {
-        withCredentials: true
+        withCredentials: true,
       }
     );
     if (response.data.success) {
@@ -50,7 +49,9 @@ const PostCard = ({ post, user }) => {
         <p className="postcard-content">{post.content}</p>
       </div>
       <div className="postcard-button-container">
-        <button onClick={toggleLiked} className="postcard-button">{isLiked ? "Liked" : "Like"}</button>
+        <button onClick={toggleLiked} className="postcard-button">
+          {isLiked ? "Liked" : "Like"}
+        </button>
       </div>
     </div>
   );

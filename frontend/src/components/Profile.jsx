@@ -13,13 +13,10 @@ const Profile = ({ user, setUser, posts, setPosts }) => {
   const handleLogout = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.get(
-        "http://localhost:3000/user/logout",
-        {
-          withCredentials: true,
-          contentType: "application/json"
-        }
-      );
+      const res = await axios.get("http://localhost:3000/user/logout", {
+        withCredentials: true,
+        contentType: "application/json",
+      });
       if (res.data.success) {
         setUser(null);
         navigate("/");
@@ -30,7 +27,7 @@ const Profile = ({ user, setUser, posts, setPosts }) => {
   };
 
   const handleShowPosts = async (e) => {
-      navigate("/user/post/show");
+    navigate("/user/post/show");
   };
 
   useEffect(() => {
@@ -56,7 +53,11 @@ const Profile = ({ user, setUser, posts, setPosts }) => {
           </form>
         </>
       ) : (
-        <Redirect message={errorMessage} pageName={pageName} countDown={countDown} />
+        <Redirect
+          message={errorMessage}
+          pageName={pageName}
+          countDown={countDown}
+        />
       )}
     </>
   );

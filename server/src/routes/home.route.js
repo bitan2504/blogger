@@ -9,9 +9,6 @@ homeRoute.get("/:page", async (req, res) => {
   try {
     const posts = await Post.find({});
     const totalPosts = posts.length;
-    if (totalPosts < (page - 1) * parseInt(process.env.PAGE_SIZE)) {
-      return res.status(404).send("Page Not Found");
-    }
 
     const ret = posts
       .slice(

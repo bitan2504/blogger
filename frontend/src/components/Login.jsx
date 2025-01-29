@@ -7,7 +7,7 @@ import Redirect from "./Redirect.jsx";
 const Login = ({ user, setUser }) => {
   const [formData, setFormData] = useState({
     uid: "",
-    password: ""
+    password: "",
   });
   const navigate = useNavigate();
   const [countDown, setCountDown] = useState(5);
@@ -32,7 +32,7 @@ const Login = ({ user, setUser }) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -54,8 +54,9 @@ const Login = ({ user, setUser }) => {
           formData,
           {
             withCredentials: true,
-            contentType: "application/json"
-          });
+            contentType: "application/json",
+          }
+        );
         if (response.data.success) {
           setUser(response.data.data);
           navigate("/user/profile");
@@ -68,11 +69,13 @@ const Login = ({ user, setUser }) => {
 
   return (
     <>
-      {user ?
-        (
-          <Redirect message={errorMessage} pageName={pageName} countDown={countDown} />
-        )
-        :
+      {user ? (
+        <Redirect
+          message={errorMessage}
+          pageName={pageName}
+          countDown={countDown}
+        />
+      ) : (
         <div className="login-form-container">
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="form-group">
@@ -95,17 +98,23 @@ const Login = ({ user, setUser }) => {
                 onChange={handleChange}
                 placeholder="Password"
               />
-              {errors.password && <span className="error">{errors.password}</span>}
+              {errors.password && (
+                <span className="error">{errors.password}</span>
+              )}
             </div>
 
             <div className="form-group forgot-password">
-              <Link to="/user/forgot-password" className="forgot-password">Forgot Password?</Link>
+              <Link to="/user/forgot-password" className="forgot-password">
+                Forgot Password?
+              </Link>
             </div>
 
-            <button className="submit-button" type="submit">Login</button>
+            <button className="submit-button" type="submit">
+              Login
+            </button>
           </form>
         </div>
-      }
+      )}
     </>
   );
 };

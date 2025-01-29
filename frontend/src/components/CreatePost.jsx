@@ -7,7 +7,7 @@ import Redirect from "./Redirect.jsx";
 const CreatePost = ({ user, setUser }) => {
   const [formData, setFormData] = useState({
     title: "",
-    content: ""
+    content: "",
   });
   const navigate = useNavigate();
   const [countDown, setCountDown] = useState(5);
@@ -32,7 +32,7 @@ const CreatePost = ({ user, setUser }) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -55,9 +55,10 @@ const CreatePost = ({ user, setUser }) => {
           {
             withCredentials: true,
             headers: {
-              "Content-Type": "application/json"
-            }
-          });
+              "Content-Type": "application/json",
+            },
+          }
+        );
         console.log(response.data);
       } catch (error) {
         console.log(error);
@@ -67,11 +68,13 @@ const CreatePost = ({ user, setUser }) => {
 
   return (
     <>
-      {!user ?
-        (
-          <Redirect message={errorMessage} pageName={pageName} countDown={countDown} />
-        )
-        :
+      {!user ? (
+        <Redirect
+          message={errorMessage}
+          pageName={pageName}
+          countDown={countDown}
+        />
+      ) : (
         <div className="login-form-container">
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="form-group">
@@ -94,12 +97,16 @@ const CreatePost = ({ user, setUser }) => {
                 onChange={handleChange}
                 placeholder="Content"
               ></textarea>
-              {errors.content && <span className="error">{errors.content}</span>}
+              {errors.content && (
+                <span className="error">{errors.content}</span>
+              )}
             </div>
-            <button className="submit-button" type="submit">Post</button>
+            <button className="submit-button" type="submit">
+              Post
+            </button>
           </form>
         </div>
-      }
+      )}
     </>
   );
 };

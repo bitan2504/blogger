@@ -1,31 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import PostCard from "./PostCard.jsx";
+import FetchPosts from "./FetchPosts.jsx";
 
-function ShowPost({ posts, setPosts, user, setUser }) {
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const fetchedPosts = await axios.get(
-        "http://localhost:3000/user/post/show",
-        {
-          withCredentials: true
-        });
-      if (fetchedPosts.data?.success) {
-        setPosts(fetchedPosts.data.data);
-      } else {
-        setPosts(null);
-      }
-    };
-    fetchPosts();
-  }, []);
+function ShowPost({ user }) {
   return (
     <>
-      {posts.length > 0 ?
-        posts.map(((post, index) => (<PostCard key={index} post={post} user={user} />)))
-        :
-        <h1>Nothing to show</h1>
-      }
-    </>);
+      <FetchPosts user={user} uri="http://localhost:3000/user/post/show" />
+    </>
+  );
 }
 
 export default ShowPost;

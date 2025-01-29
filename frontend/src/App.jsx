@@ -13,7 +13,6 @@ import ShowPost from "./components/ShowPost.jsx";
 function App() {
   const [username, setUsername] = useState(null);
   const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -58,12 +57,12 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/user">
-            <Route path="/user/profile" element={<Profile user={user} setUser={setUser} posts={posts} setPosts={setPosts} />} />
+            <Route path="/user/profile" element={<Profile user={user} setUser={setUser} />} />
             <Route path="/user/login" element={<Login user={user} setUser={setUser} />} />
             <Route path="/user/register" element={<Register user={user} setUser={setUser} />} />
             <Route path="/user/post">
               <Route path="/user/post/create" element={<CreatePost user={user} setUser={setUser} />} />
-              <Route path="/user/post/show" element={<ShowPost posts={posts} setPosts={setPosts} /> } />
+              <Route path="/user/post/show" element={<ShowPost user={user} /> } />
             </Route>
           </Route>
         </Routes>
