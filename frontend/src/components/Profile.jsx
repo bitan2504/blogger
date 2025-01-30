@@ -3,12 +3,15 @@ import Redirect from "./Redirect.jsx";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/Profile.css";
+import ProfileCard from "./ProfileCard.jsx";
 
 const Profile = ({ user, setUser, posts, setPosts }) => {
   const navigate = useNavigate();
   const [countDown, setCountDown] = useState(5);
   const pageName = "Login";
   const errorMessage = "User not logged in";
+  console.log(user);
+  
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -24,10 +27,6 @@ const Profile = ({ user, setUser, posts, setPosts }) => {
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const handleShowPosts = async (e) => {
-    navigate("/user/post/show");
   };
 
   useEffect(() => {
@@ -46,8 +45,7 @@ const Profile = ({ user, setUser, posts, setPosts }) => {
       {user ? (
         <>
           <h1>Profile</h1>
-          <p>Welcome, {user.username}</p>
-          <button onClick={handleShowPosts}>Show Posts</button>
+          <ProfileCard  user={user} uri="http://localhost:3000/user/profile" />
           <form onSubmit={handleLogout}>
             <input type="submit" value="Logout" className="submit-button" />
           </form>

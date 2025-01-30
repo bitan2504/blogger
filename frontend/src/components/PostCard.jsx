@@ -39,6 +39,7 @@ const PostCard = ({ post, user }) => {
       } else {
         setIsLiked(false);
       }
+      setLikes(response.data.data.likes);
     } else {
       console.log("Failed to proceed");
     }

@@ -1,0 +1,54 @@
+.profile-card {
+  padding: 20px;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.profile-card h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
+
+.profile-stats {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.profile-stats div {
+  text-align: center;
+}
+
+.profile-stats p {
+  margin: 2px 0;
+}
+
+.profile-stats .count {
+  font-size: 18px;
+  font-weight: 500;
+  color: #222;
+}
+
+.profile-stats .label {
+  font-size: 14px;
+  color: #666;
+}
+
+.post-header {
+  color: black;
+  margin: 1rem;
+  font: black;
+  font-weight: bolder;
+  font-size: larger;
+}
+
+#profile-avatar {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+}

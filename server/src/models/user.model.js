@@ -9,79 +9,90 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
-      index: true
+      index: true,
     },
     fullname: {
       type: String,
-      required: true
+      required: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
       trim: true,
-      index: true
+      index: true,
     },
     password: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     dob: {
       type: Date,
-      required: true
+      required: true,
     },
     avatar: {
       type: String,
-      required: true
+      required: true,
     },
     refreshToken: {
-      type: String
+      type: String,
     },
     posts: {
       type: [Schema.Types.ObjectId],
       ref: "Post",
-      default: []
-    }
+      default: [],
+    },
+    followers: {
+      type: Number,
+      default: 0,
+    },
+    following: {
+      type: Number,
+      default: 0,
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-userSchema.methods.isValidPassword = async function(password) {
+userSchema.methods.isValidPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, parseInt(process.env.BCRYPT_SALT_ROUND));
+    this.password = await bcrypt.hash(
+      this.password,
+      parseInt(process.env.BCRYPT_SALT_ROUND)
+    );
   }
   next();
 });
 
-userSchema.methods.generateAccessToken = function() {
+userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
       email: this.email,
-      username: this.username
+      username: this.username,
     },
     process.env.JWT_ACCESS_TOKEN_SECRET,
     {
-      expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRY
+      expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRY,
     }
   );
 };
 
-userSchema.methods.generateRefreshToken = function() {
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
-      _id: this._id
+      _id: this._id,
     },
     process.env.JWT_REFRESH_TOKEN_SECRET,
     {
-      expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRY
+      expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRY,
     }
   );
 };

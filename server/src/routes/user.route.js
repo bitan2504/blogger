@@ -38,6 +38,8 @@ userRoute.post("/register", async (req, res) => {
       password,
       dob,
       avatar,
+      followers: 0,
+      following: 0,
     });
     const user = await User.findById(newUser._id).select(
       "-password -refreshToken"
@@ -187,6 +189,67 @@ userRoute.get("/post/show/:page", verifyJWT, async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, "Successfully posted", posts, true));
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+userRoute.get("/profile", verifyJWT, async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, "User not found", {}, false));
+    }
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        "User found",
+        {
+          _id: user._id,
+          username: user.username,
+          followers: user.followers,
+          following: user.following,
+        },
+        true
+      )
+    );
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+userRoute.get("/profile/posts/:page", verifyJWT, async (req, res) => {
+  try {
+    const page = req.params?.page;
+    const user = await User.findById(req.user?._id);
+    if (!user) {
+      return res.status(400).send("User not found");
+    }
+    const fetchedPostIds = user.posts;
+
+    const totalPosts = fetchedPostIds.length;
+    const postIds = fetchedPostIds
+      .slice(
+        (page - 1) * parseInt(process.env.PAGE_SIZE),
+        Math.max(page * parseInt(process.env.PAGE_SIZE) - 1, totalPosts - 1)
+      )
+      .reverse();
+
+    const posts = await Promise.all(
+      postIds.map(async (postId) => await Post.findById(postId)).reverse()
+    );
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        "User found",
+        posts,
+        true
+      )
+    );
   } catch (error) {
     console.error(error);
   }
