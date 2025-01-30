@@ -4,6 +4,7 @@ import axios from "axios";
 
 const PostCard = ({ post, user }) => {
   const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(0);
 
   useEffect(() => {
     const fetchLikedData = async () => {
@@ -19,6 +20,7 @@ const PostCard = ({ post, user }) => {
         } else {
           setIsLiked(false);
         }
+        setLikes(response.data.data.likes);
       }
     };
     fetchLikedData();
@@ -50,7 +52,8 @@ const PostCard = ({ post, user }) => {
       </div>
       <div className="postcard-button-container">
         <button onClick={toggleLiked} className="postcard-button">
-          {isLiked ? "Liked" : "Like"}
+          <div>{isLiked ? "Liked" : "Like"}</div>
+          <div>{likes}</div>
         </button>
       </div>
     </div>

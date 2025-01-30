@@ -26,11 +26,12 @@ postRoute.get("/show/:postId", verifyJWT, async (req, res) => {
     const isLiked = findPost.likes.some(
       (like) => parseInt(like) === parseInt(user._id)
     );
+    const likes = findPost.likes.length;
 
     return res
       .status(200)
       .json(
-        new ApiResponse(200, "Successfully fetched post", { isLiked }, true)
+        new ApiResponse(200, "Successfully fetched post", { isLiked, likes }, true)
       );
   } catch (error) {
     console.error(error);

@@ -14,7 +14,7 @@ const FetchPosts = function ({ user, uri }) {
         const response = await axios.get(`${uri}/${page}`, {
           withCredentials: true,
         });
-        console.log(response.data);
+        
         if (response.data?.success) {
           setCurrentPosts(response.data.data);
         } else {

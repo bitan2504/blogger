@@ -9,6 +9,7 @@ import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import CreatePost from "./components/CreatePost.jsx";
 import ShowPost from "./components/ShowPost.jsx";
+import Top from "./components/Top.jsx";
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -26,7 +27,7 @@ function App() {
             }
           }
         );
-        // console.log(foundUser.data);
+        
         if (foundUser.data) {
           setUser(foundUser.data);
           setUsername(foundUser.data.username);
@@ -55,7 +56,10 @@ function App() {
         <Navbar username={username} setUsername={setUsername} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="/home" >
+            <Route path="/home" element={<Home user={user} />} />
+            <Route path="/home/top" element={<Top user={user} />} />
+          </Route>
           <Route path="/user">
             <Route path="/user/profile" element={<Profile user={user} setUser={setUser} />} />
             <Route path="/user/login" element={<Login user={user} setUser={setUser} />} />
