@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ProfileCard from "./ProfileCard";
+import ConnectCard from "./ConnectCard";
 
 export default function Connect({ user }) {
   const [search, setSearch] = useState("");
@@ -36,9 +37,9 @@ export default function Connect({ user }) {
       <button onClick={handleSearch}>Go</button>
       {/* </form> */}
       {searchUser ? (
-        <ProfileCard
+        <ConnectCard
           user={user}
-          uri={`http://localhost:3000/connect/${searchUser}`}
+          searchUser={searchUser}
         />
       ) : (
         <></>

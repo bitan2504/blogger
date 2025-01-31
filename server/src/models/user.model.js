@@ -44,12 +44,14 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
     followers: {
-      type: Number,
-      default: 0,
+      type: [Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
     },
     following: {
-      type: Number,
-      default: 0,
+      type: [Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
     },
   },
   {
