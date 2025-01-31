@@ -1,7 +1,34 @@
-import "./styles/Navbar.css";
+import { useState, useEffect } from "react";
+import "./Navbar.css";
 import { NavLink } from "react-router-dom";
+import axios from "axios";
 
-const Navbar = ({ username, setUsername }) => {
+export default function Navbar({ active, setActive }) {
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const foundUser = await axios.get(
+          "http://localhost:3000/user/getUser",
+          {
+            withCredentials: true,
+          }
+        );
+
+        setActive(foundUser.data.data ? true : false);
+        if (foundUser.data.data) {
+          setUsername(foundUser.data.data.username);
+        } else {
+          setUsername(null);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUser();
+  }, [active]);
+
   return (
     <nav id="navbar" className="navbar">
       <div className="navbar-container">
@@ -19,7 +46,7 @@ const Navbar = ({ username, setUsername }) => {
         </NavLink>
       </div>
       <div className="navbar-container">
-        {!username ? (
+        {!active ? (
           <>
             <NavLink to="/user/login" className="navbar-items">
               Login
@@ -41,6 +68,4 @@ const Navbar = ({ username, setUsername }) => {
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

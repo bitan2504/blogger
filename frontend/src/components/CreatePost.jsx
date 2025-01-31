@@ -1,30 +1,15 @@
 import React, { useEffect, useState } from "react";
-import "./styles/CreatePost.css";
+import "./CreatePost.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Redirect from "./Redirect.jsx";
+import MessagePage from "./MessagePage.jsx";
 
-const CreatePost = ({ user, setUser }) => {
+const CreatePost = ({ active }) => {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
   });
   const navigate = useNavigate();
-  const [countDown, setCountDown] = useState(5);
-  const pageName = "Login";
-  const errorMessage = "Please login first.";
-
-  useEffect(() => {
-    if (!user) {
-      setTimeout(() => {
-        setCountDown(countDown - 1);
-      }, 1000);
-      if (countDown <= 0) {
-        navigate("/user/profile");
-        return;
-      }
-    }
-  }, [countDown, user]);
 
   const [errors, setErrors] = useState({});
 
@@ -68,12 +53,8 @@ const CreatePost = ({ user, setUser }) => {
 
   return (
     <>
-      {!user ? (
-        <Redirect
-          message={errorMessage}
-          pageName={pageName}
-          countDown={countDown}
-        />
+      {!active ? (
+        <MessagePage message={"User not logged in"} />
       ) : (
         <div className="login-form-container">
           <form className="login-form" onSubmit={handleSubmit}>

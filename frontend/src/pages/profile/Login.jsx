@@ -1,31 +1,15 @@
 import React, { useEffect, useState } from "react";
-import "./styles/Login.css";
+import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Redirect from "./Redirect.jsx";
+import MessagePage from '../../components/MessagePage.jsx';
 
-const Login = ({ user, setUser }) => {
+export default function Login({ active, setActive }) {
   const [formData, setFormData] = useState({
     uid: "",
     password: "",
   });
   const navigate = useNavigate();
-  const [countDown, setCountDown] = useState(5);
-  const pageName = "Profile";
-  const errorMessage = "User already logged in";
-
-  useEffect(() => {
-    if (user) {
-      setTimeout(() => {
-        setCountDown(countDown - 1);
-      }, 1000);
-      if (countDown <= 0) {
-        navigate("/user/profile");
-        return;
-      }
-    }
-  }, [countDown, user]);
-
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -58,8 +42,8 @@ const Login = ({ user, setUser }) => {
           }
         );
         if (response.data.success) {
-          setUser(response.data.data);
-          navigate("/user/profile");
+          setActive(true);
+          navigate("/home");
         }
       } catch (error) {
         console.log(error);
@@ -69,12 +53,8 @@ const Login = ({ user, setUser }) => {
 
   return (
     <>
-      {user ? (
-        <Redirect
-          message={errorMessage}
-          pageName={pageName}
-          countDown={countDown}
-        />
+      {active ? (
+        <MessagePage message={"User is logged in."} />
       ) : (
         <div className="login-form-container">
           <form className="login-form" onSubmit={handleSubmit}>
@@ -118,5 +98,3 @@ const Login = ({ user, setUser }) => {
     </>
   );
 };
-
-export default Login;

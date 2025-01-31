@@ -9,7 +9,9 @@ const userRoute = Router();
 
 userRoute.get("/getUser", verifyJWT, async (req, res) => {
   const user = req.user;
-  return res.status(200).json(user);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Fetched successfully", user, true));
 });
 
 userRoute.post("/register", async (req, res) => {
@@ -38,8 +40,6 @@ userRoute.post("/register", async (req, res) => {
       password,
       dob,
       avatar,
-      followers: 0,
-      following: 0,
     });
     const user = await User.findById(newUser._id).select(
       "-password -refreshToken"
@@ -242,14 +242,9 @@ userRoute.get("/profile/posts/:page", verifyJWT, async (req, res) => {
       postIds.map(async (postId) => await Post.findById(postId)).reverse()
     );
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        "User found",
-        posts,
-        true
-      )
-    );
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "User found", posts, true));
   } catch (error) {
     console.error(error);
   }

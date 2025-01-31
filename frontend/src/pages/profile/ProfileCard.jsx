@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "./styles/ProfileCard.css";
-import FetchPosts from "./FetchPosts";
+import "./ProfileCard.css";
+import FetchPosts from "../../components/FetchPosts";
 
-export default function ProfileCard({ user, uri }) {
+export default function ProfileCard({ uri }) {
   const [username, setUsername] = useState("");
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
@@ -50,7 +50,7 @@ export default function ProfileCard({ user, uri }) {
       </div>
       <div>
         {/* <div className="post-header">Posts</div> */}
-        <FetchPosts user={user} uri={`${uri}/posts`} />
+        <FetchPosts uri={`${uri}/posts`} />
       </div>
     </div>
   );

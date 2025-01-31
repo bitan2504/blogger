@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "./styles/ProfileCard.css";
-import FetchPosts from "./FetchPosts";
+import FetchPosts from "../../components/FetchPosts.jsx";
 
 export default function ConnectCard({ user, searchUser }) {
   const [username, setUsername] = useState("");
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
-  const [totalPosts, setTotalPosts] = useState(0);
   const [avatarLoc, setAvatarLoc] = useState("/default/DEFAULT_AVATAR.jpg");
   const [followed, setFollowed] = useState(false);
 

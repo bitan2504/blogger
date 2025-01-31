@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import "./styles/Register.css";
+import "./Register.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Redirect from "./Redirect.jsx";
+import MessagePage from "../../components/MessagePage";
 
 const Register = ({ user }) => {
   const [formData, setFormData] = useState({
@@ -69,6 +69,10 @@ const Register = ({ user }) => {
             contentType: "application/json",
           }
         );
+
+        if (response.data.success) {
+          navigate("/user/login");
+        }
       } catch (error) {
         console.log(error);
       }
@@ -78,11 +82,7 @@ const Register = ({ user }) => {
   return (
     <>
       {user ? (
-        <Redirect
-          message={errorMessage}
-          pageName={pageName}
-          countDown={countDown}
-        />
+        <MessagePage message={"User is logged in"} />
       ) : (
         <div className="login-form-container">
           <form className="login-form" onSubmit={handleSubmit}>

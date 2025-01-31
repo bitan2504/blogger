@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import "./styles/PostCard.css";
+import "./PostCard.css";
 import axios from "axios";
 
-const PostCard = ({ post, user }) => {
+const PostCard = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(0);
 

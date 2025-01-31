@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import ProfileCard from "./ProfileCard";
-import ConnectCard from "./ConnectCard";
+import ConnectCard from "./ConnectCard.jsx";
 
 export default function Connect({ user }) {
   const [search, setSearch] = useState("");
