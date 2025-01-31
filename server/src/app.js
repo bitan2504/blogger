@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import userRoute from "./routes/user.route.js";
 import postRoute from "./routes/post.route.js";
 import homeRoute from "./routes/home.route.js";
-import profileRouter from './routes/profile.route.js';
+import connectRoute from "./routes/connect.route.js";
 
 const app = express();
 app.use(express.static("public"));
@@ -32,6 +32,6 @@ app.use((req, res, next) => {
 app.use("/home", homeRoute);
 app.use("/user", userRoute);
 app.use("/post", postRoute);
-app.use("/profile", profileRouter)
+app.use("/connect", connectRoute);
 
 export { app };

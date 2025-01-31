@@ -14,7 +14,7 @@ const Navbar = ({ username, setUsername }) => {
         <NavLink to="/home/following" className="navbar-items">
           Following
         </NavLink>
-        <NavLink to="/user/connect" className="navbar-items">
+        <NavLink to="/connect" className="navbar-items">
           Connect
         </NavLink>
       </div>

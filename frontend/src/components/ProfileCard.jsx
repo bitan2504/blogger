@@ -28,7 +28,7 @@ export default function ProfileCard({ user, uri }) {
       }
     };
     fetch();
-  }, []);
+  }, [uri]);
 
   return (
     <div className="profile-card">

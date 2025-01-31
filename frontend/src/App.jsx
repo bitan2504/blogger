@@ -10,6 +10,7 @@ import Register from "./components/Register.jsx";
 import CreatePost from "./components/CreatePost.jsx";
 import ShowPost from "./components/ShowPost.jsx";
 import Top from "./components/Top.jsx";
+import Connect from "./components/Connect.jsx";
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -69,6 +70,7 @@ function App() {
               <Route path="/user/post/show" element={<ShowPost user={user} /> } />
             </Route>
           </Route>
+          <Route path="/connect" element={<Connect />} />
         </Routes>
       </div>
     </BrowserRouter>

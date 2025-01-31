@@ -15,11 +15,7 @@ const PostCard = ({ post, user }) => {
         }
       );
       if (response.data.success) {
-        if (response.data.data.isLiked) {
-          setIsLiked(true);
-        } else {
-          setIsLiked(false);
-        }
+        setIsLiked(response.data.data.isLiked);
         setLikes(response.data.data.likes);
       }
     };
@@ -34,11 +30,7 @@ const PostCard = ({ post, user }) => {
       }
     );
     if (response.data.success) {
-      if (response.data.data.isLiked) {
-        setIsLiked(true);
-      } else {
-        setIsLiked(false);
-      }
+      setIsLiked(response.data.data.isLiked);
       setLikes(response.data.data.likes);
     } else {
       console.log("Failed to proceed");

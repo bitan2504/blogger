@@ -25,7 +25,7 @@ const FetchPosts = function ({ user, uri }) {
       }
     };
     fetchPosts();
-  }, [page]);
+  }, [page, uri]);
 
   const handlePageChange = (event) => {
     event.preventDefault();
