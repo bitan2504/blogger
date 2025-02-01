@@ -44,6 +44,44 @@ connectRoute.get("/:username", verifyJWT, async (req, res) => {
   }
 });
 
+connectRoute.get("/id/:userId", verifyJWT, async (req, res) => {
+  try {
+    const userId = req.params?.userId;
+    const searchUser = await User.findById(userId);
+    const user = await User.findById(req.user?._id);
+    if (!searchUser) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, "User not found", {}, false));
+    }
+
+    const followed =
+      (user
+        ? user.following.some((elem) => String(elem) === String(searchUser._id))
+        : false) &&
+      searchUser.followers.some(
+        (follower) => String(follower) === String(user?._id)
+      );
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        "User found",
+        {
+          _id: searchUser._id,
+          username: searchUser.username,
+          followers: searchUser.followers,
+          following: searchUser.following,
+          followed: followed,
+        },
+        true
+      )
+    );
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 connectRoute.get("/:username/posts/:page", async (req, res) => {
   try {
     const page = req.params?.page;

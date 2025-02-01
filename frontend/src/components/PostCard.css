@@ -8,6 +8,19 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.postcard-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.postcard-header img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+}
+
 .postcard-title {
     font-size: 24px;
     font-weight: bold;

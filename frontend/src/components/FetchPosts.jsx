@@ -44,23 +44,6 @@ const FetchPosts = function ({ uri }) {
     <>
       {currentPosts.length > 0 ? (
         <>
-          <form
-            onSubmit={handlePage}
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              gap: "1rem",
-            }}
-          >
-            <input
-              type="number"
-              onChange={handlePageChange}
-              value={pageNumberInput}
-              style={{ width: "20rem" }}
-            />
-            <input type="submit" value="Go" />
-          </form>
           {currentPosts.map((post, index) => (
             <PostCard key={index} post={post} />
           ))}
@@ -68,6 +51,25 @@ const FetchPosts = function ({ uri }) {
       ) : (
         <h3 style={{ color: "black" }}>No posts to show</h3>
       )}
+      <form
+        onSubmit={handlePage}
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          gap: "1rem",
+        }}
+      >
+        <label for="page-number">Page</label>
+        <input
+        id="page-number"
+          type="number"
+          onChange={handlePageChange}
+          value={pageNumberInput}
+          style={{ width: "20rem" }}
+        />
+        <input type="submit" value="Go" />
+      </form>
     </>
   );
 };

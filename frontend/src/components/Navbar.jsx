@@ -1,48 +1,34 @@
 import { useState, useEffect } from "react";
 import "./Navbar.css";
 import { NavLink } from "react-router-dom";
-import axios from "axios";
+import ConnectSvg from "../../public/img/ConnectSvg.jsx";
+import FollowingSvg from "../../public/img/FollowingSvg.jsx";
+import TopSvg from "../../public/img/TopSvg.jsx";
+import HomeSvg from "../../public/img/HomeSvg.jsx";
+import CreateSvg from "../../public/img/CreateSvg.jsx";
 
-export default function Navbar({ active, setActive }) {
-  const [username, setUsername] = useState("");
+export default function Navbar({ active, user }) {
+  const [username, setUsername] = useState(null);
 
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const foundUser = await axios.get(
-          "http://localhost:3000/user/getUser",
-          {
-            withCredentials: true,
-          }
-        );
-
-        setActive(foundUser.data.data ? true : false);
-        if (foundUser.data.data) {
-          setUsername(foundUser.data.data.username);
-        } else {
-          setUsername(null);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getUser();
-  }, [active]);
+    setUsername(user?.username);
+  }, [user]);
 
   return (
     <nav id="navbar" className="navbar">
+      <img id="logo" src="/img/navbar.png" alt="" />
       <div className="navbar-container">
         <NavLink to="/home" className="navbar-items">
-          Home
+          <HomeSvg />
         </NavLink>
         <NavLink to="/home/top" className="navbar-items">
-          Top
+          <TopSvg />
         </NavLink>
         <NavLink to="/home/following" className="navbar-items">
-          Following
+          <FollowingSvg />
         </NavLink>
         <NavLink to="/connect" className="navbar-items">
-          Connect
+          <ConnectSvg />
         </NavLink>
       </div>
       <div className="navbar-container">
@@ -60,9 +46,11 @@ export default function Navbar({ active, setActive }) {
             <NavLink to="/user/profile" className="navbar-items">
               {username}
             </NavLink>
-            <NavLink to="/user/post/create">
-              <button>Create Post</button>
-            </NavLink>
+            <button id="create-post-button">
+              <NavLink id="create-post" to="/user/post/create">
+                Create Posts
+              </NavLink>
+            </button>
           </>
         )}
       </div>

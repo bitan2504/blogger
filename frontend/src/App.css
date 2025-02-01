@@ -1,6 +1,7 @@
-#root {
-  width: 100%;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+
+#main-container {
+    display: grid;
+    grid-template-columns: 7fr 3fr;
+    /* background: #03045E; */
+    padding: 2rem;
 }
