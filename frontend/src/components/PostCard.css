@@ -53,8 +53,14 @@
     gap: 0.5rem;
 }
 
-.postcard-button {
+.postcard-button-container button {
     width: 100%;
+}
+
+.liked-button {
+    background: blue;
+    color: white;
+    border-color: blue;
 }
 
 .postcard-button-container button {

@@ -6,9 +6,9 @@ export default function Top({ setNavroute }) {
     setNavroute("top-container");
   }, []);
   return (
-    <>
+    <div className="home-container">
       <h1 style={{ marginBottom: "1rem", textAlign: "center" }}>Top Posts</h1>
       <FetchPosts uri="http://localhost:3000/home/top" />
-    </>
+    </div>
   );
 }

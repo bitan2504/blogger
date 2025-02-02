@@ -10,8 +10,9 @@ import CreatePost from "./components/CreatePost.jsx";
 import ShowPost from "./components/ShowPost.jsx";
 import Top from "./pages/home/Top.jsx";
 import Connect from "./pages/connect/Connect.jsx";
-import MenuBar from './components/MenuBar';
+import MenuBar from "./components/MenuBar";
 import axios from "axios";
+import SharePost from "./components/SharePost.jsx";
 
 function App() {
   const [active, setActive] = useState(false);
@@ -44,22 +45,43 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar active={active} user={user} navroute={navroute} />
-      <div id="main-container">
+      {/* <div id="main-container"> */}
         <div id="body-container">
           <Routes>
-            <Route path="/" element={<Home active={active} setNavroute={setNavroute} />} />
+            <Route
+              path="/"
+              element={<Home active={active} setNavroute={setNavroute} />}
+            />
             <Route path="/home">
-              <Route path="/home" element={<Home setNavroute={setNavroute} />} />
-              <Route path="/home/top" element={<Top setNavroute={setNavroute} />} />
+              <Route
+                path="/home"
+                element={<Home setNavroute={setNavroute} />}
+              />
+              <Route
+                path="/home/top"
+                element={<Top setNavroute={setNavroute} />}
+              />
             </Route>
             <Route path="/user">
               <Route
                 path="/user/profile"
-                element={<Profile active={active} setActive={setActive} setNavroute={setNavroute} />}
+                element={
+                  <Profile
+                    active={active}
+                    setActive={setActive}
+                    setNavroute={setNavroute}
+                  />
+                }
               />
               <Route
                 path="/user/login"
-                element={<Login active={active} setActive={setActive} setNavroute={setNavroute} />}
+                element={
+                  <Login
+                    active={active}
+                    setActive={setActive}
+                    setNavroute={setNavroute}
+                  />
+                }
               />
               <Route
                 path="/user/register"
@@ -76,11 +98,17 @@ function App() {
                 />
               </Route>
             </Route>
-            <Route path="/connect" element={<Connect active={active} setNavroute={setNavroute} />} />
+            <Route
+              path="/connect"
+              element={<Connect active={active} setNavroute={setNavroute} />}
+            />
+            <Route path="/share">
+                <Route path="/share/post/:postID" element={<SharePost />} />
+            </Route>
           </Routes>
         </div>
-        <MenuBar user={user} />
-      </div>
+        {/* <MenuBar user={user} /> */}
+      {/* </div> */}
     </BrowserRouter>
   );
 }

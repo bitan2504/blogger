@@ -7,6 +7,7 @@ const PostCard = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(0);
   const [author, setAuthor] = useState("");
+  const [shareButtonText, setShareButtonText] = useState("Share");
 
   useEffect(() => {
     const fetchAuthorData = async (authorId) => {
@@ -14,7 +15,7 @@ const PostCard = ({ post }) => {
         const response = await axios.get(
           `http://localhost:3000/connect/id/${authorId}`,
           {
-            withCredentials: true
+            withCredentials: true,
           }
         );
         if (response.data.success) {
@@ -56,6 +57,18 @@ const PostCard = ({ post }) => {
     }
   };
 
+  const handleShareButton = async (event) => {
+    event.preventDefault();
+    await navigator.clipboard
+      .writeText(`http://localhost:5173/share/post/${post._id}`)
+      .then(() => {
+        setShareButtonText("Text copied");
+        setTimeout(() => {
+          setShareButtonText("Share");
+        }, 2000);
+      });
+  };
+
   return (
     <div className="postcard-container">
       <div className="postcard-header">
@@ -66,11 +79,16 @@ const PostCard = ({ post }) => {
         <p className="postcard-content">{post.content}</p>
       </div>
       <div className="postcard-button-container">
-        <button onClick={toggleLiked} className="postcard-button">
+        <button
+          onClick={toggleLiked}
+          className={isLiked ? "liked-button" : "like-button"}
+        >
           <div>{isLiked ? "Liked" : "Like"}</div>
           <div>{likes}</div>
         </button>
-        <button className="postcard-button">Share</button>
+        <button className="postcard-button" onClick={handleShareButton}>
+          {shareButtonText}
+        </button>
       </div>
     </div>
   );

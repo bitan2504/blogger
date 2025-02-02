@@ -31,7 +31,6 @@ const Profile = ({ active, setActive, setNavroute }) => {
     <>
       {active ? (
         <>
-          <h1 style={{ marginBottom: "1rem", textAlign: "center" }}>Profile</h1>
           <ProfileCard uri="http://localhost:3000/user/profile" />
           <form onSubmit={handleLogout}>
             <input type="submit" value="Logout" className="submit-button" />

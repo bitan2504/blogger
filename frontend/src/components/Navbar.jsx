@@ -37,7 +37,7 @@ export default function Navbar({ active, user, navroute }) {
         >
           <TopSvg />
         </NavLink>
-        <NavLink
+        {/* <NavLink
           id="following-container"
           to="/home/following"
           className={
@@ -45,7 +45,7 @@ export default function Navbar({ active, user, navroute }) {
           }
         >
           <FollowingSvg />
-        </NavLink>
+        </NavLink> */}
         <NavLink
           id="connect-container"
           to="/connect"

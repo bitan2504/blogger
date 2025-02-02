@@ -5,7 +5,6 @@ import axios from "axios";
 import MessagePage from "./MessagePage.jsx";
 
 const CreatePost = ({ active }) => {
-  const navigate = useNavigate();
   const textAreaRef = useRef();
   const [formData, setFormData] = useState({
     title: "",

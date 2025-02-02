@@ -1,10 +1,10 @@
 .profile-card {
   padding: 20px;
   background: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+  /* border-radius: 15px; */
   text-align: center;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
 }
 
 .profile-card h2 {
