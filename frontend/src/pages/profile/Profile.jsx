@@ -15,7 +15,7 @@ const Profile = ({ active, setActive, setNavroute }) => {
   const handleLogout = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.get("http://localhost:3000/user/logout", {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/logout`, {
         withCredentials: true,
       });
       if (res.data.success) {
@@ -31,7 +31,7 @@ const Profile = ({ active, setActive, setNavroute }) => {
     <>
       {active ? (
         <>
-          <ProfileCard uri="http://localhost:3000/user/profile" />
+          <ProfileCard uri={`${import.meta.env.VITE_BACKEND_URL}/user/profile`} />
           <form onSubmit={handleLogout}>
             <input type="submit" value="Logout" className="submit-button" />
           </form>

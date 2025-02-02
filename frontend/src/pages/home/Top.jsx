@@ -8,7 +8,7 @@ export default function Top({ setNavroute }) {
   return (
     <div className="home-container">
       <h1 style={{ marginBottom: "1rem", textAlign: "center" }}>Top Posts</h1>
-      <FetchPosts uri="http://localhost:3000/home/top" />
+      <FetchPosts uri={`${import.meta.env.VITE_BACKEND_URL}/home/top`} />
     </div>
   );
 }

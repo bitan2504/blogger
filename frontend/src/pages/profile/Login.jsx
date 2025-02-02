@@ -38,7 +38,7 @@ export default function Login({ active, setActive, setNavroute }) {
     if (validate()) {
       try {
         const response = await axios.post(
-          "http://localhost:3000/user/login",
+          `${import.meta.env.VITE_BACKEND_URL}/user/login`,
           formData,
           {
             withCredentials: true,

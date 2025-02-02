@@ -13,7 +13,7 @@ const PostCard = ({ post }) => {
     const fetchAuthorData = async (authorId) => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/connect/id/${authorId}`,
+          `${import.meta.env.VITE_BACKEND_URL}/connect/id/${authorId}`,
           {
             withCredentials: true,
           }
@@ -28,7 +28,7 @@ const PostCard = ({ post }) => {
 
     const fetchLikedData = async () => {
       const response = await axios.get(
-        `http://localhost:3000/post/show/${post._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/post/show/${post._id}`,
         {
           withCredentials: true,
         }
@@ -44,7 +44,7 @@ const PostCard = ({ post }) => {
 
   const toggleLiked = async (e) => {
     const response = await axios.get(
-      `http://localhost:3000/post/like/toggle/${post._id}`,
+      `${import.meta.env.VITE_BACKEND_URL}/post/like/toggle/${post._id}`,
       {
         withCredentials: true,
       }

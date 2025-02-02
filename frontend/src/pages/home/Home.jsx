@@ -9,7 +9,7 @@ const Home = function ({ setNavroute }) {
 
   return (
     <div className="home-container">
-      <FetchPosts uri="http://localhost:3000/home" />
+      <FetchPosts uri={`${import.meta.env.VITE_BACKEND_URL}/home`} />
     </div>
   );
 };

@@ -66,7 +66,7 @@ const Register = ({ user, setNavroute }) => {
     if (validate()) {
       try {
         const response = await axios.post(
-          "http://localhost:3000/user/register",
+          `${import.meta.env.VITE_BACKEND_URL}/user/register`,
           formData,
           {
             withCredentials: true,

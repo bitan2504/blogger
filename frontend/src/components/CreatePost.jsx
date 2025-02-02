@@ -35,7 +35,7 @@ const CreatePost = ({ active }) => {
     if (validate()) {
       try {
         const response = await axios.post(
-          "http://localhost:3000/user/post/create",
+          `${import.meta.env.VITE_BACKEND_URL}/user/post/create`,
           formData,
           {
             withCredentials: true,

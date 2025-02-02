@@ -6,7 +6,7 @@ import FetchPosts from "./FetchPosts.jsx";
 function ShowPost({ user }) {
   return (
     <>
-      <FetchPosts user={user} uri="http://localhost:3000/user/post/show" />
+      <FetchPosts user={user} uri={`${import.meta.env.VITE_BACKEND_URL}/user/post/show`} />
     </>
   );
 }

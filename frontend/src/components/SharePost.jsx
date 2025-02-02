@@ -12,7 +12,7 @@ export default function SharePost() {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/share/post/${postID}`,
+          `${import.meta.env.VITE_BACKEND_URL}/share/post/${postID}`,
           {
             withCredentials: true,
           }

@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config({
-  path: "./test.env"
+  path: "./.env"
 });
 
 import mongoose from "mongoose";

@@ -21,7 +21,7 @@ export default function MProfileCard({ author }) {
     event.preventDefault();
     try {
       const response = await axios.get(
-        `http://localhost:3000/connect/follow/toggle/${author.username}`,
+        `${import.meta.env.VITE_BACKEND_URL}/connect/follow/toggle/${author.username}`,
         {
           withCredentials: true,
         }

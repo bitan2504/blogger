@@ -14,7 +14,7 @@ export default function ConnectCard({ active, searchUser }) {
     const fetchConnectUser = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/connect/${searchUser}`,
+          `${import.meta.env.VITE_BACKEND_URL}/connect/${searchUser}`,
           {
             withCredentials: true,
           }
@@ -38,7 +38,7 @@ export default function ConnectCard({ active, searchUser }) {
     event.preventDefault();
     try {
       const response = await axios.get(
-        `http://localhost:3000/connect/follow/toggle/${searchUser}`,
+        `${import.meta.env.VITE_BACKEND_URL}/connect/follow/toggle/${searchUser}`,
         {
           withCredentials: true,
         }
@@ -74,7 +74,7 @@ export default function ConnectCard({ active, searchUser }) {
       </div>
       <div>
         <FetchPosts
-          uri={`http://localhost:3000/connect/${searchUser}/posts`}
+          uri={`${import.meta.env.VITE_BACKEND_URL}/connect/${searchUser}/posts`}
         />
       </div>
     </div>

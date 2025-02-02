@@ -23,7 +23,7 @@ function App() {
     const getUser = async () => {
       try {
         const foundUser = await axios.get(
-          "http://localhost:3000/user/getUser",
+          `${import.meta.env.VITE_BACKEND_URL}/user/getUser`,
           {
             withCredentials: true,
           }
