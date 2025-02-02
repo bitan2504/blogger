@@ -4,7 +4,7 @@ dotenv.config({
 });
 
 import mongoose from "mongoose";
-import { app } from "./app.js";
+import { app } from "./src/app.js";
 
 const connectDB = async () => {
   console.log(process.env.MONGODB_URI);
