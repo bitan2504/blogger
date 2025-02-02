@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import FetchPosts from "../../components/FetchPosts.jsx";
+import "./ConnectCard.css"
 
-export default function ConnectCard({ user, searchUser }) {
+export default function ConnectCard({ active, searchUser }) {
   const [username, setUsername] = useState("");
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
@@ -51,12 +52,12 @@ export default function ConnectCard({ user, searchUser }) {
   };
 
   return (
-    <div className="profile-card">
-      <div className="profile-card-container">
-        <img id="profile-avatar" src={avatarLoc} alt="" />
+    <div className="connect-card">
+      <div className="connect-card-container">
+        <img id="connect-avatar" src={avatarLoc} alt="" />
         <div>
           <h2>@{username}</h2>
-          <div className="profile-stats">
+          <div className="connect-stats">
             <div>
               <p className="count">{followers}</p>
               <p className="label">Followers</p>
@@ -67,14 +68,12 @@ export default function ConnectCard({ user, searchUser }) {
             </div>
           </div>
         </div>
-        <button onClick={handleToggleFollow}>
+        <button className={followed ? "followed-button" : "follow-button"} onClick={handleToggleFollow}>
           {followed ? "Following" : "Follow"}
         </button>
       </div>
       <div>
-        {/* <div className="post-header">Posts</div> */}
         <FetchPosts
-          user={user}
           uri={`http://localhost:3000/connect/${searchUser}/posts`}
         />
       </div>

@@ -16,6 +16,7 @@ import axios from "axios";
 function App() {
   const [active, setActive] = useState(false);
   const [user, setUser] = useState(null);
+  const [navroute, setNavroute] = useState("");
 
   useEffect(() => {
     const getUser = async () => {
@@ -42,27 +43,27 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Navbar active={active} user={user} />
+      <Navbar active={active} user={user} navroute={navroute} />
       <div id="main-container">
         <div id="body-container">
           <Routes>
-            <Route path="/" element={<Home active={active} />} />
+            <Route path="/" element={<Home active={active} setNavroute={setNavroute} />} />
             <Route path="/home">
-              <Route path="/home" element={<Home />} />
-              <Route path="/home/top" element={<Top />} />
+              <Route path="/home" element={<Home setNavroute={setNavroute} />} />
+              <Route path="/home/top" element={<Top setNavroute={setNavroute} />} />
             </Route>
             <Route path="/user">
               <Route
                 path="/user/profile"
-                element={<Profile active={active} setActive={setActive} />}
+                element={<Profile active={active} setActive={setActive} setNavroute={setNavroute} />}
               />
               <Route
                 path="/user/login"
-                element={<Login active={active} setActive={setActive} />}
+                element={<Login active={active} setActive={setActive} setNavroute={setNavroute} />}
               />
               <Route
                 path="/user/register"
-                element={<Register active={active} />}
+                element={<Register active={active} setNavroute={setNavroute} />}
               />
               <Route path="/user/post">
                 <Route
@@ -75,7 +76,7 @@ function App() {
                 />
               </Route>
             </Route>
-            <Route path="/connect" element={<Connect active={active} />} />
+            <Route path="/connect" element={<Connect active={active} setNavroute={setNavroute} />} />
           </Routes>
         </div>
         <MenuBar user={user} />

@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./CreatePost.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MessagePage from "./MessagePage.jsx";
 
 const CreatePost = ({ active }) => {
+  const navigate = useNavigate();
+  const textAreaRef = useRef();
   const [formData, setFormData] = useState({
     title: "",
     content: "",
   });
-  const navigate = useNavigate();
 
   const [errors, setErrors] = useState({});
 
@@ -51,6 +52,12 @@ const CreatePost = ({ active }) => {
     }
   };
 
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px"; // Set height to scroll height
+    }
+  }, [formData]);
+
   return (
     <>
       {!active ? (
@@ -59,7 +66,9 @@ const CreatePost = ({ active }) => {
         <div className="login-form-container">
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <h2>Create Post</h2>
+              <h1 style={{ textAlign: "center", marginBottom: "1rem" }}>
+                Create Post
+              </h1>
               <input
                 type="text"
                 name="title"
@@ -72,6 +81,8 @@ const CreatePost = ({ active }) => {
 
             <div className="form-group">
               <textarea
+                ref={textAreaRef}
+                type="text"
                 id="content"
                 name="content"
                 value={formData.content}

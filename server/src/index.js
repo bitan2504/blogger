@@ -1,10 +1,7 @@
 import dotenv from "dotenv";
-
-if (process.env.NODE_ENV != "production") {
-  dotenv.config({
-    path: "./test.env"
-  });
-}
+dotenv.config({
+  path: "./test.env"
+});
 
 import mongoose from "mongoose";
 import { app } from "./app.js";

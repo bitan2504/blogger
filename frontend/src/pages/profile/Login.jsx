@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import MessagePage from '../../components/MessagePage.jsx';
+import MessagePage from "../../components/MessagePage.jsx";
 
-export default function Login({ active, setActive }) {
+export default function Login({ active, setActive, setNavroute }) {
+  useEffect(() => {
+    setNavroute("home-container");
+  }, []);
+
   const [formData, setFormData] = useState({
     uid: "",
     password: "",
@@ -97,4 +101,4 @@ export default function Login({ active, setActive }) {
       )}
     </>
   );
-};
+}

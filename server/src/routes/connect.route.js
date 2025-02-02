@@ -123,7 +123,9 @@ connectRoute.get("/follow/toggle/:username", verifyJWT, async (req, res) => {
     if (!searchUser) {
       return res.status(404).send("User not found");
     }
-
+    if (String(user._id) === String(searchUser._id)) {
+      return res.status(401).send("Bad request");
+    }
     const followed =
       searchUser.followers.some(
         (follower) => String(follower) === String(user._id)

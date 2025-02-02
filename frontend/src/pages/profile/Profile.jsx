@@ -3,9 +3,14 @@ import axios from "axios";
 import "./Profile.css";
 import ProfileCard from "./ProfileCard.jsx";
 import MessagePage from "../../components/MessagePage.jsx";
+import { useEffect } from "react";
 
-const Profile = ({ active, setActive }) => {
-  const navigate = useNavigate(); 
+const Profile = ({ active, setActive, setNavroute }) => {
+  useEffect(() => {
+    setNavroute("profile-container");
+  }, []);
+
+  const navigate = useNavigate();
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -26,7 +31,7 @@ const Profile = ({ active, setActive }) => {
     <>
       {active ? (
         <>
-          <h1>Profile</h1>
+          <h1 style={{ marginBottom: "1rem", textAlign: "center" }}>Profile</h1>
           <ProfileCard uri="http://localhost:3000/user/profile" />
           <form onSubmit={handleLogout}>
             <input type="submit" value="Logout" className="submit-button" />

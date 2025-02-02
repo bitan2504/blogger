@@ -26,10 +26,6 @@ const FetchPosts = function ({ uri }) {
     fetchPosts();
   }, [page, uri]);
 
-  useEffect(() => {
-    console.log(currentPosts.length);
-  }, [currentPosts]);
-
   const handlePageChange = (event) => {
     event.preventDefault();
     setPageNumberInput(event.target.value);
@@ -60,7 +56,7 @@ const FetchPosts = function ({ uri }) {
           gap: "1rem",
         }}
       >
-        <label for="page-number">Page</label>
+        <label htmlFor="page-number">Page</label>
         <input
         id="page-number"
           type="number"
@@ -68,7 +64,7 @@ const FetchPosts = function ({ uri }) {
           value={pageNumberInput}
           style={{ width: "20rem" }}
         />
-        <input type="submit" value="Go" />
+        <button type="submit">Go</button>
       </form>
     </>
   );

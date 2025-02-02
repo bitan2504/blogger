@@ -3,16 +3,24 @@
     border-radius: 8px;
     padding: 16px;
     max-width: 600px;
-    margin: 16px auto;
+    margin: 2rem auto;
     background-color: #f9f9f9;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .postcard-header {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    gap: 0.5rem;
+}
+
+.postcard-header h2 {
+    font-size: medium;
+    font-weight: normal;
 }
 
 .postcard-header img {
@@ -22,9 +30,7 @@
 }
 
 .postcard-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 8px;
+    font-weight: bold !important;
     color: #333;
 }
 
@@ -35,7 +41,6 @@
 }
 
 .postcard-content-container {
-    border: 1px solid navy;
     border-left: none;
     border-right: none;
 }

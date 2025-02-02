@@ -4,7 +4,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import MessagePage from "../../components/MessagePage";
 
-const Register = ({ user }) => {
+const Register = ({ user, setNavroute }) => {
+  useEffect(() => {
+    setNavroute("home-container");
+  }, []);
+
   const [formData, setFormData] = useState({
     username: "",
     fullname: "",

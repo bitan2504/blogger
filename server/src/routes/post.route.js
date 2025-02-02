@@ -53,11 +53,11 @@ postRoute.get("/like/toggle/:postId", verifyJWT, async (req, res) => {
     }
 
     const isLiked = findPost.likes.some(
-      (like) => String(like) == String(user._id)
+      (like) => String(like) === String(user._id)
     );
     if (isLiked) {
       findPost.likes = findPost.likes.filter(
-        (like) => like != user._id
+        (like) => String(like) !== String(user._id)
       );
     } else {
       findPost.likes.push(user._id);

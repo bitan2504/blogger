@@ -1,9 +1,13 @@
 import FetchPosts from "../../components/FetchPosts";
+import { useEffect } from "react";
 
-export default function Top() {
+export default function Top({ setNavroute }) {
+  useEffect(() => {
+    setNavroute("top-container");
+  }, []);
   return (
     <>
-      <h1>Top</h1>
+      <h1 style={{ marginBottom: "1rem", textAlign: "center" }}>Top Posts</h1>
       <FetchPosts uri="http://localhost:3000/home/top" />
     </>
   );

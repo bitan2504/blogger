@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./PostCard.css";
 import axios from "axios";
-import SProfileCard from "../pages/profile/SProfileCard.jsx";
+import MProfileCard from "../pages/connect/MConnectCard.jsx";
 
 const PostCard = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
@@ -12,7 +12,10 @@ const PostCard = ({ post }) => {
     const fetchAuthorData = async (authorId) => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/connect/id/${authorId}`
+          `http://localhost:3000/connect/id/${authorId}`,
+          {
+            withCredentials: true
+          }
         );
         if (response.data.success) {
           setAuthor(response.data.data);
@@ -56,7 +59,7 @@ const PostCard = ({ post }) => {
   return (
     <div className="postcard-container">
       <div className="postcard-header">
-        <SProfileCard user={author} />
+        <MProfileCard author={author} />
         <h2 className="postcard-title">{post.title}</h2>
       </div>
       <div className="postcard-content-container">
@@ -67,6 +70,7 @@ const PostCard = ({ post }) => {
           <div>{isLiked ? "Liked" : "Like"}</div>
           <div>{likes}</div>
         </button>
+        <button className="postcard-button">Share</button>
       </div>
     </div>
   );

@@ -29,7 +29,7 @@ export default function MProfileCard({ user }) {
   return (
     <div className="profile-card">
       {user ? (
-        <div className="profile-card-container">
+        <div className="profile-card-container" style={{margin: "0"}}>
           <img id="profile-avatar" src={avatarLoc} alt="" />
           <div>
             <h2>@{username}</h2>

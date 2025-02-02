@@ -1,0 +1,79 @@
+.follow-button {
+  border: 1px solid black;
+  background: lightgray;
+}
+
+.followed-button {
+  background: black;
+  color: white;
+}
+
+.followed-button,
+.follow-button {
+  padding: 0.25rem 0.75rem;
+  font-weight: normal;
+  font-size: small;
+  cursor: pointer;
+}
+
+.connect-card {
+  padding: 20px;
+  background: white;
+  text-align: center;
+}
+
+.connect-card h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
+
+.connect-card-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem;
+  gap: 1rem;
+}
+
+.connect-stats {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.connect-stats div {
+  text-align: center;
+}
+
+.connect-stats p {
+  margin: 2px 0;
+}
+
+.connect-stats .count {
+  font-size: 18px;
+  font-weight: 500;
+  color: #222;
+}
+
+.connect-stats .label {
+  font-size: 14px;
+  color: #666;
+}
+
+.post-header {
+  color: black;
+  margin: 1rem;
+  font: black;
+  font-weight: bolder;
+  font-size: larger;
+}
+
+#connect-avatar {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+}
