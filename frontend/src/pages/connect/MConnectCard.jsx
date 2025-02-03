@@ -51,7 +51,7 @@ export default function MProfileCard({ author }) {
           alignItems: "center",
         }}
       >
-        <img src={avatarLoc} />
+        <img src={avatarLoc} style={{width: "2rem", height: "2rem", borderRadius: "50%"}} />
         <h2>{username}</h2>
       </div>
       <button

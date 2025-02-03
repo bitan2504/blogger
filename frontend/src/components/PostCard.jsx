@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import "./PostCard.css";
 import axios from "axios";
 import MProfileCard from "../pages/connect/MConnectCard.jsx";
+import { useNavigate } from "react-router-dom";
 
 const PostCard = ({ post }) => {
+  const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(0);
   const [author, setAuthor] = useState("");
@@ -69,6 +71,11 @@ const PostCard = ({ post }) => {
       });
   };
 
+  const handleCommentClick = async (event) => {
+    event.preventDefault();
+    navigate(`/share/post/${post._id}`);
+  };
+
   return (
     <div className="postcard-container">
       <div className="postcard-header">
@@ -86,6 +93,7 @@ const PostCard = ({ post }) => {
           <div>{isLiked ? "Liked" : "Like"}</div>
           <div>{likes}</div>
         </button>
+        <button onClick={handleCommentClick}>Comment</button>
         <button className="postcard-button" onClick={handleShareButton}>
           {shareButtonText}
         </button>

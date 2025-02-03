@@ -24,7 +24,7 @@ export default function Connect({ active, setNavroute }) {
       <h1 style={{ marginBottom: "1rem", textAlign: "center" }}>
         Connect with people
       </h1>
-      <form
+      <for
         onSubmit={handleSearch}
         style={{
           display: "flex",
@@ -41,7 +41,7 @@ export default function Connect({ active, setNavroute }) {
           placeholder="Search User"
         />
         <button type="submit">Go</button>
-      </form>
+      </for>
       {searchUser ? (
         <ConnectCard active={active} searchUser={searchUser} />
       ) : (

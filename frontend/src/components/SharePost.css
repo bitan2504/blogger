@@ -1,0 +1,16 @@
+.full-post-container {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  /* align-items: center; */
+  justify-self: center;
+}
+
+.add-comment-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 0;
+}

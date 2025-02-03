@@ -16,7 +16,11 @@ const postSchema = new Schema({
   likes: {
     type: [Schema.Types.ObjectId],
     ref: "Like",
-  }
+  },
+  comments: {
+    type: [Schema.Types.ObjectId],
+    ref: "Comment",
+  },
 });
 
 const Post = mongoose.model("Post", postSchema);

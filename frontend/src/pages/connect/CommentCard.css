@@ -1,0 +1,11 @@
+.commentcard-container {
+    margin: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-bottom: gray 2px solid;
+}
+
+.commentcard-content-container {
+    padding: 1rem;
+}

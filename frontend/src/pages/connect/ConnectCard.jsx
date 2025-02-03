@@ -3,7 +3,7 @@ import axios from "axios";
 import FetchPosts from "../../components/FetchPosts.jsx";
 import "./ConnectCard.css"
 
-export default function ConnectCard({ active, searchUser }) {
+export default function ConnectCard({ searchUser }) {
   const [username, setUsername] = useState("");
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);

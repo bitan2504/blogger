@@ -165,10 +165,10 @@ const Register = ({ user, setNavroute }) => {
               {errors.dob && <span className="error">{errors.dob}</span>}
             </div>
 
-            <div id="avatar-form-group">
+            {/* <div id="avatar-form-group">
               <label htmlFor="avatar">Avatar</label>
               <input type="file" name="avatar" onChange={handleChange} />
-            </div>
+            </div> */}
 
             <button className="submit-button" type="submit">
               Submit
