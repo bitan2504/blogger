@@ -1,9 +1,13 @@
+import ApiResponse from "../ApiResponse.js";
 
-
-const securedCookieParserOptions = {
+export const securedCookieParserOptions = {
   secure: true,
   httpOnly: true,
   sameSite: "None",
 };
 
-export { securedCookieParserOptions };
+export const unknownErrorResponse = (res) => {
+  return res
+    .status(500)
+    .json(new ApiResponse(404, "Unknown error occurred", {}, false));
+};

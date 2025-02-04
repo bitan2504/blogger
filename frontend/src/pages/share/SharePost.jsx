@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import PostCard from "./PostCard";
-import MessagePage from "./MessagePage";
+import { useParams } from "react-router-dom";
+import PostCard from "../../components/PostCard.jsx";
+import MessagePage from "../../components/MessagePage.jsx";
 import axios from "axios";
 import "./SharePost.css";
-import FetchComment from "./FetchComment.jsx";
+import FetchComment from "../../components/FetchComment.jsx";
 
 export default function SharePost() {
-  const navigate = useNavigate();
   const { postID } = useParams();
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState({});
   const [commentContent, setCommentContent] = useState("");
+  const [postAvailable, setPostAvailable] = useState(true);
+  const [refreshBit, setRefreshBit] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -21,17 +22,22 @@ export default function SharePost() {
             withCredentials: true,
           }
         );
-
-        if (response.data?.success) {
-          setPost(response.data.data);
-        } else {
-          setPost(null);
-        }
+        return response.data;
       } catch (error) {
         console.error(error);
+        return null;
       }
     };
-    fetchPosts();
+
+    fetchPosts().then((response) => {
+      if (response?.success) {
+        setPostAvailable(!!response.data);
+        setPost(response.data);
+      } else {
+        setPostAvailable(false);
+        setPost(null);
+      }
+    });
   }, [postID]);
 
   const handleCommentInput = (event) => {
@@ -51,10 +57,7 @@ export default function SharePost() {
           withCredentials: true,
         }
       );
-
-      if (response.data.success) {
-        window.location.reload();
-      }
+      setRefreshBit(response.data.success);
     } catch (error) {
       console.log(error);
     }
@@ -62,7 +65,11 @@ export default function SharePost() {
 
   return (
     <>
-      {post ? (
+      {!postAvailable ? (
+        <MessagePage message={"Post not available"} />
+      ) : !post ? (
+        <MessagePage message={"Loading..."} />
+      ) : (
         <div className="full-post-container">
           <PostCard post={post} />
           <h2>Comments</h2>
@@ -75,10 +82,12 @@ export default function SharePost() {
             />
             <button type="submit">Go</button>
           </form>
-          <FetchComment postId={post._id} />
+          <FetchComment
+            postId={postID}
+            refreshBit={refreshBit}
+            setRefreshBit={setRefreshBit}
+          />
         </div>
-      ) : (
-        <MessagePage message={"Not available"} />
       )}
     </>
   );

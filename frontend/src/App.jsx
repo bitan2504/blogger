@@ -12,7 +12,7 @@ import Top from "./pages/home/Top.jsx";
 import Connect from "./pages/connect/Connect.jsx";
 import MenuBar from "./components/MenuBar";
 import axios from "axios";
-import SharePost from "./components/SharePost.jsx";
+import SharePost from "./pages/share/SharePost.jsx";
 
 function App() {
   const [active, setActive] = useState(false);

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import PostCard from "./PostCard.jsx";
+import MessagePage from "./MessagePage.jsx";
 
 const FetchPosts = function ({ uri }) {
-  const [currentPosts, setCurrentPosts] = useState([]);
+  const [currentPosts, setCurrentPosts] = useState(null);
   const [page, setPage] = useState(1);
   const [pageNumberInput, setPageNumberInput] = useState(1);
 
@@ -38,34 +39,38 @@ const FetchPosts = function ({ uri }) {
 
   return (
     <>
-      {currentPosts.length > 0 ? (
-        <>
-          {currentPosts.map((post, index) => (
-            <PostCard key={index} post={post} />
-          ))}
-        </>
+      {currentPosts ? (
+        currentPosts.length > 0 ? (
+          <>
+            {currentPosts.map((post, index) => (
+              <PostCard key={index} post={post} />
+            ))}
+            <form
+              onSubmit={handlePage}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                gap: "1rem",
+              }}
+            >
+              <label htmlFor="page-number">Page</label>
+              <input
+                id="page-number"
+                type="number"
+                onChange={handlePageChange}
+                value={pageNumberInput}
+                style={{ width: "20rem" }}
+              />
+              <button type="submit">Go</button>
+            </form>
+          </>
+        ) : (
+          <MessagePage message="No posts to show" />
+        )
       ) : (
-        <h3 style={{ color: "black" }}>No posts to show</h3>
+        <MessagePage message="Loading..." />
       )}
-      <form
-        onSubmit={handlePage}
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-          gap: "1rem",
-        }}
-      >
-        <label htmlFor="page-number">Page</label>
-        <input
-        id="page-number"
-          type="number"
-          onChange={handlePageChange}
-          value={pageNumberInput}
-          style={{ width: "20rem" }}
-        />
-        <button type="submit">Go</button>
-      </form>
     </>
   );
 };

@@ -42,7 +42,7 @@ const PostCard = ({ post }) => {
       }
     };
     fetchLikedData();
-  }, []);
+  }, [post]);
 
   const toggleLiked = async (e) => {
     const response = await axios.get(
@@ -64,7 +64,7 @@ const PostCard = ({ post }) => {
     await navigator.clipboard
       .writeText(`http://localhost:5173/share/post/${post._id}`)
       .then(() => {
-        setShareButtonText("Text copied");
+        setShareButtonText("Link copied");
         setTimeout(() => {
           setShareButtonText("Share");
         }, 2000);

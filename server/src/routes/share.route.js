@@ -4,6 +4,7 @@ import Post from "../models/post.model.js";
 import ApiResponse from "../ApiResponse.js";
 import { User } from "../models/user.model.js";
 import Comment from "../models/comment.model.js";
+import { unknownErrorResponse } from "./index.route.js";
 
 const shareRoute = Router();
 
@@ -14,11 +15,13 @@ shareRoute.get("/post/:postId", verifyJWT, async (req, res) => {
 
     const findPost = await Post.findById(postId);
     if (!findPost) {
-      return res.status(404).json(new (404, "Post not found", {}, false)());
+      return res
+        .status(404)
+        .json(new ApiResponse(404, "Post not found", {}, false));
     }
 
     const isLiked = findPost.likes.some(
-      (like) => String(like) == String(user?._id)
+      (like) => String(like) === String(user?._id)
     );
     const likes = findPost.likes.length;
 
@@ -47,15 +50,21 @@ shareRoute.get("/comments/:postId", async (req, res) => {
     const postId = req.params?.postId;
     const findPost = await Post.findById(postId);
     if (!findPost) {
-      return res.status(404).json(new (404, "Post not found", {}, false)());
+      return res
+        .status(404)
+        .json(new ApiResponse(404, "Post not found", {}, false));
     }
 
     const commentsId = findPost.comments;
-    const comments = await Promise.all(commentsId.map(async (commentId) => {
-      const comment = await Comment.findById(commentId);
-      comment.author = await User.findById(comment.author);
-      return comment;
-    }));
+    const comments = (
+      await Promise.all(
+        commentsId.map(async (commentId) => {
+          const comment = await Comment.findById(commentId);
+          comment.author = await User.findById(comment.author);
+          return comment;
+        })
+      )
+    ).reverse();
 
     return res
       .status(200)
@@ -72,15 +81,19 @@ shareRoute.post("/comments/post/:postId", verifyJWT, async (req, res) => {
     const user = await User.findById(req.user?._id);
     const content = req.body.content;
     if (!user) {
-      return res.status(404).json(new ApiResponse(404, "User not logged in", {}, false));
+      return res
+        .status(404)
+        .json(new ApiResponse(404, "User not logged in", {}, false));
     }
     if (!findPost) {
-      return res.status(404).json(new ApiResponse(404, "Post not found", {}, false));
+      return res
+        .status(404)
+        .json(new ApiResponse(404, "Post not found", {}, false));
     }
     if (!content) {
       return res
         .status(404)
-        .json(new (404, "Content field is required", {}, false)());
+        .json(new ApiResponse(404, "Content field is required", {}, false));
     }
 
     const newComment = await Comment.create({
@@ -92,15 +105,15 @@ shareRoute.post("/comments/post/:postId", verifyJWT, async (req, res) => {
     if (!comment) {
       return res
         .status(404)
-        .json(new (404, "Failed creating comment", {}, false)());
+        .json(new ApiResponse(404, "Failed creating comment", {}, false));
     }
     findPost.comments.push(comment);
-    await findPost.save({validateBeforeSave: false});
+    await findPost.save({ validateBeforeSave: false });
     const post = await Post.findById(findPost._id);
     if (!post) {
       return res
         .status(404)
-        .json(new (404, "Failed creating comment", {}, false)());
+        .json(new ApiResponse(404, "Failed creating comment", {}, false));
     }
 
     return res
