@@ -20,26 +20,44 @@ shareRoute.get("/post/:postId", verifyJWT, async (req, res) => {
         .json(new ApiResponse(404, "Post not found", {}, false));
     }
 
-    const isLiked = findPost.likes.some(
-      (like) => String(like) === String(user?._id)
-    );
-    const likes = findPost.likes.length;
+    const author = await User.findById(findPost.author);
+    const followed =
+      user &&
+      author._id &&
+      user.following.some((e) => String(e) === String(author._id)) &&
+      author.followers.some((e) => String(e) === String(user._id));
+    const isLiked = findPost.likes.some((e) => String(e) === String(user._id));
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        "Successfully fetched post",
-        {
-          _id: findPost._id,
-          title: findPost.title,
-          content: findPost.content,
-          author: findPost.author,
-          isLiked,
-          likes,
-        },
-        true
-      )
-    );
+    // const commentsId = findPost.comments;
+    // const comments = (
+    //   await Promise.all(
+    //     commentsId.map(async (commentId) => {
+    //       const comment = await Comment.findById(commentId);
+    //       comment.author = await User.findById(comment.author);
+    //       return comment;
+    //     })
+    //   )
+    // ).reverse();
+
+    const post = {
+      title: findPost.title,
+      content: findPost.content,
+      likes: findPost.likes,
+      likesCount: findPost.likes.length || 0,
+      isLiked: isLiked,
+      // comments: comments,
+      author: {
+        id: author._id || "",
+        username: author.username || "Anonymous User",
+        followers: author.followers || [],
+        following: author.following || [],
+        followed: followed || false,
+      },
+    };
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "Successfully fetched post", post, true));
   } catch (error) {
     console.error(error);
   }

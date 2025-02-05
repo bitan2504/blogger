@@ -225,22 +225,23 @@ userRoute.get("/profile/posts/:page", verifyJWT, async (req, res) => {
   try {
     const page = req.params?.page;
     const user = await User.findById(req.user?._id);
+    const pageSize = parseInt(process.env.PAGE_SIZE) || 5;
     if (!user) {
       return res.status(400).send("User not found");
     }
-    const fetchedPostIds = user.posts;
 
-    const totalPosts = fetchedPostIds.length;
-    const postIds = fetchedPostIds
-      .slice(
-        (page - 1) * parseInt(process.env.PAGE_SIZE),
-        Math.max(page * parseInt(process.env.PAGE_SIZE) - 1, totalPosts - 1)
-      )
-      .reverse();
+    const postIds = user.posts;
+    const findPosts = await Post.find({ _id: { $in: postIds } })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .lean();
 
-    const posts = await Promise.all(
-      postIds.map(async (postId) => await Post.findById(postId)).reverse()
-    );
+    const posts = findPosts.map((post) => ({
+      ...post,
+      likesCount: post.likes.length || 0,
+      isLiked: post.likes.some((e) => String(e) === String(user._id)),
+    }));
 
     return res
       .status(200)

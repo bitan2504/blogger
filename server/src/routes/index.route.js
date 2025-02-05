@@ -9,5 +9,5 @@ export const securedCookieParserOptions = {
 export const unknownErrorResponse = (res) => {
   return res
     .status(500)
-    .json(new ApiResponse(404, "Unknown error occurred", {}, false));
+    .json(new ApiResponse(500, "Server error", {}, false));
 };

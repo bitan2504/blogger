@@ -10,7 +10,6 @@ postRoute.get("/show/:postId", verifyJWT, async (req, res) => {
   const postId = req.params?.postId;
   try {
     const user = req.user;
-
     const findPost = await Post.findById(postId);
     if (!findPost) {
       return res
@@ -19,15 +18,20 @@ postRoute.get("/show/:postId", verifyJWT, async (req, res) => {
     }
 
     const isLiked = findPost.likes.some(
-      (like) => String(like) == String(user?._id)
+      (like) => String(like) === String(user?._id)
     );
-    const likes = findPost.likes.length;
 
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, "Successfully fetched post", { isLiked, likes }, true)
-      );
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        "Successfully fetched post",
+        {
+          isLiked,
+          likesCount: findPost.likes.length,
+        },
+        true
+      )
+    );
   } catch (error) {
     console.error(error);
   }
@@ -40,9 +44,7 @@ postRoute.get("/like/toggle/:postId", verifyJWT, async (req, res) => {
     if (!user) {
       return res
         .status(201)
-        .json(
-          new ApiResponse(201, "User not logged in", {}, false)
-        );
+        .json(new ApiResponse(201, "User not logged in", {}, false));
     }
 
     const findPost = await Post.findById(postId);
@@ -70,7 +72,6 @@ postRoute.get("/like/toggle/:postId", verifyJWT, async (req, res) => {
         .status(401)
         .json(new ApiResponse(401, "Something went wrong", {}, false));
     }
-    const likes = post.likes.length;
 
     return res
       .status(200)
@@ -78,7 +79,7 @@ postRoute.get("/like/toggle/:postId", verifyJWT, async (req, res) => {
         new ApiResponse(
           200,
           "Post like toggled successfully",
-          { isLiked: !isLiked, likes },
+          { isLiked: !isLiked, likesCount: findPost.likes.length },
           true
         )
       );

@@ -1,50 +1,23 @@
 import { useEffect, useState } from "react";
 import "./PostCard.css";
 import axios from "axios";
-import MProfileCard from "../pages/connect/MConnectCard.jsx";
 import { useNavigate } from "react-router-dom";
+import MConnectCard from "../pages/connect/MConnectCard.jsx";
 
 const PostCard = ({ post }) => {
   const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(false);
-  const [likes, setLikes] = useState(0);
-  const [author, setAuthor] = useState("");
+  const [likesCount, setLikesCount] = useState(0);
+  const [author, setAuthor] = useState(null);
   const [shareButtonText, setShareButtonText] = useState("Share");
 
   useEffect(() => {
-    const fetchAuthorData = async (authorId) => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/connect/id/${authorId}`,
-          {
-            withCredentials: true,
-          }
-        );
-        if (response.data.success) {
-          setAuthor(response.data.data);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    const fetchLikedData = async () => {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/post/show/${post._id}`,
-        {
-          withCredentials: true,
-        }
-      );
-      if (response.data.success) {
-        setIsLiked(response.data.data.isLiked);
-        setLikes(response.data.data.likes);
-        fetchAuthorData(post.author);
-      }
-    };
-    fetchLikedData();
+    setAuthor(post.author);
+    setLikesCount(post.likesCount);
+    setIsLiked(post.isLiked);
   }, [post]);
 
-  const toggleLiked = async (e) => {
+  const toggleLiked = async () => {
     const response = await axios.get(
       `${import.meta.env.VITE_BACKEND_URL}/post/like/toggle/${post._id}`,
       {
@@ -53,7 +26,7 @@ const PostCard = ({ post }) => {
     );
     if (response.data.success) {
       setIsLiked(response.data.data.isLiked);
-      setLikes(response.data.data.likes);
+      setLikesCount(response.data.data.likesCount);
     } else {
       console.log("Failed to proceed");
     }
@@ -79,7 +52,7 @@ const PostCard = ({ post }) => {
   return (
     <div className="postcard-container">
       <div className="postcard-header">
-        <MProfileCard author={author} />
+        <MConnectCard author={author} />
         <h2 className="postcard-title">{post.title}</h2>
       </div>
       <div className="postcard-content-container">
@@ -91,7 +64,7 @@ const PostCard = ({ post }) => {
           className={isLiked ? "liked-button" : "like-button"}
         >
           <div>{isLiked ? "Liked" : "Like"}</div>
-          <div>{likes}</div>
+          <div>{likesCount}</div>
         </button>
         <button onClick={handleCommentClick}>Comment</button>
         <button className="postcard-button" onClick={handleShareButton}>

@@ -33,9 +33,11 @@ export default function SharePost() {
       if (response?.success) {
         setPostAvailable(!!response.data);
         setPost(response.data);
+        setCommentContent(response.data.comments);
       } else {
         setPostAvailable(false);
         setPost(null);
+        setCommentContent(null);
       }
     });
   }, [postID]);
