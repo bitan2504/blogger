@@ -53,7 +53,7 @@ const CreatePost = ({ active }) => {
 
   useEffect(() => {
     if (textAreaRef.current) {
-      textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px"; // Set height to scroll height
+      textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px";
     }
   }, [formData]);
 
@@ -62,41 +62,39 @@ const CreatePost = ({ active }) => {
       {!active ? (
         <MessagePage message={"User not logged in"} />
       ) : (
-        <div className="login-form-container">
-          <form className="login-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <h1 style={{ textAlign: "center", marginBottom: "1rem" }}>
-                Create Post
-              </h1>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="Title"
-              />
-              {errors.title && <span className="error">{errors.title}</span>}
-            </div>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <h1 style={{ textAlign: "center", marginBottom: "1rem" }}>
+              Create Post
+            </h1>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="Title"
+            />
+            {errors.title && <span className="error">{errors.title}</span>}
+          </div>
 
-            <div className="form-group">
-              <textarea
-                ref={textAreaRef}
-                type="text"
-                id="content"
-                name="content"
-                value={formData.content}
-                onChange={handleChange}
-                placeholder="Content"
-              ></textarea>
-              {errors.content && (
-                <span className="error">{errors.content}</span>
-              )}
-            </div>
-            <button className="submit-button" type="submit">
-              Post
-            </button>
-          </form>
-        </div>
+          <div className="form-group">
+            <textarea
+              ref={textAreaRef}
+              type="text"
+              id="content"
+              name="content"
+              value={formData.content}
+              onChange={handleChange}
+              placeholder="Content"
+            ></textarea>
+            {errors.content && (
+              <span className="error">{errors.content}</span>
+            )}
+          </div>
+          <button className="submit-button" type="submit">
+            Post
+          </button>
+        </form>
       )}
     </>
   );

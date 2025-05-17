@@ -1,11 +1,31 @@
 .commentcard-container {
-    margin: 0.5rem 0;
+    background-color: #1f2937;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #f9fafb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: background-color 0.3s ease;
+}
+
+.commentcard-container:hover {
+    background-color: #273549;
+}
+
+.commentcard-header {
+    margin-bottom: 1rem;
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    border-bottom: gray 2px solid;
+    align-items: center;
 }
 
 .commentcard-content-container {
-    padding: 1rem;
+    padding-left: 0.5rem;
+}
+
+.commentcard-content {
+    font-family: 'Merriweather', serif;
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: #d1d5db;
+    white-space: pre-line;
 }

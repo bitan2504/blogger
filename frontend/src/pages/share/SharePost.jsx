@@ -50,8 +50,9 @@ export default function SharePost() {
   const handleCommentSubmit = async (event) => {
     event.preventDefault();
     try {
+      console.log(post);
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/share/comments/post/${post._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/share/comments/post/${postID}`,
         {
           content: commentContent,
         },

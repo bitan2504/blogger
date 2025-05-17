@@ -6,11 +6,10 @@ import FollowingSvg from "../../public/img/FollowingSvg.jsx";
 import TopSvg from "../../public/img/TopSvg.jsx";
 import HomeSvg from "../../public/img/HomeSvg.jsx";
 import CreateSvg from "../../public/img/CreateSvg.jsx";
-import { Tooltip } from "react-tooltip";
-import "react-tooltip/dist/react-tooltip.css";
 
 export default function Navbar({ active, user, navroute }) {
   const [username, setUsername] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,14 +18,26 @@ export default function Navbar({ active, user, navroute }) {
 
   return (
     <nav id="navbar" className="navbar">
-      <img id="logo" src="/img/navbar.png" alt="" />
-      <div className="navbar-container">
+      <div className="logo-hamburger-row">
+        <img id="logo" src="/img/navbar.png" alt="Logo" />
+        <button
+          id="hamburger-button"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle Menu"
+          aria-expanded={menuOpen}
+        >
+          <span className="hamburger-bar"></span>
+          <span className="hamburger-bar"></span>
+          <span className="hamburger-bar"></span>
+        </button>
+      </div>
+
+      <div className={`navbar-container ${menuOpen ? "show" : ""}`}>
         <NavLink
           id="home-container"
           to="/home"
-          className={
-            navroute === "home-container" ? "a-active" : "navbar-items"
-          }
+          className={navroute === "home-container" ? "a-active" : "navbar-items"}
+          onClick={() => setMenuOpen(false)}
         >
           <HomeSvg />
         </NavLink>
@@ -34,35 +45,33 @@ export default function Navbar({ active, user, navroute }) {
           id="top-container"
           to="/home/top"
           className={navroute === "top-container" ? "a-active" : "navbar-items"}
+          onClick={() => setMenuOpen(false)}
         >
           <TopSvg />
         </NavLink>
-        {/* <NavLink
-          id="following-container"
-          to="/home/following"
-          className={
-            navroute === "following-container" ? "a-active" : "navbar-items"
-          }
-        >
-          <FollowingSvg />
-        </NavLink> */}
         <NavLink
           id="connect-container"
           to="/connect"
-          className={
-            navroute === "connect-container" ? "a-active" : "navbar-items"
-          }
+          className={navroute === "connect-container" ? "a-active" : "navbar-items"}
+          onClick={() => setMenuOpen(false)}
         >
           <ConnectSvg />
         </NavLink>
-      </div>
-      <div className="navbar-container">
+
         {!active ? (
           <>
-            <NavLink to="/user/login" className="navbar-items">
+            <NavLink
+              to="/user/login"
+              className="navbar-items"
+              onClick={() => setMenuOpen(false)}
+            >
               Login
             </NavLink>
-            <NavLink to="/user/register" className="navbar-items">
+            <NavLink
+              to="/user/register"
+              className="navbar-items"
+              onClick={() => setMenuOpen(false)}
+            >
               Register
             </NavLink>
           </>
@@ -71,9 +80,8 @@ export default function Navbar({ active, user, navroute }) {
             <NavLink
               id="profile-container"
               to="/user/profile"
-              className={
-                navroute === "profile-container" ? "a-active" : "navbar-items"
-              }
+              className={navroute === "profile-container" ? "a-active" : "navbar-items"}
+              onClick={() => setMenuOpen(false)}
             >
               {username}
             </NavLink>
@@ -81,6 +89,7 @@ export default function Navbar({ active, user, navroute }) {
               id="create-post-button"
               onClick={() => {
                 navigate("/user/post/create");
+                setMenuOpen(false);
               }}
             >
               <CreateSvg />
