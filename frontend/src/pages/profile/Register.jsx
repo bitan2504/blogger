@@ -88,7 +88,7 @@ const Register = ({ user, setNavroute }) => {
       {user ? (
         <MessagePage message={"User is logged in"} />
       ) : (
-        <div className="login-form-container">
+        // <div className="login-form-container">
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="form-group">
               <h2>Register</h2>
@@ -174,7 +174,7 @@ const Register = ({ user, setNavroute }) => {
               Submit
             </button>
           </form>
-        </div>
+        // </div>
       )}
     </>
   );
