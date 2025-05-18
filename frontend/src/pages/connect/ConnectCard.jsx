@@ -52,31 +52,33 @@ export default function ConnectCard({ searchUser }) {
   };
 
   return (
-    <div className="connect-card">
-      <div className="connect-card-container">
-        <img id="connect-avatar" src={avatarLoc} alt="" />
-        <div>
-          <h2>@{username}</h2>
-          <div className="connect-stats">
-            <div>
-              <p className="count">{followers}</p>
-              <p className="label">Followers</p>
-            </div>
-            <div>
-              <p className="count">{following}</p>
-              <p className="label">Following</p>
+    <>
+    {/* <div className="connect-card"> */}
+        <div className="connect-card-container">
+          <img id="connect-avatar" src={avatarLoc} alt="" />
+          <div>
+            <h2>@{username}</h2>
+            <div className="connect-stats">
+              <div>
+                <p className="count">{followers}</p>
+                <p className="label">Followers</p>
+              </div>
+              <div>
+                <p className="count">{following}</p>
+                <p className="label">Following</p>
+              </div>
             </div>
           </div>
+          <button className={followed ? "followed-button" : "follow-button"} onClick={handleToggleFollow}>
+            {followed ? "Following" : "Follow"}
+          </button>
         </div>
-        <button className={followed ? "followed-button" : "follow-button"} onClick={handleToggleFollow}>
-          {followed ? "Following" : "Follow"}
-        </button>
-      </div>
-      <div>
-        <FetchPosts
-          uri={`${import.meta.env.VITE_BACKEND_URL}/connect/${searchUser}/posts`}
-        />
-      </div>
-    </div>
+        <div>
+          <FetchPosts
+            uri={`${import.meta.env.VITE_BACKEND_URL}/connect/${searchUser}/posts`}
+          />
+        </div>
+    {/* </div> */}
+    </>
   );
 }

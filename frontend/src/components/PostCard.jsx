@@ -35,7 +35,7 @@ const PostCard = ({ post }) => {
   const handleShareButton = async (event) => {
     event.preventDefault();
     await navigator.clipboard
-      .writeText(`http://localhost:5173/share/post/${post._id}`)
+      .writeText(`${import.meta.env.VITE_BACKEND_URL}/share/post/${post._id}`)
       .then(() => {
         setShareButtonText("Link copied");
         setTimeout(() => {

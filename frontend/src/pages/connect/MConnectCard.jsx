@@ -57,12 +57,12 @@ export default function MConnectCard({ author }) {
             <img src={avatarLoc} style={{ width: "2rem", height: "2rem", borderRadius: "50%" }} />
             <h2>{username}</h2>
           </div>
-          <button
+          {/* <button
             className={followed ? "followed-button" : "follow-button"}
             onClick={handleToggleFollow}
           >
             {followed ? "Following" : "Follow"}
-          </button>
+          </button> */}
         </div>)
         :
         (<></>)
