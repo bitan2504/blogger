@@ -44,9 +44,11 @@ const connectToDatabase: () => Promise<typeof mongoose | null> = async () => {
   }
 };
 
+import { connectRedis } from "./utils/redis";
 // Start Server
-connectToDatabase().then((connection) => {
+connectToDatabase().then(async (connection) => {
   if (connection) {
+    await connectRedis();
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
