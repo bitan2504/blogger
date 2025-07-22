@@ -26,6 +26,10 @@ app.use(cookieParser());
 app.use("/static", express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Routes
+import userRoutes from "./routes/user.route";
+app.use("/api/v2/user", userRoutes);
+
 // Database Connection
 const connectToDatabase: () => Promise<typeof mongoose | null> = async () => {
   try {

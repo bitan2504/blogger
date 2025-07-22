@@ -17,3 +17,5 @@ const registerUserOtpTemplate = (name: string, otp: string) => {
         `,
   };
 };
+
+export default registerUserOtpTemplate;
