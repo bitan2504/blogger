@@ -49,7 +49,7 @@ import { connectRedis } from "./utils/redis";
 connectToDatabase().then(async (connection) => {
   if (connection) {
     await connectRedis();
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 8000;
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });

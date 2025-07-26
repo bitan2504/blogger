@@ -1,6 +1,7 @@
 "use client";
 import useMenubarContext from "@/context/MenubarContext";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function NavigationBar() {
   const { toggleMenubarVisibility } = useMenubarContext();
@@ -52,9 +53,9 @@ export default function NavigationBar() {
       </div>
 
       <div id="signin-button">
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+        <Link href="/signin" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
           Sign In
-        </button>
+        </Link>
       </div>
     </nav>
   );
