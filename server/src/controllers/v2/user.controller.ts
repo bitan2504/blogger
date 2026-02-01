@@ -1,4 +1,5 @@
 import prisma from "../../db/prisma.db";
+import ApiResponse from "../../utils/ApiResponse";
 import express from "express";
 import {
     generateAccessToken,
@@ -40,19 +41,19 @@ export const registerUser = async (req: any, res: any) => {
     ) {
         return res
             .status(400)
-            .json({ message: "Required fields must be non-empty strings" });
+            .json(new ApiResponse(400, "Required fields must be non-empty strings", null, false));
     }
 
     // Handle Optional Avatar
     if (avatar && typeof avatar !== "string") {
-        return res.status(400).json({ message: "Avatar must be a string URL" });
+        return res.status(400).json(new ApiResponse(400, "Avatar must be a string URL", null, false));
     }
 
     // Handle Date of Birth
     if (!dob || isNaN(Date.parse(dob))) {
         return res
             .status(400)
-            .json({ message: "Invalid Date of Birth format" });
+            .json(new ApiResponse(400, "Invalid Date of Birth format", null, false));
     }
 
     // Validate password length
@@ -60,9 +61,7 @@ export const registerUser = async (req: any, res: any) => {
         password.length < Number(process.env.PASSWORD_MIN_LENGTH || "6") ||
         password.length > Number(process.env.PASSWORD_MAX_LENGTH || "16")
     ) {
-        return res.status(400).json({
-            message: `Password must be between ${process.env.PASSWORD_MIN_LENGTH} and ${process.env.PASSWORD_MAX_LENGTH} characters`,
-        });
+        return res.status(400).json(new ApiResponse(400, `Password must be between ${process.env.PASSWORD_MIN_LENGTH} and ${process.env.PASSWORD_MAX_LENGTH} characters`, null, false));
     }
 
     try {
@@ -77,7 +76,7 @@ export const registerUser = async (req: any, res: any) => {
             // User with same username or email already exists
             return res
                 .status(409)
-                .json({ message: "Username or email already in use" });
+                .json(new ApiResponse(409, "Username or email already in use", null, false));
         }
 
         // generate hashed password
@@ -103,12 +102,10 @@ export const registerUser = async (req: any, res: any) => {
         });
 
         // User created successfully
-        res.status(200).json({
-            message: "User registered successfully",
-        });
+        res.status(200).json(new ApiResponse(200, "User registered successfully", newUser, true));
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json(new ApiResponse(500, "Internal Server Error", null, false));
     }
 };
 
@@ -131,7 +128,7 @@ export const loginUser = async (req: any, res: any) => {
         typeof uid !== "string" ||
         typeof password !== "string"
     ) {
-        return res.status(400).json({ message: "Missing credentials" });
+        return res.status(400).json(new ApiResponse(400, "Missing credentials", null, false));
     }
 
     try {
@@ -144,7 +141,7 @@ export const loginUser = async (req: any, res: any) => {
 
         if (!user || !(await comparePassword(password, user.password))) {
             // user with given credentials does not exists
-            return res.status(401).json({ message: "Invalid credentials" });
+            return res.status(401).json(new ApiResponse(401, "Invalid credentials", null, false));
         }
 
         // generate access token and refresh token
@@ -164,10 +161,10 @@ export const loginUser = async (req: any, res: any) => {
         res.status(200)
             .cookie("refreshToken", refreshToken, securedCookieParserOptions)
             .cookie("accessToken", accessToken, securedCookieParserOptions)
-            .json({ message: "Login successful" });
+            .json(new ApiResponse(200, "Login successful", null, true));
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json(new ApiResponse(500, "Internal Server Error", null, false));
     }
 };
 
@@ -183,7 +180,7 @@ export const logoutUser = async (req: any, res: any) => {
 
     if (!user) {
         // No authenticated user found
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json(new ApiResponse(401, "Unauthorized", null, false));
     }
 
     try {
@@ -196,10 +193,10 @@ export const logoutUser = async (req: any, res: any) => {
         res.status(200)
             .clearCookie("refreshToken", securedCookieParserOptions)
             .clearCookie("accessToken", securedCookieParserOptions)
-            .json({ message: "Logout successful" });
+            .json(new ApiResponse(200, "Logout successful", null, true));
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json(new ApiResponse(500, "Internal Server Error", null, false));
     }
 };
 
@@ -219,14 +216,14 @@ export const createPost = async (req: any, res: any) => {
      */
     // Check for authenticated user
     if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json(new ApiResponse(401, "Unauthorized", null, false));
     }
 
     // Validate required fields
     if (!title || !content) {
         return res
             .status(400)
-            .json({ message: "Title and content are required" });
+            .json(new ApiResponse(400, "Title and content are required", null, false));
     }
 
     try {
@@ -241,16 +238,13 @@ export const createPost = async (req: any, res: any) => {
 
         if (!newPost) {
             // Post creation failed
-            return res.status(500).json({ message: "Failed to create post" });
+            return res.status(500).json(new ApiResponse(500, "Failed to create post", null, false));
         }
 
-        res.status(200).json({
-            message: "Post created successfully",
-            post: newPost,
-        });
+        res.status(200).json(new ApiResponse(200, "Post created successfully", newPost, true));
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json(new ApiResponse(500, "Internal Server Error", null, false));
     }
 };
 
@@ -271,7 +265,7 @@ export const showPostsByPageNumber = async (req: any, res: any) => {
      */
     // Check for authenticated user
     if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json(new ApiResponse(401, "Unauthorized", null, false));
     }
 
     try {
@@ -284,12 +278,12 @@ export const showPostsByPageNumber = async (req: any, res: any) => {
         });
         if (!posts || posts.length === 0) {
             // No posts found
-            return res.status(404).json({ message: "No posts found" });
+            return res.status(404).json(new ApiResponse(404, "No posts found", null, false));
         }
 
-        return res.status(200).json({ posts: posts });
+        return res.status(200).json(new ApiResponse(200, "Posts retrieved successfully", posts, true));
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json(new ApiResponse(500, "Internal Server Error", null, false));
     }
 };
