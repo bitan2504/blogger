@@ -202,3 +202,94 @@ export const logoutUser = async (req: any, res: any) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
+/**
+ * Create a new post for an authenticated user
+ * @route POST /api/v2/user/post/create
+ * @param req Express request object
+ * @param res Express response object
+ * @returns JSON response with post creation status
+ */
+export const createPost = async (req: any, res: any) => {
+    const user = req.user;
+    const { title, content } = req.body;
+
+    /**
+     * Input Validation
+     */
+    // Check for authenticated user
+    if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Validate required fields
+    if (!title || !content) {
+        return res
+            .status(400)
+            .json({ message: "Title and content are required" });
+    }
+
+    try {
+        // Create new post
+        const newPost = await prisma.post.create({
+            data: {
+                title: title,
+                content: content,
+                authorId: user.id,
+            },
+        });
+
+        if (!newPost) {
+            // Post creation failed
+            return res.status(500).json({ message: "Failed to create post" });
+        }
+
+        res.status(200).json({
+            message: "Post created successfully",
+            post: newPost,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+/**
+ * Show posts by page number for an authenticated user
+ * @route GET /api/v2/user/post/show/:page
+ * @param req Express request object
+ * @param res Express response object
+ * @returns JSON response with posts for the specified page
+ */
+export const showPostsByPageNumber = async (req: any, res: any) => {
+    const user = req.user;
+    const pageNumber = parseInt(req.params.page) || 1;
+    const postsPerPage = parseInt(process.env.POST_PER_PAGE || "5");
+
+    /**
+     * Input Validation
+     */
+    // Check for authenticated user
+    if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        // Fetch posts with pagination
+        const posts = await prisma.post.findMany({
+            where: { authorId: user.id },
+            skip: (pageNumber - 1) * postsPerPage,
+            take: postsPerPage,
+            orderBy: { createdAt: "desc" },
+        });
+        if (!posts || posts.length === 0) {
+            // No posts found
+            return res.status(404).json({ message: "No posts found" });
+        }
+
+        return res.status(200).json({ posts: posts });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
