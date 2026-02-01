@@ -6,6 +6,7 @@ import {
     generateRefreshToken,
 } from "../../utils/AuthToken";
 import { hashPassword, comparePassword } from "../../utils/HashPassword";
+import { title } from "node:process";
 
 /**
  * Cookie Parser Options for Secure Cookies
@@ -447,11 +448,19 @@ export const userProfile = async (req: any, res: any) => {
     }
 };
 
+/**
+ * Get profile page posts for authenticated user
+ * @route GET /api/v2/user/profile/posts/:page
+ * @param req Express request object
+ * @param res Express response object
+ * @returns JSON response with profile page posts
+ */
 export const profilePagePosts = async (req: any, res: any) => {
     const user = req.user;
-    const pageNumber = parseInt(req.params.page) || 1;
+    const pageNumber = parseInt(req.params.page || "1");
     const postsPerPage = parseInt(process.env.POST_PER_PAGE || "5");
 
+    // Validate user authentication
     if (!user) {
         return res
             .status(401)
@@ -459,29 +468,34 @@ export const profilePagePosts = async (req: any, res: any) => {
     }
 
     try {
+        // Fetch posts with pagination
         const findPosts = await prisma.post.findMany({
             where: { authorId: user.id },
             skip: (pageNumber - 1) * postsPerPage,
             take: postsPerPage,
             orderBy: { createdAt: "desc" },
+            include: {
+                _count: { select: { likes: true } },
+                likes: {
+                    where: { userId: user.id },
+                    select: { userId: true },
+                },
+            },
         });
 
-        const posts = await Promise.all(
-            findPosts.map(async (post) => {
-                const likesCount = await prisma.like.count({
-                    where: { postId: post.id },
-                });
-                const isLiked =
-                    (await prisma.like.findFirst({
-                        where: { postId: post.id, userId: user.id },
-                    })) !== null;
-                return {
-                    ...post,
-                    likesCount,
-                    isLiked,
-                };
-            })
-        );
+        // Enhance posts with isLiked property
+        const posts = findPosts.map((post) => {
+            return {
+                id: post.id,
+                title: post.title,
+                content: post.content,
+                authorId: post.authorId,
+                likesCount: post._count.likes,
+                isLiked: post.likes.length > 0,
+                createdAt: post.createdAt,
+                updatedAt: post.updatedAt,
+            };
+        });
 
         res.status(200).json(
             new ApiResponse(200, "Posts retrieved successfully", posts, true)

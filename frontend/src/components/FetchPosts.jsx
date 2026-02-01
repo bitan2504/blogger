@@ -15,6 +15,7 @@ const FetchPosts = function ({ uri }) {
           withCredentials: true,
         });
 
+        console.log(response.data.data);
         if (response.data?.success) {
           setCurrentPosts(response.data.data);
         } else {

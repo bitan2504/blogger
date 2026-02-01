@@ -12,6 +12,7 @@ const PostCard = ({ post }) => {
   const [shareButtonText, setShareButtonText] = useState("Share");
 
   useEffect(() => {
+    console.log(post);
     setAuthor(post.author);
     setLikesCount(post.likesCount);
     setIsLiked(post.isLiked);
