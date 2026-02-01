@@ -38,7 +38,11 @@ app.use((req, res, next) => {
 
 // routes v2
 import userRoutesV2 from "./routes/v2/user.route.ts";
+import connectRoutesV2 from "./routes/v2/connect.route.ts";
+import postRoutesV2 from "./routes/v2/post.route.ts";
 app.use("/api/v2/user", userRoutesV2);
+app.use("/api/v2/connect", connectRoutesV2);
+app.use("/api/v2/post", postRoutesV2);
 
 app.listen(process.env.PORT || 3000, () => {
     console.log(`Server is running on port ${process.env.PORT || 3000}`);

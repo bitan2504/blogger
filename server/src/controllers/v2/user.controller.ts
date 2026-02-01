@@ -446,3 +446,50 @@ export const userProfile = async (req: any, res: any) => {
             .json(new ApiResponse(500, "Internal Server Error", null, false));
     }
 };
+
+export const profilePagePosts = async (req: any, res: any) => {
+    const user = req.user;
+    const pageNumber = parseInt(req.params.page) || 1;
+    const postsPerPage = parseInt(process.env.POST_PER_PAGE || "5");
+
+    if (!user) {
+        return res
+            .status(401)
+            .json(new ApiResponse(401, "Unauthorized", null, false));
+    }
+
+    try {
+        const findPosts = await prisma.post.findMany({
+            where: { authorId: user.id },
+            skip: (pageNumber - 1) * postsPerPage,
+            take: postsPerPage,
+            orderBy: { createdAt: "desc" },
+        });
+
+        const posts = await Promise.all(
+            findPosts.map(async (post) => {
+                const likesCount = await prisma.like.count({
+                    where: { postId: post.id },
+                });
+                const isLiked =
+                    (await prisma.like.findFirst({
+                        where: { postId: post.id, userId: user.id },
+                    })) !== null;
+                return {
+                    ...post,
+                    likesCount,
+                    isLiked,
+                };
+            })
+        );
+
+        res.status(200).json(
+            new ApiResponse(200, "Posts retrieved successfully", posts, true)
+        );
+    } catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json(new ApiResponse(500, "Internal Server Error", null, false));
+    }
+};

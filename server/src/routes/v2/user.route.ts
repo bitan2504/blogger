@@ -4,6 +4,7 @@ import {
     getUser,
     loginUser,
     logoutUser,
+    profilePagePosts,
     registerUser,
     showPostsByPageNumber,
     userProfile,
@@ -18,5 +19,6 @@ router.get("/logout", verifyJWT, logoutUser);
 router.post("/post/create", verifyJWT, createPost);
 router.get("/post/show/:page", verifyJWT, showPostsByPageNumber);
 router.get("/profile", verifyJWT, userProfile);
+router.get("/profile/posts/:page", verifyJWT, profilePagePosts);
 
 export default router;

@@ -19,7 +19,7 @@ const PostCard = ({ post }) => {
 
   const toggleLiked = async () => {
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/post/like/toggle/${post._id}`,
+      `${import.meta.env.VITE_BACKEND_URL}/post/like/toggle/${post.id}`,
       {
         withCredentials: true,
       }
@@ -35,7 +35,7 @@ const PostCard = ({ post }) => {
   const handleShareButton = async (event) => {
     event.preventDefault();
     await navigator.clipboard
-      .writeText(`${import.meta.env.VITE_BACKEND_URL}/share/post/${post._id}`)
+      .writeText(`${import.meta.env.VITE_BACKEND_URL}/share/post/${post.id}`)
       .then(() => {
         setShareButtonText("Link copied");
         setTimeout(() => {
@@ -46,7 +46,7 @@ const PostCard = ({ post }) => {
 
   const handleCommentClick = async (event) => {
     event.preventDefault();
-    navigate(`/share/post/${post._id}`);
+    navigate(`/share/post/${post.id}`);
   };
 
   return (
