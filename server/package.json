@@ -1,25 +1,41 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "server for blogger",
+  "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
   },
-  "author": "Bitan Das",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.1.1",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.5"
-  },
+  "type": "module",
   "devDependencies": {
-    "nodemon": "^3.1.9",
-    "prettier": "^3.4.2"
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.1.0",
+    "@types/pg": "^8.16.0",
+    "prisma": "^7.3.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+    "@types/cookie-parser": "^1.4.10",
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.18.0"
   }
 }
