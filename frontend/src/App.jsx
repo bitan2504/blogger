@@ -11,7 +11,7 @@ import Top from "./pages/home/Top.jsx";
 import Connect from "./pages/connect/Connect.jsx";
 import MenuBar from "./components/MenuBar";
 import axios from "axios";
-import SharePost from "./pages/share/SharePost.jsx";
+import PostPage from "./pages/post/PostPage.jsx";
 
 function App() {
     const [active, setActive] = useState(false);
@@ -113,12 +113,12 @@ function App() {
                             />
                         }
                     /> */}
-                    {/* <Route path="/share">
+                    <Route path="/post">
                         <Route
-                            path="/share/post/:postID"
-                            element={<SharePost />}
+                            path="/post/:postID"
+                            element={<PostPage />}
                         />
-                    </Route> */}
+                    </Route>
                 </Routes>
             </div>
             {/* <MenuBar user={user} /> */}
