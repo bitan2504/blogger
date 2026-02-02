@@ -1,5 +1,4 @@
 import MConnectCard from "./MConnectCard.jsx";
-import "./CommentCard.css"
 
 export default function CommentCard({ comment }) {
   return (

@@ -34,6 +34,7 @@ model Post {
   updatedAt DateTime  @default(now()) @updatedAt
   comments  Comment[]
   likes     Like[]
+  tags      Tag[]
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
 
@@ -66,4 +67,10 @@ model Follow {
   following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@id([followerId, followingId])
+}
+
+model Tag {
+  id   String  @id @default(cuid())
+  name  String  @unique
+  posts Post[]
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import PostCard from "./PostCard.jsx";
+import PostCardM from "./PostCardM.jsx";
 import FetchPosts from "./FetchPosts.jsx";
 
 function ShowPost({ user }) {

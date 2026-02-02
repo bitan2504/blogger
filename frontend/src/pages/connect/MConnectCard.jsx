@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import "./ConnectCard.css";
 import MessagePage from "../../components/MessagePage.jsx";
 
 export default function MConnectCard({ author }) {

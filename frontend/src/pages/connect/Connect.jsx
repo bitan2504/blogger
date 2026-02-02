@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import ConnectCard from "./ConnectCard.jsx";
-import "../profile/Profile.css";
 
 export default function Connect({ active, setNavroute }) {
   useEffect(() => {

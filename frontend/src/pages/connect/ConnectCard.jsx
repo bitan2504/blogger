@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import FetchPosts from "../../components/FetchPosts.jsx";
-import "./ConnectCard.css"
 
 export default function ConnectCard({ searchUser }) {
   const [username, setUsername] = useState("");

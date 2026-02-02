@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./ProfileCard.css";
 
 export default function MProfileCard({ user }) {
   const [username, setUsername] = useState("");

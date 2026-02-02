@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import PostCard from "./PostCard.jsx";
+import PostCardM from "./PostCardM.jsx";
 import MessagePage from "./MessagePage.jsx";
 
 const FetchPosts = function ({ uri }) {
@@ -44,7 +44,7 @@ const FetchPosts = function ({ uri }) {
         currentPosts.length > 0 ? (
           <>
             {currentPosts.map((post, index) => (
-              <PostCard key={index} post={post} />
+              <PostCardM key={index} post={post} />
             ))}
             <form
               onSubmit={handlePage}

@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import PostCard from "../../components/PostCard.jsx";
+import PostCardM from "../../components/PostCardM.jsx";
 import MessagePage from "../../components/MessagePage.jsx";
 import axios from "axios";
-import "./SharePost.css";
 import FetchComment from "../../components/FetchComment.jsx";
 
 export default function SharePost() {
@@ -74,7 +73,7 @@ export default function SharePost() {
         <MessagePage message={"Loading..."} />
       ) : (
         <div className="full-post-container">
-          <PostCard post={post} />
+          <PostCardM post={post} />
           <h2>Comments</h2>
           <form className="add-comment-form" onSubmit={handleCommentSubmit}>
             <input

@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./Profile.css";
 import ProfileCard from "./ProfileCard.jsx";
 import MessagePage from "../../components/MessagePage.jsx";
 import { useEffect } from "react";

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "./ProfileCard.css";
 import FetchPosts from "../../components/FetchPosts";
 
 export default function ProfileCard({ uri }) {
