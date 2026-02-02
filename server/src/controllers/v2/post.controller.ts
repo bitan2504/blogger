@@ -80,11 +80,11 @@ export const getPosts = async (req: any, res: any) => {
     // Sorting
     const order =
         req.query?.asc === true || req.query?.asc === "true" ? "asc" : "desc";
-    if (req.params?.orderBy === "likes") {
+    if (req.query?.orderBy === "likes") {
         pipeline.orderBy = { likes: { _count: order } };
-    } else if (req.params?.orderBy === "comments") {
+    } else if (req.query?.orderBy === "comments") {
         pipeline.orderBy = { comments: { _count: order } };
-    } else if (req.params?.orderBy === "date") {
+    } else if (req.query?.orderBy === "date") {
         pipeline.orderBy = { createdAt: order };
     }
 
@@ -152,7 +152,7 @@ export const getPosts = async (req: any, res: any) => {
 
 /**
  * Toggle like on a post
- * @route GET /api/v2/post/like/toggle/:postId
+ * @route POST /api/v2/post/like/toggle/:postId
  * @param req Request object
  * @param res Response object
  * @returns ApiResponse for like toggle action

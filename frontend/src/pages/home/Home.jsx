@@ -63,7 +63,7 @@ const Home = ({ active, setNavroute }) => {
     const filters = [
         { id: "", label: "All Posts" },
         { id: "following", label: "Following", disabled: !active },
-        { id: "like", label: "Popular" },
+        { id: "likes", label: "Popular" },
         { id: "date", label: "Recent" },
     ];
 

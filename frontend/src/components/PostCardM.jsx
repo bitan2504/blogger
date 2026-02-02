@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import MConnectCard from "../pages/connect/MConnectCard.jsx";
 import {
-    Bookmark,
     Calendar,
     ChevronRight,
     Clock,
@@ -22,16 +20,23 @@ const PostCardM = ({ post }) => {
     }, [post]);
 
     const handleLike = async (postId) => {
-        // try {
-        //     await axios.post(
-        //         `${import.meta.env.VITE_BACKEND_URL}/posts/${postId}/like`,
-        //         {},
-        //         { withCredentials: true }
-        //     );
-        //     fetchPosts();
-        // } catch (error) {
-        //     console.error("Error liking post:", error);
-        // }
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/post/like/toggle/${postId}`,
+                {},
+                { withCredentials: true }
+            );
+
+            setThisPost((prevPost) => ({
+                ...prevPost,
+                isLiked: res.data.data.isLiked,
+                likesCount: res.data.data.likesCount,
+            }));
+
+            console.log(res, thisPost)
+        } catch (error) {
+            console.error("Error liking post:", error);
+        }
     };
 
     return (
@@ -44,8 +49,9 @@ const PostCardM = ({ post }) => {
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center text-white font-semibold">
-                            {thisPost.author?.username?.charAt(0)?.toUpperCase() ||
-                                "U"}
+                            {thisPost.author?.username
+                                ?.charAt(0)
+                                ?.toUpperCase() || "U"}
                         </div>
                         <div>
                             <div className="flex items-center gap-2">
@@ -55,9 +61,13 @@ const PostCardM = ({ post }) => {
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-500">
                                 <Calendar size={12} />
-                                {new Date(thisPost.createdAt).toLocaleDateString()}
+                                {new Date(
+                                    thisPost.createdAt
+                                ).toLocaleDateString()}
                                 <Clock size={12} />
-                                {new Date(thisPost.createdAt).toLocaleTimeString()}
+                                {new Date(
+                                    thisPost.createdAt
+                                ).toLocaleTimeString()}
                             </div>
                         </div>
                     </div>
@@ -83,7 +93,7 @@ const PostCardM = ({ post }) => {
                             <Heart
                                 size={20}
                                 className={
-                                    thisPost.liked
+                                    thisPost.isLiked
                                         ? "fill-red-500 text-red-500"
                                         : ""
                                 }
