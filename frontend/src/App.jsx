@@ -58,10 +58,10 @@ function App() {
                             path="/home"
                             element={<Home setNavroute={setNavroute} />}
                         />
-                        {/* <Route
+                        <Route
                             path="/home/top"
                             element={<Top setNavroute={setNavroute} />}
-                        /> */}
+                        />
                     </Route>
                     <Route path="/user">
                         <Route

@@ -22,28 +22,22 @@ export const getPosts = async (req: any, res: any) => {
      * Filters
      */
     // Date range filter
-    if (
-        (req.query?.startDate &&
-            !isNaN(new Date(req.query.startDate).getTime())) ||
-        (req.query?.endDate && !isNaN(new Date(req.query.endDate).getTime()))
-    ) {
-        const startDate =
-            req.query.startDate && !isNaN(req.query.startDate)
-                ? new Date(req.query.startDate)
-                : new Date("1970-01-01");
-        const endDate =
-            req.query.endDate && !isNaN(req.query.endDate)
-                ? new Date(req.query.endDate)
-                : new Date();
+    const startDate = req.query.startDate
+        ? new Date(req.query.startDate as string)
+        : new Date("1970-01-01");
 
-        pipeline.where = {
-            ...pipeline.where,
-            createdAt: {
-                gte: startDate,
-                lte: endDate,
-            },
-        };
-    }
+    const endDate = req.query.endDate
+        ? new Date(req.query.endDate as string)
+        : new Date();
+
+    console.log(startDate, endDate);
+    pipeline.where = {
+        ...pipeline.where,
+        createdAt: {
+            gte: startDate,
+            lte: endDate,
+        },
+    };
 
     // Tags filter
     if (req.query?.tags) {
@@ -162,7 +156,7 @@ export const getPostById = async (req: any, res: any) => {
     const user = req.user;
 
     if (!postId) {
-        // Missing postId parameter    
+        // Missing postId parameter
         return res
             .status(400)
             .json(new ApiResponse(400, "Post ID is required", null, false));

@@ -33,7 +33,7 @@ const PostCardM = ({ post }) => {
                 likesCount: res.data.data.likesCount,
             }));
 
-            console.log(res, thisPost)
+            console.log(res, thisPost);
         } catch (error) {
             console.error("Error liking post:", error);
         }
@@ -102,12 +102,15 @@ const PostCardM = ({ post }) => {
                                 {`${thisPost.likesCount || 0} likes`}
                             </span>
                         </button>
-                        <button className="flex items-center gap-2 text-gray-600 hover:text-blue-500 transition-colors">
+                        <Link
+                            to={`/post/${thisPost.id}`}
+                            className="flex items-center gap-2 text-gray-600 hover:text-blue-500 transition-colors"
+                        >
                             <MessageCircle size={20} />
                             <span className="font-medium">
                                 {`${thisPost.commentsCount || 0} comments`}
                             </span>
-                        </button>
+                        </Link>
                         <button className="flex items-center gap-2 text-gray-600 hover:text-emerald-500 transition-colors">
                             <Share2 size={20} />
                             Share
