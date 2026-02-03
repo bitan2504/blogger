@@ -26,7 +26,15 @@ export const securedCookieParserOptions: express.CookieOptions = {
 export const getUser = async (req: any, res: any) => {
     const user = req.user;
     res.status(200).json(
-        new ApiResponse(200, "User retrieved successfully", user, true)
+        new ApiResponse(
+            200,
+            "User retrieved successfully",
+            {
+                id: user.id,
+                username: user.username,
+            },
+            true
+        )
     );
 };
 
@@ -408,9 +416,6 @@ export const showPostsByPageNumber = async (req: any, res: any) => {
 export const userProfile = async (req: any, res: any) => {
     const user = req.user;
 
-    /**
-     * Input Validation
-     */
     // Check for authenticated user
     if (!user) {
         return res
@@ -420,25 +425,67 @@ export const userProfile = async (req: any, res: any) => {
 
     try {
         // Fetch user counts
-        const followers = await prisma.follow.findMany({
-            where: { followingId: user.id },
-        });
-        const following = await prisma.follow.findMany({
-            where: { followerId: user.id },
+        const fetchProfile = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                createdAt: true,
+                _count: {
+                    select: {
+                        followers: true,
+                        following: true,
+                        posts: true,
+                    },
+                },
+                posts:
+                    req.query.includePosts === "true"
+                        ? {
+                              select: {
+                                  id: true,
+                                  title: true,
+                                  content: true,
+                                  createdAt: true,
+                              },
+                              take: parseInt(process.env.POST_PER_PAGE || "10"),
+                          }
+                        : false,
+            },
         });
 
-        res.status(200).json(
-            new ApiResponse(
-                200,
-                "User profile retrieved",
-                {
-                    id: user.id,
-                    username: user.username,
-                    followers,
-                    following,
+        if (!fetchProfile) {
+            return res
+                .status(404)
+                .json(
+                    new ApiResponse(404, "User profile not found", null, false)
+                );
+        }
+
+        const likesCount = await prisma.like.count({
+            where: {
+                post: {
+                    authorId: user.id,
                 },
-                true
-            )
+            },
+        });
+
+        const profile = {
+            user: {
+                id: fetchProfile?.id,
+                username: fetchProfile?.username,
+                email: fetchProfile?.email,
+                createdAt: fetchProfile?.createdAt,
+                followerCount: fetchProfile?._count.followers || 0,
+                followingCount: fetchProfile?._count.following || 0,
+                postCount: fetchProfile?._count.posts || 0,
+                likesCount: likesCount || 0,
+            },
+            posts: fetchProfile.posts || [],
+        };
+
+        res.status(200).json(
+            new ApiResponse(200, "User profile retrieved", profile, true)
         );
     } catch (error) {
         console.log(error);

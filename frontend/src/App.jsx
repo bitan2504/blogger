@@ -64,7 +64,7 @@ function App() {
                         /> */}
                     </Route>
                     <Route path="/user">
-                        {/* <Route
+                        <Route
                             path="/user/profile"
                             element={
                                 <Profile
@@ -73,7 +73,7 @@ function App() {
                                     setNavroute={setNavroute}
                                 />
                             }
-                        /> */}
+                        />
                         <Route
                             path="/user/login"
                             element={
