@@ -32,6 +32,7 @@ export const getUser = async (req: any, res: any) => {
             {
                 id: user.id,
                 username: user.username,
+                avatar: user.avatar,
             },
             true
         )
@@ -70,15 +71,6 @@ export const registerUser = async (req: any, res: any) => {
                     null,
                     false
                 )
-            );
-    }
-
-    // Handle Optional Avatar
-    if (avatar && typeof avatar !== "string") {
-        return res
-            .status(400)
-            .json(
-                new ApiResponse(400, "Avatar must be a string URL", null, false)
             );
     }
 
@@ -144,13 +136,8 @@ export const registerUser = async (req: any, res: any) => {
             fullname,
             password: hashedPassword,
             dob: new Date(dob),
-            avatar,
+            avatar: null,
         };
-
-        if (!avatar || avatar.trim() === "") {
-            // Set default avatar if not provided
-            newUserData.avatar = process.env.DEFAULT_AVATAR || "";
-        }
 
         // Create new user
         const newUser = await prisma.user.create({

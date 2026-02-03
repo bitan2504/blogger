@@ -77,23 +77,24 @@ const Home = ({ active, setNavroute }) => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-20 px-4">
+            <div className="min-h-screen bg-gray-50 pt-20 pb-20 px-4">
                 <div className="max-w-7xl mx-auto">
                     <div className="animate-pulse">
-                        <div className="h-8 bg-gray-200 rounded-lg w-64 mb-8"></div>
+                        <div className="h-12 bg-gray-200 rounded-lg w-96 mb-4 mx-auto"></div>
+                        <div className="h-6 bg-gray-200 rounded w-64 mb-12 mx-auto"></div>
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <div className="lg:col-span-2 space-y-6">
                                 {[1, 2, 3].map((i) => (
                                     <div
                                         key={i}
-                                        className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100"
+                                        className="bg-white rounded-xl shadow-sm p-6 border border-gray-200"
                                     >
-                                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                                        <div className="h-4 bg-gray-200 rounded w-1/2 mb-6"></div>
-                                        <div className="h-48 bg-gray-200 rounded-xl mb-4"></div>
+                                        <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
+                                        <div className="h-5 bg-gray-200 rounded w-1/2 mb-6"></div>
+                                        <div className="h-48 bg-gray-200 rounded-lg mb-4"></div>
                                         <div className="flex justify-between">
-                                            <div className="h-4 bg-gray-200 rounded w-24"></div>
-                                            <div className="h-4 bg-gray-200 rounded w-32"></div>
+                                            <div className="h-5 bg-gray-200 rounded w-32"></div>
+                                            <div className="h-5 bg-gray-200 rounded w-40"></div>
                                         </div>
                                     </div>
                                 ))}
@@ -107,53 +108,57 @@ const Home = ({ active, setNavroute }) => {
 
     return (
         <div
-            className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-20 px-4"
+            className="min-h-screen bg-gray-50 pt-20 pb-20 px-4"
             ref={containerRef}
         >
             <div className="max-w-7xl mx-auto">
                 {/* Hero Section */}
                 <div className="mb-12 text-center">
-                    <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-2xl mb-6 shadow-lg">
+                    <div className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-lg mb-6">
                         <Sparkles size={20} />
                         <span className="text-sm font-semibold">
                             Welcome to blogger
                         </span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
                         Discover Amazing Content
-                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                        <span className="block mt-2 text-blue-600">
                             From Creative Minds
                         </span>
                     </h1>
-                    <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8">
+                    <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
                         Join thousands of creators sharing their ideas,
                         insights, and stories. Connect, learn, and grow
-                        together.
+                        together in a vibrant community.
                     </p>
 
                     {/* Search Bar */}
                     <div className="max-w-2xl mx-auto mb-8">
                         <div className="relative">
-                            <Search
-                                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-                                size={20}
-                            />
-                            <input
-                                type="text"
-                                placeholder="Search for topics, creators, or keywords..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm hover:shadow-md"
-                            />
+                            <div className="bg-white rounded-lg border border-gray-300 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                                <Search
+                                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                                    size={20}
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Search for topics, creators, or keywords..."
+                                    value={searchQuery}
+                                    onChange={(e) =>
+                                        setSearchQuery(e.target.value)
+                                    }
+                                    className="w-full pl-12 pr-4 py-3 bg-transparent rounded-lg focus:outline-none text-gray-900 placeholder-gray-500"
+                                />
+                            </div>
                         </div>
                     </div>
 
                     {/* Categories */}
-                    <div className="flex flex-wrap justify-center gap-3 mb-8">
+                    <div className="flex flex-wrap justify-center gap-2 mb-8">
                         {categories.map((category) => (
                             <button
                                 key={category.name}
-                                className={`px-4 py-2 rounded-xl font-medium transition-all hover:scale-105 ${category.color}`}
+                                className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${category.color}`}
                             >
                                 #{category.name}
                             </button>
@@ -165,8 +170,8 @@ const Home = ({ active, setNavroute }) => {
                     {/* Main Content */}
                     <div className="lg:col-span-2">
                         {/* Filter Tabs */}
-                        <div className="flex items-center justify-between mb-8">
-                            <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                        <div className="flex items-center justify-between mb-6 bg-white rounded-lg p-2 border border-gray-200">
+                            <div className="flex items-center gap-1 overflow-x-auto flex-1">
                                 {filters.map((filter) => (
                                     <button
                                         key={filter.id}
@@ -174,18 +179,18 @@ const Home = ({ active, setNavroute }) => {
                                             setActiveFilter(filter.id)
                                         }
                                         disabled={filter.disabled}
-                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium whitespace-nowrap transition-all ${
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-colors ${
                                             activeFilter === filter.id
-                                                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg"
+                                                ? "bg-blue-600 text-white"
                                                 : filter.disabled
-                                                  ? "text-gray-400 bg-gray-100 cursor-not-allowed"
-                                                  : "text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                                                  ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                                                  : "text-gray-700 hover:bg-gray-100"
                                         }`}
                                     >
-                                        {filter.id === "popular" && (
+                                        {filter.id === "likes" && (
                                             <TrendingUp size={16} />
                                         )}
-                                        {filter.id === "recent" && (
+                                        {filter.id === "date" && (
                                             <Clock size={16} />
                                         )}
                                         {filter.id === "following" && (
@@ -195,10 +200,6 @@ const Home = ({ active, setNavroute }) => {
                                     </button>
                                 ))}
                             </div>
-                            <button className="flex items-center gap-2 px-4 py-2.5 text-gray-600 bg-white border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-all">
-                                <Filter size={16} />
-                                Filter
-                            </button>
                         </div>
 
                         {/* Posts Grid */}
@@ -208,14 +209,14 @@ const Home = ({ active, setNavroute }) => {
                                     <PostCardM key={post.id} post={post} />
                                 ))
                             ) : (
-                                <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-                                    <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center">
+                                <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
+                                    <div className="w-16 h-16 mx-auto mb-4 rounded-lg bg-blue-100 flex items-center justify-center">
                                         <Flame
-                                            size={32}
-                                            className="text-blue-500"
+                                            size={28}
+                                            className="text-blue-600"
                                         />
                                     </div>
-                                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2">
                                         No posts yet
                                     </h3>
                                     <p className="text-gray-600 mb-6">
@@ -224,9 +225,9 @@ const Home = ({ active, setNavroute }) => {
                                     {active && (
                                         <Link
                                             to="/user/post/create"
-                                            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+                                            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
                                         >
-                                            <Plus size={20} />
+                                            <Plus size={18} />
                                             Create Your First Post
                                         </Link>
                                     )}
@@ -239,10 +240,10 @@ const Home = ({ active, setNavroute }) => {
                     <div className="lg:col-span-1">
                         {/* Trending Section */}
                         <div className="sticky top-24 space-y-6">
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                                 <div className="flex items-center justify-between mb-6">
-                                    <div className="flex items-center gap-2">
-                                        <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 text-white">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 rounded-lg bg-blue-600 text-white">
                                             <Flame size={20} />
                                         </div>
                                         <h2 className="text-xl font-bold text-gray-900">
@@ -251,13 +252,13 @@ const Home = ({ active, setNavroute }) => {
                                     </div>
                                     <TrendingUp
                                         size={20}
-                                        className="text-orange-500"
+                                        className="text-blue-600"
                                     />
                                 </div>
 
-                                <div className="space-y-4">
+                                <div className="space-y-3">
                                     {trending.length > 0 ? (
-                                        trending.map((item, index) => (
+                                        trending.slice(0, 5).map((item, index) => (
                                             <PostCardS
                                                 key={item.id}
                                                 post={item}
@@ -275,70 +276,63 @@ const Home = ({ active, setNavroute }) => {
 
                                 <Link
                                     to="/home/top"
-                                    className="mt-6 flex items-center justify-center gap-2 w-full py-3 text-blue-600 hover:text-blue-700 font-medium bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors"
+                                    className="mt-6 flex items-center justify-center gap-2 w-full py-3 text-blue-600 hover:text-blue-700 font-semibold bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                                 >
                                     View All Trending
                                     <ChevronRight size={16} />
                                 </Link>
                             </div>
 
-                            {/* Quick Links */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                                 <h3 className="text-lg font-bold text-gray-900 mb-4">
                                     Quick Actions
                                 </h3>
-                                <div className="space-y-3">
+                                <div className="space-y-2">
                                     {active && (
                                         <Link
                                             to="/user/post/create"
-                                            className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 hover:from-blue-100 hover:to-indigo-100 transition-all group"
+                                            className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors group"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
-                                                    <Plus size={16} />
-                                                </div>
-                                                <span className="font-medium">
+                                                <Plus size={18} className="text-blue-600" />
+                                                <span className="font-medium text-gray-700">
                                                     Create Post
                                                 </span>
                                             </div>
                                             <ChevronRight
                                                 size={16}
-                                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                                className="text-gray-400 group-hover:translate-x-1 transition-transform"
                                             />
                                         </Link>
                                     )}
                                     <Link
                                         to="/connect"
-                                        className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 hover:from-emerald-100 hover:to-green-100 transition-all group"
+                                        className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors group"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500 to-green-500 text-white">
-                                                <Users size={16} />
-                                            </div>
-                                            <span className="font-medium">
+                                            <Users size={18} className="text-green-600" />
+                                            <span className="font-medium text-gray-700">
                                                 Find Friends
                                             </span>
                                         </div>
                                         <ChevronRight
                                             size={16}
-                                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                            className="text-gray-400 group-hover:translate-x-1 transition-transform"
                                         />
                                     </Link>
                                     <Link
                                         to="/home/top"
-                                        className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-orange-50 to-red-50 text-orange-700 hover:from-orange-100 hover:to-red-100 transition-all group"
+                                        className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors group"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 text-white">
-                                                <Flame size={16} />
-                                            </div>
-                                            <span className="font-medium">
+                                            <Flame size={18} className="text-orange-600" />
+                                            <span className="font-medium text-gray-700">
                                                 Top Posts
                                             </span>
                                         </div>
                                         <ChevronRight
                                             size={16}
-                                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                            className="text-gray-400 group-hover:translate-x-1 transition-transform"
                                         />
                                     </Link>
                                 </div>

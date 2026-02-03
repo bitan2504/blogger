@@ -42,13 +42,13 @@ const PostCardM = ({ post }) => {
     return (
         <div
             key={thisPost.id}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 group"
         >
             {/* Post Header */}
             <div className="p-6 pb-4">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center text-white font-semibold">
+                        <div className="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
                             {thisPost.author?.username
                                 ?.charAt(0)
                                 ?.toUpperCase() || "U"}
@@ -59,12 +59,13 @@ const PostCardM = ({ post }) => {
                                     @{thisPost.author?.username}
                                 </span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
-                                <Calendar size={12} />
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <Calendar size={14} />
                                 {new Date(
                                     thisPost.createdAt
                                 ).toLocaleDateString()}
-                                <Clock size={12} />
+                                <span className="text-gray-400">•</span>
+                                <Clock size={14} />
                                 {new Date(
                                     thisPost.createdAt
                                 ).toLocaleTimeString()}
@@ -74,21 +75,21 @@ const PostCardM = ({ post }) => {
                 </div>
 
                 {/* Post Content */}
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors leading-tight">
                     {thisPost.title}
                 </h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">
+                <p className="text-gray-700 mb-4 line-clamp-3 leading-relaxed">
                     {thisPost.content}
                 </p>
             </div>
 
             {/* Post Actions */}
-            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-6">
                         <button
                             onClick={() => handleLike(thisPost.id)}
-                            className="flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-red-600 transition-colors font-medium"
                         >
                             <Heart
                                 size={20}
@@ -98,27 +99,27 @@ const PostCardM = ({ post }) => {
                                         : ""
                                 }
                             />
-                            <span className="font-medium">
-                                {`${thisPost.likesCount || 0} likes`}
+                            <span className="font-bold">
+                                {`${thisPost.likesCount || 0}`}
                             </span>
                         </button>
                         <Link
                             to={`/post/${thisPost.id}`}
-                            className="flex items-center gap-2 text-gray-600 hover:text-blue-500 transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium"
                         >
                             <MessageCircle size={20} />
-                            <span className="font-medium">
-                                {`${thisPost.commentsCount || 0} comments`}
+                            <span className="font-bold">
+                                {`${thisPost.commentsCount || 0}`}
                             </span>
                         </Link>
-                        <button className="flex items-center gap-2 text-gray-600 hover:text-emerald-500 transition-colors">
+                        <button className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors font-medium">
                             <Share2 size={20} />
-                            Share
+                            <span className="font-bold">Share</span>
                         </button>
                     </div>
                     <Link
                         to={`/user/post/show?id=${thisPost.id}`}
-                        className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium group/read"
+                        className="flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold text-sm transition-colors group/read"
                     >
                         Read More
                         <ChevronRight

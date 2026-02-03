@@ -126,22 +126,22 @@ const PostCardL = ({ post }) => {
     return (
         <div
             data-post-id={thisPost.id}
-            className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 group"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
         >
             {/* Post Header */}
             <div className="p-6 pb-4">
                 <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                         <div className="relative">
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold shadow-md">
+                            <div className="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
                                 {thisPost.author?.username
                                     ?.charAt(0)
                                     ?.toUpperCase() || "U"}
                             </div>
                             {thisPost.author?.verified && (
-                                <div className="absolute -top-1 -right-1 p-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full">
+                                <div className="absolute -top-1 -right-1 p-1 bg-blue-600 rounded-full">
                                     <Sparkles
-                                        size={10}
+                                        size={12}
                                         className="text-white"
                                     />
                                 </div>
@@ -153,15 +153,16 @@ const PostCardL = ({ post }) => {
                                     @{thisPost.author?.username}
                                 </span>
                             </div>
-                            <div className="flex items-center gap-3 text-sm text-gray-500 mt-0.5">
-                                <div className="flex items-center gap-1">
-                                    <Calendar size={12} />
+                            <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
+                                <div className="flex items-center gap-1.5">
+                                    <Calendar size={14} />
                                     {new Date(
                                         thisPost.createdAt
                                     ).toLocaleDateString()}
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <Clock size={12} />
+                                <span className="text-gray-400">•</span>
+                                <div className="flex items-center gap-1.5">
+                                    <Clock size={14} />
                                     {new Date(
                                         thisPost.createdAt
                                     ).toLocaleTimeString([], {
@@ -169,32 +170,46 @@ const PostCardL = ({ post }) => {
                                         minute: "2-digit",
                                     })}
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <Eye size={12} />
+                                <span className="text-gray-400">•</span>
+                                <div className="flex items-center gap-1.5">
+                                    <Eye size={14} />
                                     {thisPost.views || 0} views
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <button
+                        onClick={handleSave}
+                        className={`p-2.5 rounded-lg transition-colors ${
+                            isSaved
+                                ? "bg-blue-600 text-white"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
+                    >
+                        <Bookmark
+                            size={20}
+                            className={isSaved ? "fill-white" : ""}
+                        />
+                    </button>
                 </div>
 
                 {/* Post Title & Content */}
                 <Link to={`/user/post/show?id=${thisPost.id}`}>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">
                         {thisPost.title}
                     </h3>
-                    <p className="text-gray-600 mb-4 leading-relaxed">
+                    <p className="text-gray-700 mb-5 leading-relaxed">
                         {thisPost.content}
                     </p>
                 </Link>
 
                 {/* Tags */}
                 {thisPost.tags?.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    <div className="flex flex-wrap gap-2 mb-6">
                         {thisPost.tags.map((tag, index) => (
                             <span
                                 key={index}
-                                className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 transition-colors cursor-pointer"
+                                className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg"
                             >
                                 #{tag}
                             </span>
@@ -204,45 +219,36 @@ const PostCardL = ({ post }) => {
             </div>
 
             {/* Post Stats & Actions */}
-            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
-                <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <div className="flex items-center gap-1">
-                                <Heart size={14} className="text-red-500" />
-                                <span className="font-medium">
-                                    {thisPost.likesCount || 0}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <MessageCircle
-                                    size={14}
-                                    className="text-blue-500"
-                                />
-                                <span className="font-medium">
-                                    {thisPost.commentsCount || 0}
-                                </span>
-                            </div>
+            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4 text-sm">
+                        <div className="flex items-center gap-2 text-gray-700">
+                            <Heart size={16} className="text-red-500" />
+                            <span>{thisPost.likesCount || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-700">
+                            <MessageCircle size={16} className="text-blue-600" />
+                            <span>{thisPost.commentsCount || 0}</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                     <button
                         onClick={handleLike}
                         disabled={isLiking}
-                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all ${
+                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold transition-colors ${
                             thisPost.isLiked
-                                ? "bg-gradient-to-r from-red-50 to-red-100 text-red-600 border border-red-200"
-                                : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                                ? "bg-red-600 text-white"
+                                : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                         <Heart
-                            size={16}
+                            size={18}
                             className={
                                 thisPost.isLiked
-                                    ? "fill-red-500 text-red-500"
+                                    ? "fill-white text-white"
                                     : ""
                             }
                         />
@@ -251,17 +257,17 @@ const PostCardL = ({ post }) => {
 
                     <button
                         onClick={() => setShowCommentBar(!showCommentBar)}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-gray-600 border border-gray-200 font-medium hover:bg-gray-50 hover:border-gray-300 transition-all"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white text-gray-700 border border-gray-200 font-semibold hover:bg-gray-50 transition-colors"
                     >
-                        <MessageCircle size={16} />
-                        {showCommentBar ? "Hide Comments" : "Show Comments"}
+                        <MessageCircle size={18} />
+                        {showCommentBar ? "Hide" : "Comment"}
                     </button>
 
                     <button
                         onClick={handleShare}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-gray-600 border border-gray-200 font-medium hover:bg-gray-50 hover:border-gray-300 transition-all"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white text-gray-700 border border-gray-200 font-semibold hover:bg-gray-50 transition-colors"
                     >
-                        <Share2 size={16} />
+                        <Share2 size={18} />
                         Share
                     </button>
                 </div>
@@ -269,13 +275,13 @@ const PostCardL = ({ post }) => {
 
             {/* Comment Input Bar */}
             {showCommentBar && (
-                <div className="border-t border-gray-100">
+                <div className="border-t border-gray-200 bg-white">
                     <div className="p-6">
                         {/* New Comment Form */}
-                        <div className="mb-6">
-                            <div className="flex gap-3">
+                        <div className="mb-8">
+                            <div className="flex gap-4">
                                 <div className="flex-shrink-0">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center text-white font-semibold">
+                                    <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">
                                         Y
                                     </div>
                                 </div>
@@ -286,44 +292,44 @@ const PostCardL = ({ post }) => {
                                         onChange={(e) =>
                                             setNewComment(e.target.value)
                                         }
-                                        placeholder="Write a comment..."
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                        placeholder="Share your thoughts..."
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white"
                                         onKeyPress={(e) =>
                                             e.key === "Enter" &&
                                             handleSubmitComment()
                                         }
                                     />
-                                    <div className="flex items-center justify-between mt-2">
+                                    <div className="flex items-center justify-between mt-3">
                                         <div className="flex items-center gap-2">
-                                            <button className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                                            <button className="p-2 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
                                                 <Smile
                                                     size={18}
-                                                    className="text-gray-400"
+                                                    className="text-gray-500"
                                                 />
                                             </button>
-                                            <button className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                                            <button className="p-2 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
                                                 <ImageIcon
                                                     size={18}
-                                                    className="text-gray-400"
+                                                    className="text-gray-500"
                                                 />
                                             </button>
-                                            <button className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                                            <button className="p-2 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
                                                 <LinkIcon
                                                     size={18}
-                                                    className="text-gray-400"
+                                                    className="text-gray-500"
                                                 />
                                             </button>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-sm text-gray-500">
-                                                Press Enter to post
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-sm text-gray-600">
+                                                Press Enter ↵
                                             </span>
                                             <button
                                                 onClick={handleSubmitComment}
                                                 disabled={!newComment.trim()}
-                                                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                                className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                             >
-                                                <Send size={14} />
+                                                <Send size={16} />
                                                 Post
                                             </button>
                                         </div>
@@ -334,8 +340,9 @@ const PostCardL = ({ post }) => {
 
                         {/* Comments List */}
                         <div className="space-y-4">
-                            <div className="flex items-center justify-between mb-2">
-                                <h4 className="text-sm font-semibold text-gray-900">
+                            <div className="flex items-center justify-between mb-4">
+                                <h4 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                    <MessageCircle size={18} className="text-blue-600" />
                                     Comments ({comments.length})
                                 </h4>
                             </div>
@@ -350,14 +357,16 @@ const PostCardL = ({ post }) => {
                                     ))}
                                 </>
                             ) : (
-                                <div className="text-center py-8">
+                                <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
                                     <MessageCircle
-                                        size={32}
-                                        className="text-gray-300 mx-auto mb-3"
+                                        size={40}
+                                        className="text-gray-300 mx-auto mb-4"
                                     />
-                                    <p className="text-gray-500">
-                                        No comments yet. Be the first to
-                                        comment!
+                                    <p className="text-gray-700 font-semibold text-lg">
+                                        No comments yet
+                                    </p>
+                                    <p className="text-gray-500 mt-1">
+                                        Be the first to share your thoughts!
                                     </p>
                                 </div>
                             )}

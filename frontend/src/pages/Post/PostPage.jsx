@@ -66,29 +66,26 @@ export default function PostPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-20 px-4">
+            <div className="min-h-screen bg-gray-50 pt-20 pb-20 px-4">
                 <div className="max-w-4xl mx-auto">
                     {/* Loading Skeleton */}
-                    <div className="animate-pulse">
+                    <div className="animate-pulse space-y-6">
                         {/* Back Navigation Skeleton */}
-                        <div className="flex items-center justify-between mb-8">
-                            <div className="h-8 bg-gray-200 rounded w-32"></div>
-                            <div className="h-8 bg-gray-200 rounded w-24"></div>
-                        </div>
+                        <div className="h-10 bg-gray-200 rounded-lg w-32 mb-8"></div>
                         
                         {/* Post Skeleton */}
-                        <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="w-12 h-12 rounded-full bg-gray-200"></div>
-                                <div className="space-y-2">
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="w-12 h-12 rounded-lg bg-gray-200"></div>
+                                <div className="space-y-3 flex-1">
                                     <div className="h-4 bg-gray-200 rounded w-32"></div>
                                     <div className="h-3 bg-gray-200 rounded w-24"></div>
                                 </div>
                             </div>
-                            <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
+                            <div className="h-8 bg-gray-200 rounded w-3/4 mb-6"></div>
                             <div className="h-4 bg-gray-200 rounded w-full mb-3"></div>
-                            <div className="h-4 bg-gray-200 rounded w-2/3 mb-6"></div>
-                            <div className="h-64 bg-gray-200 rounded-xl mb-6"></div>
+                            <div className="h-4 bg-gray-200 rounded w-2/3 mb-8"></div>
+                            <div className="h-64 bg-gray-200 rounded-lg mb-6"></div>
                         </div>
                     </div>
                 </div>
@@ -98,29 +95,29 @@ export default function PostPage() {
 
     if (!postAvailable) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-20 px-4">
+            <div className="min-h-screen bg-gray-50 pt-20 pb-20 px-4">
                 <div className="max-w-4xl mx-auto text-center">
-                    <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
-                        <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
-                            <Flame size={32} className="text-red-500" />
+                    <div className="bg-white rounded-xl shadow-sm p-10 border border-gray-200">
+                        <div className="w-16 h-16 mx-auto mb-6 rounded-lg bg-red-100 flex items-center justify-center">
+                            <Flame size={32} className="text-red-600" />
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 mb-3">Post Not Available</h2>
-                        <p className="text-gray-600 mb-6">
+                        <p className="text-gray-600 mb-8">
                             The post you're looking for doesn't exist or has been removed.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center">
                             <Link
                                 to="/home"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
                             >
-                                <Home size={16} />
+                                <Home size={18} />
                                 Back to Home
                             </Link>
                             <button
                                 onClick={handleRefresh}
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 border border-gray-200 font-semibold rounded-xl hover:bg-gray-50 transition-all"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
                             >
-                                <RefreshCw size={16} />
+                                <RefreshCw size={18} />
                                 Try Again
                             </button>
                         </div>
@@ -132,27 +129,27 @@ export default function PostPage() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-20 px-4">
+            <div className="min-h-screen bg-gray-50 pt-20 pb-20 px-4">
                 <div className="max-w-4xl mx-auto text-center">
-                    <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-2xl p-8">
-                        <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-white flex items-center justify-center">
-                            <Sparkles size={32} className="text-red-500" />
+                    <div className="bg-white rounded-xl shadow-sm p-10 border border-gray-200">
+                        <div className="w-16 h-16 mx-auto mb-6 rounded-lg bg-red-100 flex items-center justify-center">
+                            <Sparkles size={32} className="text-red-600" />
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 mb-3">Something Went Wrong</h2>
-                        <p className="text-gray-600 mb-6">{error}</p>
+                        <p className="text-gray-600 mb-8">{error}</p>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center">
                             <button
                                 onClick={handleRefresh}
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
                             >
-                                <RefreshCw size={16} />
+                                <RefreshCw size={18} />
                                 Retry
                             </button>
                             <Link
                                 to="/home"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 border border-gray-200 font-semibold rounded-xl hover:bg-gray-50 transition-all"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 border border-gray-300 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
                             >
-                                <ArrowLeft size={16} />
+                                <ArrowLeft size={18} />
                                 Go Back
                             </Link>
                         </div>
@@ -163,7 +160,7 @@ export default function PostPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-20 px-4">
+        <div className="min-h-screen bg-gray-50 pt-20 pb-20 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -173,21 +170,21 @@ export default function PostPage() {
                         <PostCardL post={post} />
                         
                         {/* Comments Section Header */}
-                        <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
-                                        <MessageCircle size={20} />
+                                <div className="flex items-center gap-4">
+                                    <div className="p-2 rounded-lg bg-blue-600 text-white">
+                                        <MessageCircle size={18} />
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-bold text-gray-900">Discussion</h3>
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-gray-600">
                                             {post.commentsCount || 0} comments • Join the conversation
                                         </p>
                                     </div>
                                 </div>
-                                <div className="text-sm text-gray-500">
-                                    <Clock size={14} className="inline mr-1" />
+                                <div className="text-sm text-gray-500 flex items-center gap-2">
+                                    <Clock size={14} />
                                     Updated just now
                                 </div>
                             </div>
@@ -199,19 +196,19 @@ export default function PostPage() {
                         <div className="sticky top-24 space-y-6">
                             {/* Author Info */}
                             {post.author && (
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold text-lg">
+                                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <div className="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
                                             {post.author.username?.charAt(0)?.toUpperCase()}
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-gray-900">@{post.author.username}</h4>
-                                            <p className="text-sm text-gray-500">Post Author</p>
+                                            <h4 className="font-semibold text-gray-900">@{post.author.username}</h4>
+                                            <p className="text-sm text-gray-600">Post Author</p>
                                         </div>
                                     </div>
                                     <Link
                                         to={`/user/profile?username=${post.author.username}`}
-                                        className="block w-full text-center py-2.5 text-blue-600 hover:text-blue-700 font-medium bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors"
+                                        className="block w-full text-center py-2.5 text-white bg-blue-600 font-semibold rounded-lg hover:bg-blue-700 transition-colors"
                                     >
                                         View Profile
                                     </Link>
@@ -220,9 +217,11 @@ export default function PostPage() {
 
                             {/* Related Posts */}
                             {post && post.relatedPosts?.length > 0 && (
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <TrendingUp size={20} className="text-orange-500" />
+                                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2 rounded-lg bg-blue-600 text-white">
+                                            <TrendingUp size={18} />
+                                        </div>
                                         <h4 className="font-bold text-gray-900">Related Posts</h4>
                                     </div>
                                     <div className="space-y-3">
@@ -230,16 +229,16 @@ export default function PostPage() {
                                             <Link
                                                 key={relatedPost.id}
                                                 to={`/post/${relatedPost.id}`}
-                                                className="block p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-all group"
+                                                className="block"
                                             >
-                                                <PostCardS key={relatedPost.id} post={relatedPost} />
+                                                <PostCardS post={relatedPost} index={index} />
                                             </Link>
                                         ))}
                                     </div>
                                     {post?.relatedPosts.length > 3 && (
                                         <Link
                                             to="/home/top"
-                                            className="mt-4 block text-center text-sm text-blue-600 hover:text-blue-700 font-medium"
+                                            className="mt-4 block text-center text-blue-600 hover:text-blue-700 font-semibold text-sm"
                                         >
                                             View more posts →
                                         </Link>
@@ -249,16 +248,16 @@ export default function PostPage() {
 
 
                             {/* Quick Actions */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                <h4 className="font-bold text-gray-900 mb-4">Quick Actions</h4>
-                                <div className="space-y-2">
-                                    <button className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-left">
-                                        <MessageCircle size={16} className="text-gray-500" />
-                                        <span className="font-medium text-gray-700">Write Comment</span>
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                <h4 className="font-bold text-gray-900 mb-4 text-lg">Quick Actions</h4>
+                                <div className="space-y-3">
+                                    <button className="w-full flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-left font-medium text-gray-700">
+                                        <MessageCircle size={18} className="text-blue-600" />
+                                        <span>Write Comment</span>
                                     </button>
-                                    <button className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-left">
-                                        <Share2 size={16} className="text-gray-500" />
-                                        <span className="font-medium text-gray-700">Share with Friends</span>
+                                    <button className="w-full flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-left font-medium text-gray-700">
+                                        <Share2 size={18} className="text-green-600" />
+                                        <span>Share with Friends</span>
                                     </button>
                                 </div>
                             </div>
