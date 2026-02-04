@@ -1,6 +1,5 @@
 import prisma from "../../db/prisma.db";
 import ApiResponse from "../../utils/ApiResponse";
-
 /**
  * Get posts by username with pagination
  * @route GET /api/v2/connect/:username/posts/:page
@@ -8,39 +7,34 @@ import ApiResponse from "../../utils/ApiResponse";
  * @param res Express response object
  * @returns JSON response with posts data
  */
-export const getPostByUsername = async (req: any, res: any) => {
+export const getPostByUsername = async (req, res) => {
     const user = req.user;
     const pageNumber = parseInt(req.params?.page || "1");
     const postPerPage = parseInt(process.env.POSTS_PER_PAGE || "10");
     const username = req.params?.username;
-
     // Validate user authentication
     if (!user) {
         return res
             .status(401)
             .json(new ApiResponse(401, "Unauthorized", null, false));
     }
-
     // Check if username is provided
     if (!username || typeof username !== "string" || username.trim() === "") {
         return res
             .status(400)
             .json(new ApiResponse(400, "Username is required", null, false));
     }
-
     try {
         // Find user by username
         const findUser = await prisma.user.findUnique({
             where: { username },
         });
-
         if (!findUser) {
             // User not found
             return res
                 .status(404)
                 .json(new ApiResponse(404, "Username not found", null, false));
         }
-
         // Fetch posts by the found user's ID with pagination
         const findPosts = await prisma.post.findMany({
             where: { authorId: findUser.id },
@@ -54,8 +48,7 @@ export const getPostByUsername = async (req: any, res: any) => {
                 likes: { where: { userId: user?.id || "" } },
             },
         });
-
-        const posts = findPosts.map(async (post: any) => {
+        const posts = findPosts.map(async (post) => {
             return {
                 id: post.id,
                 title: post.title,
@@ -67,19 +60,16 @@ export const getPostByUsername = async (req: any, res: any) => {
                 updatedAt: post.updatedAt,
             };
         });
-
         // Return the posts in the response
-        res.status(200).json(
-            new ApiResponse(200, "Posts retrieved successfully", posts, true)
-        );
-    } catch (error) {
+        res.status(200).json(new ApiResponse(200, "Posts retrieved successfully", posts, true));
+    }
+    catch (error) {
         console.log("Error in getPostByUsername:", error);
         return res
             .status(500)
             .json(new ApiResponse(500, "Internal Server Error", null, false));
     }
 };
-
 /**
  * Toggle follow/unfollow a user
  * @route GET /api/v2/connect/follow/toggle/:username
@@ -87,52 +77,42 @@ export const getPostByUsername = async (req: any, res: any) => {
  * @param res Express response object
  * @returns JSON response indicating follow/unfollow status
  */
-export const toggleFollow = async (req: any, res: any) => {
+export const toggleFollow = async (req, res) => {
     const user = req.user;
     const username = req.params?.username;
-
     // Validate user authentication
     if (!username) {
         return res
             .status(400)
             .json(new ApiResponse(400, "Username is required", null, false));
     }
-
     if (!user) {
         return res
             .status(401)
             .json(new ApiResponse(401, "Unauthorized", null, false));
     }
-
     try {
         const targetUser = await prisma.user.findUnique({
             where: { username },
         });
-
         if (!targetUser) {
             // Target user not found
             return res
                 .status(404)
                 .json(new ApiResponse(404, "Username not found", null, false));
         }
-
         if (targetUser.id === user.id) {
             // Cannot follow/unfollow oneself
             return res
                 .status(400)
-                .json(
-                    new ApiResponse(400, "Cannot follow yourself", null, false)
-                );
+                .json(new ApiResponse(400, "Cannot follow yourself", null, false));
         }
-
-        const isFollowing =
-            (await prisma.follow.findFirst({
-                where: {
-                    followerId: user.id,
-                    followingId: targetUser.id,
-                },
-            })) !== null;
-
+        const isFollowing = (await prisma.follow.findFirst({
+            where: {
+                followerId: user.id,
+                followingId: targetUser.id,
+            },
+        })) !== null;
         if (isFollowing) {
             // Unfollow
             await prisma.follow.deleteMany({
@@ -143,10 +123,9 @@ export const toggleFollow = async (req: any, res: any) => {
             });
             return res
                 .status(200)
-                .json(
-                    new ApiResponse(200, "Unfollowed successfully", null, true)
-                );
-        } else {
+                .json(new ApiResponse(200, "Unfollowed successfully", null, true));
+        }
+        else {
             // Follow
             await prisma.follow.create({
                 data: {
@@ -156,11 +135,10 @@ export const toggleFollow = async (req: any, res: any) => {
             });
             return res
                 .status(200)
-                .json(
-                    new ApiResponse(200, "Followed successfully", null, true)
-                );
+                .json(new ApiResponse(200, "Followed successfully", null, true));
         }
-    } catch (error) {
+    }
+    catch (error) {
         console.log("Error in toggleFollow:", error);
         return res
             .status(500)
