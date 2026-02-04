@@ -118,7 +118,7 @@ const PostCardM = ({ post }) => {
                         </button>
                     </div>
                     <Link
-                        to={`/user/post/show?id=${thisPost.id}`}
+                        to={`/post/${thisPost.id}`}
                         className="flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold text-sm transition-colors group/read"
                     >
                         Read More

@@ -483,6 +483,127 @@ export const userProfile = async (req: any, res: any) => {
 };
 
 /**
+ * Get public profile of a user by username
+ * @route GET /api/v2/user/:username
+ * @param req Express request object
+ * @param res Express response object
+ * @returns JSON response with public profile details
+ */
+export const publicProfile = async (req: any, res: any) => {
+    const { username } = req.params;
+    const user = req.user;
+
+    if (!username) {
+        // Username parameter is missing
+        return res
+            .status(400)
+            .json(new ApiResponse(400, "Username is required", null, false));
+    }
+
+    try {
+        // Fetch user profile by username
+        const fetchProfile = await prisma.user.findUnique({
+            where: { username: username },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                createdAt: true,
+                avatar: true,
+                _count: {
+                    select: {
+                        followers: true,
+                        following: true,
+                        posts: true,
+                    },
+                },
+                followers: user
+                    ? {
+                          where: { followerId: user.id },
+                          select: { followerId: true },
+                      }
+                    : false,
+                posts:
+                    req.query?.includePosts === "true"
+                        ? {
+                              select: {
+                                  id: true,
+                                  title: true,
+                                  content: true,
+                                  createdAt: true,
+                                  likes: user
+                                      ? {
+                                            where: { userId: user.id },
+                                            select: { userId: true },
+                                        }
+                                      : false,
+                                  _count: {
+                                      select: { likes: true, comments: true },
+                                  },
+                              },
+                              take: parseInt(process.env.POST_PER_PAGE || "10"),
+                          }
+                        : false,
+            },
+        });
+
+        if (!fetchProfile) {
+            // User with the given username does not exist
+            return res
+                .status(404)
+                .json(
+                    new ApiResponse(404, "User profile not found", null, false)
+                );
+        }
+
+        // Calculate total likes received across all posts
+        const totalLikesReceived = await prisma.like.count({
+            where: {
+                post: { authorId: fetchProfile.id },
+            },
+        });
+
+        // Construct public profile response
+        const profile = {
+            user: {
+                id: fetchProfile.id,
+                username: fetchProfile.username,
+                avatar: fetchProfile.avatar,
+                createdAt: fetchProfile.createdAt,
+                followerCount: fetchProfile._count.followers,
+                followingCount: fetchProfile._count.following,
+                postCount: fetchProfile._count.posts,
+                likesCount: totalLikesReceived,
+                isFollowing:
+                    Array.isArray(fetchProfile.followers) &&
+                    fetchProfile.followers.length > 0,
+            },
+            posts: fetchProfile.posts
+                ? fetchProfile.posts.map((post) => ({
+                      id: post.id,
+                      title: post.title,
+                      content: post.content,
+                      createdAt: post.createdAt,
+                      likesCount: post?._count.likes,
+                      commentsCount: post?._count.comments,
+                      isLiked:
+                          Array.isArray(post?.likes) && post.likes.length > 0,
+                  }))
+                : [],
+        };
+
+        res.status(200).json(
+            new ApiResponse(200, "User profile retrieved", profile, true)
+        );
+    } catch (error) {
+        console.log("Error in publicProfile:", error);
+        return res
+            .status(500)
+            .json(new ApiResponse(500, "Internal Server Error", null, false));
+    }
+};
+
+/**
  * Get profile page posts for authenticated user
  * @route GET /api/v2/user/profile/posts/:page
  * @param req Express request object
@@ -533,6 +654,69 @@ export const profilePagePosts = async (req: any, res: any) => {
 
         res.status(200).json(
             new ApiResponse(200, "Posts retrieved successfully", posts, true)
+        );
+    } catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json(new ApiResponse(500, "Internal Server Error", null, false));
+    }
+};
+
+export const searchUsers = async (req: any, res: any) => {
+    const { query, page } = req.query;
+    const user = req.user;
+    if (!query || typeof query !== "string" || query.trim().length === 0) {
+        return res
+            .status(400)
+            .json(
+                new ApiResponse(400, "Query parameter is required", null, false)
+            );
+    }
+
+    try {
+        const fetchUsers = await prisma.user.findMany({
+            where: {
+                OR: [
+                    {
+                        username: {
+                            contains: query,
+                            mode: "insensitive",
+                        },
+                    },
+                    {
+                        fullname: {
+                            contains: query,
+                            mode: "insensitive",
+                        },
+                    },
+                ],
+            },
+            select: {
+                id: true,
+                username: true,
+                fullname: true,
+                avatar: true,
+                followers: {
+                    where: user ? { followerId: user.id } : undefined,
+                    select: { followerId: true },
+                },
+            },
+            skip: ((parseInt(page) || 1) - 1) * 10,
+            take: 10,
+        });
+
+        const users = fetchUsers.map((user) => ({
+            id: user.id,
+            username: user.username,
+            fullname: user.fullname,
+            avatar: user.avatar,
+            isFollowing:
+                Array.isArray(user.followers) && user.followers.length > 0,
+        }));
+
+        res.status(200).json(
+            new ApiResponse(200, "Users retrieved successfully", users, true)
         );
     } catch (error) {
         console.log(error);

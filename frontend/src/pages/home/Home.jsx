@@ -133,7 +133,7 @@ const Home = ({ active, setNavroute }) => {
                     </p>
 
                     {/* Search Bar */}
-                    <div className="max-w-2xl mx-auto mb-8">
+                    {/* <div className="max-w-2xl mx-auto mb-8">
                         <div className="relative">
                             <div className="bg-white rounded-lg border border-gray-300 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
                                 <Search
@@ -151,7 +151,7 @@ const Home = ({ active, setNavroute }) => {
                                 />
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Categories */}
                     <div className="flex flex-wrap justify-center gap-2 mb-8">

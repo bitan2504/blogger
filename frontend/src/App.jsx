@@ -4,14 +4,11 @@ import Home from "./pages/home/Home.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import Login from "./pages/profile/Login.jsx";
-import Register from "./pages/profile/Register.jsx";
-import CreatePost from "./components/CreatePost.jsx";
-import ShowPost from "./components/ShowPost.jsx";
 import Top from "./pages/home/Top.jsx";
-import Connect from "./pages/connect/Connect.jsx";
-import MenuBar from "./components/MenuBar";
+import ConnectPage from "./pages/connect/ConnectPage.jsx";
 import axios from "axios";
 import PostPage from "./pages/post/PostPage.jsx";
+import AllProfile from "./pages/profile/AllProfile.jsx";
 
 function App() {
     const [active, setActive] = useState(false);
@@ -75,6 +72,17 @@ function App() {
                             }
                         />
                         <Route
+                            path="/user/profile/:username"
+                            element={
+                                <AllProfile
+                                    active={active}
+                                    setActive={setActive}
+                                    setNavroute={setNavroute}
+                                    currentUser={user}
+                                />
+                            }
+                        />
+                        <Route
                             path="/user/login"
                             element={
                                 <Login
@@ -104,15 +112,16 @@ function App() {
                             />
                         </Route> */}
                     </Route>
-                    {/* <Route
+                    <Route
                         path="/connect"
                         element={
-                            <Connect
+                            <ConnectPage
                                 active={active}
                                 setNavroute={setNavroute}
+                                currentUser={user}
                             />
                         }
-                    /> */}
+                    />
                     <Route path="/post">
                         <Route
                             path="/post/:postID"

@@ -13,7 +13,7 @@ const PostCardS = ({ post, index }) => {
 
     return (
         <Link
-            to={`/user/post/show?id=${item.id}`}
+            to={`/post/${item.id}`}
             key={item.id}
             className="block p-4 rounded-lg border border-gray-200 hover:border-blue-300 bg-white hover:bg-gray-50 transition-all duration-200 group cursor-pointer"
         >
