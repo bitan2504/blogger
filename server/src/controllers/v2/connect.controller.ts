@@ -55,7 +55,7 @@ export const getPostByUsername = async (req: any, res: any) => {
             },
         });
 
-        const posts = findPosts.map(async (post) => {
+        const posts = findPosts.map(async (post: any) => {
             return {
                 id: post.id,
                 title: post.title,

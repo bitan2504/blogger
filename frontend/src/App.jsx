@@ -7,7 +7,7 @@ import Login from "./pages/profile/Login.jsx";
 import Top from "./pages/home/Top.jsx";
 import ConnectPage from "./pages/connect/ConnectPage.jsx";
 import axios from "axios";
-import PostPage from "./pages/post/PostPage.jsx";
+import PostPage from "./pages/Post/PostPage.jsx";
 import AllProfile from "./pages/profile/AllProfile.jsx";
 
 function App() {
@@ -124,7 +124,7 @@ function App() {
                     />
                     <Route path="/post">
                         <Route
-                            path="/post/:postID"
+                            path=":postID"
                             element={<PostPage />}
                         />
                     </Route>

@@ -526,22 +526,17 @@ export const publicProfile = async (req: any, res: any) => {
                 posts:
                     req.query?.includePosts === "true"
                         ? {
-                              select: {
-                                  id: true,
-                                  title: true,
-                                  content: true,
-                                  createdAt: true,
-                                  likes: user
-                                      ? {
-                                            where: { userId: user.id },
-                                            select: { userId: true },
-                                        }
-                                      : false,
-                                  _count: {
-                                      select: { likes: true, comments: true },
-                                  },
-                              },
-                              take: parseInt(process.env.POST_PER_PAGE || "10"),
+                                include: {
+                                    likes: user
+                                        ? {
+                                              where: { userId: user.id },
+                                          }
+                                        : true,
+                                    _count: {
+                                        select: { likes: true, comments: true },
+                                    },
+                                },
+                                take: parseInt(process.env.POST_PER_PAGE || "10"),
                           }
                         : false,
             },
@@ -579,13 +574,13 @@ export const publicProfile = async (req: any, res: any) => {
                     fetchProfile.followers.length > 0,
             },
             posts: fetchProfile.posts
-                ? fetchProfile.posts.map((post) => ({
+                ? fetchProfile.posts.map((post: any) => ({
                       id: post.id,
                       title: post.title,
                       content: post.content,
                       createdAt: post.createdAt,
-                      likesCount: post?._count.likes,
-                      commentsCount: post?._count.comments,
+                      likesCount: post?._count?.likes,
+                      commentsCount: post?._count?.comments,
                       isLiked:
                           Array.isArray(post?.likes) && post.likes.length > 0,
                   }))
@@ -639,7 +634,7 @@ export const profilePagePosts = async (req: any, res: any) => {
         });
 
         // Enhance posts with isLiked property
-        const posts = findPosts.map((post) => {
+        const posts = findPosts.map((post: any) => {
             return {
                 id: post.id,
                 title: post.title,
@@ -706,7 +701,7 @@ export const searchUsers = async (req: any, res: any) => {
             take: 10,
         });
 
-        const users = fetchUsers.map((user) => ({
+        const users = fetchUsers.map((user: any) => ({
             id: user.id,
             username: user.username,
             fullname: user.fullname,
