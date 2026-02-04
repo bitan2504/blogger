@@ -71,6 +71,15 @@ export const getPosts = async (req: any, res: any) => {
         };
     }
 
+    // Author filter
+    if (req.query?.usernames) {
+        const usernames = req.query.usernames.split(",").map((u: string) => u.trim());
+        pipeline.where.author = {
+            ...pipeline.where.author,
+            username: { in: usernames, mode: "insensitive" },
+        };
+    }
+
     // Sorting
     const order =
         req.query?.asc === true || req.query?.asc === "true" ? "asc" : "desc";
@@ -88,18 +97,14 @@ export const getPosts = async (req: any, res: any) => {
             ...pipeline,
             skip: skip,
             take: pageSize,
-            select: {
-                id: true,
-                title: true,
-                content: true,
-                createdAt: true,
+            include: {
                 _count: {
                     select: {
                         likes: true,
                         comments: true,
                     },
                 },
-                likes: user ? { where: { userId: user.id } } : false,
+                likes: user ? { where: { userId: user.id } } : true,
                 author: {
                     select: {
                         fullname: true,
@@ -112,7 +117,7 @@ export const getPosts = async (req: any, res: any) => {
         });
 
         // Process posts (truncate content, flatten counts, check if liked)
-        const posts = rawPosts.map((post) => {
+        const posts = rawPosts.map((post: any) => {
             return {
                 ...post,
                 // Truncate Content
@@ -125,7 +130,7 @@ export const getPosts = async (req: any, res: any) => {
                 likesCount: post._count.likes,
                 commentsCount: post._count.comments,
                 isLiked: Array.isArray(post.likes) && post.likes.length > 0,
-                tags: post.tags?.map((tag) => tag.name),
+                tags: post.tags?.map((tag: any) => tag.name),
 
                 // Remove internal fields
                 _count: undefined,

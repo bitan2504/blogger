@@ -221,7 +221,7 @@ const ProfileCardL = ({ active, currentUser, user, posts }) => {
                                     </div>
                                     <div className="flex justify-center">
                                         <Link
-                                            to="/user/posts"
+                                            to={`/user/posts?username=${user.username}`}
                                             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
                                         >
                                             View More Posts

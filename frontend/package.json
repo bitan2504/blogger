@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --mode production",
+    "build:analyze": "vite build --mode production && npm run preview",
+    "preview": "vite preview",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -32,6 +34,8 @@
     "globals": "^15.14.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19",
+    "terser": "^5.46.0",
+    "typescript": "^5.3.3",
     "vite": "^6.0.5"
   }
 }
