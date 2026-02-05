@@ -1,12 +1,11 @@
-import prisma from "../../db/prisma.db";
-import ApiResponse from "../../utils/ApiResponse";
+import prisma from "../../db/prisma.db.js";
+import ApiResponse from "../../utils/ApiResponse.js";
 import express from "express";
 import {
     generateAccessToken,
     generateRefreshToken,
-} from "../../utils/AuthToken";
-import { hashPassword, comparePassword } from "../../utils/HashPassword";
-import { title } from "node:process";
+} from "../../utils/AuthToken.js";
+import { hashPassword, comparePassword } from "../../utils/HashPassword.js";
 
 /**
  * Cookie Parser Options for Secure Cookies

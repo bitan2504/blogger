@@ -1,11 +1,11 @@
 import { Router } from "express";
-import verifyJWT from "../../middlewares/verifyJWT.middleware";
+import verifyJWT from "../../middlewares/verifyJWT.middleware.js";
 import {
     commentOnPost,
     getPostById,
     getPosts,
     toggleLike,
-} from "../../controllers/v2/post.controller";
+} from "../../controllers/v2/post.controller.js";
 
 const router = Router();
 

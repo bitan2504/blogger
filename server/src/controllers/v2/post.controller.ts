@@ -1,5 +1,5 @@
-import prisma from "../../db/prisma.db";
-import ApiResponse from "../../utils/ApiResponse";
+import prisma from "../../db/prisma.db.js";
+import ApiResponse from "../../utils/ApiResponse.js";
 
 /**
  * Get paginated posts with filters and sorting

@@ -1,4 +1,4 @@
-import prisma from "../db/prisma.db";
+import prisma from "../db/prisma.db.js";
 import jwt from "jsonwebtoken";
 
 /**

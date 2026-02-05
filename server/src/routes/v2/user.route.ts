@@ -10,8 +10,8 @@ import {
     searchUsers,
     showPostsByPageNumber,
     userProfile,
-} from "../../controllers/v2/user.controller";
-import verifyJWT from "../../middlewares/verifyJWT.middleware";
+} from "../../controllers/v2/user.controller.js";
+import verifyJWT from "../../middlewares/verifyJWT.middleware.js";
 const router = Router();
 
 router.get("/getUser", verifyJWT, getUser);

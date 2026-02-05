@@ -1,5 +1,5 @@
-import prisma from "../../db/prisma.db";
-import ApiResponse from "../../utils/ApiResponse";
+import prisma from "../../db/prisma.db.js";
+import ApiResponse from "../../utils/ApiResponse.js";
 
 /**
  * Get posts by username with pagination

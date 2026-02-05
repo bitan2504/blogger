@@ -58,9 +58,9 @@ app.get("/health", (req, res) => {
 });
 
 // routes v2
-import userRoutesV2 from "./routes/v2/user.route";
-import connectRoutesV2 from "./routes/v2/connect.route";
-import postRoutesV2 from "./routes/v2/post.route";
+import userRoutesV2 from "./routes/v2/user.route.js";
+import connectRoutesV2 from "./routes/v2/connect.route.js";
+import postRoutesV2 from "./routes/v2/post.route.js";
 
 app.use("/api/v2/user", userRoutesV2);
 app.use("/api/v2/connect", connectRoutesV2);
