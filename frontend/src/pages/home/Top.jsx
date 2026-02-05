@@ -20,7 +20,7 @@ const Home = ({ active, setNavroute }) => {
     const postsPerPage = 10;
 
     useEffect(() => {
-        setNavroute("home-container");
+        setNavroute("top-container");
         setCurrentPage(1);
         setLoading(true);
     }, []);

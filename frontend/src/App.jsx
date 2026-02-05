@@ -10,6 +10,7 @@ import axios from "axios";
 import PostPage from "./pages/Post/PostPage.jsx";
 import AllProfile from "./pages/profile/AllProfile.jsx";
 import Register from "./pages/profile/Register.jsx";
+import CreatePost from "./pages/Post/CreatePost.jsx";
 
 function App() {
     const [active, setActive] = useState(false);
@@ -102,16 +103,17 @@ function App() {
                                 />
                             }
                         />
-                        {/* <Route path="/user/post">
+                        <Route path="/user/post">
                             <Route
                                 path="/user/post/create"
-                                element={<CreatePost active={active} />}
+                                element={
+                                    <CreatePost
+                                        user={user}
+                                        setNavroute={setNavroute}
+                                    />
+                                }
                             />
-                            <Route
-                                path="/user/post/show"
-                                element={<ShowPost active={active} />}
-                            />
-                        </Route> */}
+                        </Route>
                     </Route>
                     <Route
                         path="/connect"

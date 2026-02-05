@@ -73,7 +73,9 @@ export const getPosts = async (req: any, res: any) => {
 
     // Author filter
     if (req.query?.usernames) {
-        const usernames = req.query.usernames.split(",").map((u: string) => u.trim());
+        const usernames = req.query.usernames
+            .split(",")
+            .map((u: string) => u.trim());
         pipeline.where.author = {
             ...pipeline.where.author,
             username: { in: usernames, mode: "insensitive" },
@@ -485,6 +487,91 @@ export const toggleLike = async (req: any, res: any) => {
         }
     } catch (error) {
         console.log("Error in toggleLike:", error);
+        return res
+            .status(500)
+            .json(new ApiResponse(500, "Internal Server Error", null, false));
+    }
+};
+
+/**
+ * Create a new post
+ * @route POST /api/v2/post/create
+ * @param req Request object
+ * @param res Response object
+ * @returns ApiResponse for post creation
+ */
+export const createPost = async (req: any, res: any) => {
+    const user = req.user;
+    if (!user) {
+        return res
+            .status(401)
+            .json(new ApiResponse(401, "Unauthorized", null, false));
+    }
+
+    const { title, content, tags } = req.body;
+
+    // Basic Validation
+    if (!title || !content) {
+        return res
+            .status(400)
+            .json(
+                new ApiResponse(
+                    400,
+                    "Title and content are required",
+                    null,
+                    false
+                )
+            );
+    }
+
+    // Safe Tag Processing
+    // Ensure tags is an array, otherwise default to empty []
+    let processedTags: any[] = [];
+    if (Array.isArray(tags)) {
+        processedTags = tags.map((tag: string) => ({
+            where: { name: tag.trim().toLowerCase() },
+            create: { name: tag.trim().toLowerCase() },
+        }));
+    }
+
+    try {
+        const post = await prisma.post.create({
+            data: {
+                title,
+                content,
+                authorId: user.id,
+                tags:
+                    processedTags.length > 0
+                        ? {
+                              connectOrCreate: processedTags,
+                          }
+                        : undefined,
+            },
+            include: {
+                tags: {
+                    select: { name: true },
+                },
+            },
+        });
+
+        // Flatten tags for cleaner API response
+        const formattedPost = {
+            ...post,
+            tags: post.tags.map((t) => t.name),
+        };
+
+        return res
+            .status(201)
+            .json(
+                new ApiResponse(
+                    201,
+                    "Post created successfully",
+                    formattedPost,
+                    true
+                )
+            );
+    } catch (error) {
+        console.log("Error in createPost:", error);
         return res
             .status(500)
             .json(new ApiResponse(500, "Internal Server Error", null, false));
