@@ -9,6 +9,7 @@ import ConnectPage from "./pages/connect/ConnectPage.jsx";
 import axios from "axios";
 import PostPage from "./pages/Post/PostPage.jsx";
 import AllProfile from "./pages/profile/AllProfile.jsx";
+import Register from "./pages/profile/Register.jsx";
 
 function App() {
     const [active, setActive] = useState(false);
@@ -92,7 +93,7 @@ function App() {
                                 />
                             }
                         />
-                        {/* <Route
+                        <Route
                             path="/user/register"
                             element={
                                 <Register
@@ -100,7 +101,7 @@ function App() {
                                     setNavroute={setNavroute}
                                 />
                             }
-                        /> */}
+                        />
                         {/* <Route path="/user/post">
                             <Route
                                 path="/user/post/create"
@@ -123,10 +124,7 @@ function App() {
                         }
                     />
                     <Route path="/post">
-                        <Route
-                            path=":postID"
-                            element={<PostPage />}
-                        />
+                        <Route path=":postID" element={<PostPage />} />
                     </Route>
                 </Routes>
             </div>

@@ -6,6 +6,8 @@ import {
     generateRefreshToken,
 } from "../../utils/AuthToken.js";
 import { hashPassword, comparePassword } from "../../utils/HashPassword.js";
+import fs from "fs";
+import uploadOnCloud from "../../utils/CloudinaryFileUpload.js";
 
 /**
  * Cookie Parser Options for Secure Cookies
@@ -46,12 +48,31 @@ export const getUser = async (req: any, res: any) => {
  * @returns JSON response with registration status
  */
 export const registerUser = async (req: any, res: any) => {
-    const { username, email, fullname, password, avatar, dob } = req.body;
+    const avatar = req.file;
 
-    /**
-     * Input Validation
-     */
-    // Validate input types
+    const cleanUpFile = () => {
+        if (avatar && avatar.path) {
+            try {
+                fs.unlinkSync(avatar.path);
+            } catch (err) {
+                console.error("Error cleaning up file:", err);
+            }
+        }
+    };
+
+    const user = req.user;
+    if (user) {
+        cleanUpFile();
+        return res
+            .status(400)
+            .json(
+                new ApiResponse(400, "User already authenticated", null, false)
+            );
+    }
+
+    const { username, email, fullname, password, dob } = req.body;
+
+    // Validation Checks
     if (
         [username, email, fullname, password].some(
             (str) => !str || str.trim().length === 0
@@ -61,6 +82,7 @@ export const registerUser = async (req: any, res: any) => {
         typeof fullname !== "string" ||
         typeof password !== "string"
     ) {
+        cleanUpFile();
         return res
             .status(400)
             .json(
@@ -73,8 +95,8 @@ export const registerUser = async (req: any, res: any) => {
             );
     }
 
-    // Handle Date of Birth
     if (!dob || isNaN(Date.parse(dob))) {
+        cleanUpFile();
         return res
             .status(400)
             .json(
@@ -87,11 +109,11 @@ export const registerUser = async (req: any, res: any) => {
             );
     }
 
-    // Validate password length
     if (
         password.length < Number(process.env.PASSWORD_MIN_LENGTH || "6") ||
         password.length > Number(process.env.PASSWORD_MAX_LENGTH || "16")
     ) {
+        cleanUpFile();
         return res
             .status(400)
             .json(
@@ -105,15 +127,13 @@ export const registerUser = async (req: any, res: any) => {
     }
 
     try {
-        // Check if user with the same username or email already exists
+        // Database Checks
         const existingUser = await prisma.user.findFirst({
-            where: {
-                OR: [{ username: username }, { email: email }],
-            },
+            where: { OR: [{ username }, { email }] },
         });
 
         if (existingUser) {
-            // User with same username or email already exists
+            cleanUpFile();
             return res
                 .status(409)
                 .json(
@@ -126,21 +146,24 @@ export const registerUser = async (req: any, res: any) => {
                 );
         }
 
-        // generate hashed password
+        // Success Path
+
+        // Upload to Cloudinary/S3
+        const avatarUrl = avatar ? await uploadOnCloud(avatar.path) : null;
+
+        // Hash Password
         const hashedPassword = await hashPassword(password);
 
-        const newUserData = {
-            username,
-            email,
-            fullname,
-            password: hashedPassword,
-            dob: new Date(dob),
-            avatar: null,
-        };
-
-        // Create new user
+        // Create User
         const newUser = await prisma.user.create({
-            data: newUserData,
+            data: {
+                username,
+                email,
+                fullname,
+                password: hashedPassword,
+                dob: new Date(dob),
+                avatar: avatarUrl ? avatarUrl.url : null,
+            },
             select: {
                 id: true,
                 username: true,
@@ -151,12 +174,13 @@ export const registerUser = async (req: any, res: any) => {
             },
         });
 
-        // User created successfully
-        res.status(200).json(
-            new ApiResponse(200, "User registered successfully", newUser, true)
+        // Return Success (201 Created)
+        res.status(201).json(
+            new ApiResponse(201, "User registered successfully", newUser, true)
         );
     } catch (error) {
         console.log(error);
+        cleanUpFile();
         return res
             .status(500)
             .json(new ApiResponse(500, "Internal Server Error", null, false));
@@ -418,6 +442,7 @@ export const userProfile = async (req: any, res: any) => {
                 username: true,
                 email: true,
                 createdAt: true,
+                avatar: true,
                 _count: {
                     select: {
                         followers: true,
@@ -462,6 +487,7 @@ export const userProfile = async (req: any, res: any) => {
                 username: fetchProfile?.username,
                 email: fetchProfile?.email,
                 createdAt: fetchProfile?.createdAt,
+                avatar: fetchProfile?.avatar,
                 followerCount: fetchProfile?._count.followers || 0,
                 followingCount: fetchProfile?._count.following || 0,
                 postCount: fetchProfile?._count.posts || 0,
@@ -525,17 +551,17 @@ export const publicProfile = async (req: any, res: any) => {
                 posts:
                     req.query?.includePosts === "true"
                         ? {
-                                include: {
-                                    likes: user
-                                        ? {
-                                              where: { userId: user.id },
-                                          }
-                                        : true,
-                                    _count: {
-                                        select: { likes: true, comments: true },
-                                    },
-                                },
-                                take: parseInt(process.env.POST_PER_PAGE || "10"),
+                              include: {
+                                  likes: user
+                                      ? {
+                                            where: { userId: user.id },
+                                        }
+                                      : true,
+                                  _count: {
+                                      select: { likes: true, comments: true },
+                                  },
+                              },
+                              take: parseInt(process.env.POST_PER_PAGE || "10"),
                           }
                         : false,
             },
