@@ -8,6 +8,7 @@ import {
 import { hashPassword, comparePassword } from "../../utils/HashPassword.js";
 import fs from "fs";
 import uploadOnCloud from "../../utils/CloudinaryFileUpload.js";
+import { MAX_RESPONSE_PER_PAGE } from "../../constants.js";
 
 /**
  * Cookie Parser Options for Secure Cookies
@@ -371,7 +372,7 @@ export const createPost = async (req: any, res: any) => {
 export const showPostsByPageNumber = async (req: any, res: any) => {
     const user = req.user;
     const pageNumber = parseInt(req.params.page) || 1;
-    const postsPerPage = parseInt(process.env.POST_PER_PAGE || "5");
+    const postsPerPage = MAX_RESPONSE_PER_PAGE;
 
     /**
      * Input Validation
@@ -459,7 +460,7 @@ export const userProfile = async (req: any, res: any) => {
                                   content: true,
                                   createdAt: true,
                               },
-                              take: parseInt(process.env.POST_PER_PAGE || "10"),
+                              take: MAX_RESPONSE_PER_PAGE,
                           }
                         : false,
             },
@@ -561,7 +562,7 @@ export const publicProfile = async (req: any, res: any) => {
                                       select: { likes: true, comments: true },
                                   },
                               },
-                              take: parseInt(process.env.POST_PER_PAGE || "10"),
+                              take: MAX_RESPONSE_PER_PAGE,
                           }
                         : false,
             },
@@ -633,7 +634,7 @@ export const publicProfile = async (req: any, res: any) => {
 export const profilePagePosts = async (req: any, res: any) => {
     const user = req.user;
     const pageNumber = parseInt(req.params.page || "1");
-    const postsPerPage = parseInt(process.env.POST_PER_PAGE || "5");
+    const postsPerPage = MAX_RESPONSE_PER_PAGE;
 
     // Validate user authentication
     if (!user) {

@@ -8,69 +8,110 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  username     String    @unique
-  email        String    @unique
-  fullname     String
-  password     String
-  dob          DateTime?
-  avatar       String?
-  refreshToken String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @default(now()) @updatedAt
-  comments     Comment[]
-  following    Follow[]  @relation("follower")
-  followers    Follow[]  @relation("following")
-  likes        Like[]
-  posts        Post[]
+  // User model - details of an user
+  id       String    @id @default(cuid())
+  email    String    @unique
+  fullname String
+  password String
+  dob      DateTime?
+  avatar   String?
+  bio      String?
+
+  // timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // relations
+  comments Comment[] // comments made by the user on a post
+  likes    Like[] // likes made by the user on a post
+  posts    Post[] // posts created by the user
+
+  // users that the user is following
+  following Follow[] @relation("follower")
+  // users that are following the user
+  followers Follow[] @relation("following")
 }
 
 model Post {
-  id        String    @id @default(cuid())
-  title     String
-  content   String
-  authorId  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
-  comments  Comment[]
-  likes     Like[]
-  tags      Tag[]
-  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  // Post model - details of a post created by an user
+  id       String @id @default(cuid())
+  title    String
+  content  String
+  authorId String
+
+  // timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // relations
+  comments Comment[] // comments on this post
+  likes    Like[] // likes on this post
+  tags     Tag[] // tags associated with this post
+
+  // author of the post
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // indexes for efficient querying
+  @@index([authorId])
+  @@index([createdAt])
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  content   String
-  authorId  String
-  postId    String
+  // Comment model - details of a comment made by an user on a post
+  id       String @id @default(cuid())
+  content  String
+  authorId String
+  postId   String
+
+  // timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  // author of the comment
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  // post on which the comment is made
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Like {
-  userId    String
-  postId    String
-  createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Like model - details of a like made by an user on a post
+  userId String
+  postId String
 
+  // timestamps
+  createdAt DateTime @default(now())
+
+  // post that is liked
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  // user who liked the post
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // many-to-many relation between user and post
   @@id([userId, postId])
 }
 
 model Follow {
+  // Follow model - details of a follow relationship between two users
   followerId  String
   followingId String
-  createdAt   DateTime @default(now())
-  follower    User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
-  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
 
+  // timestamps
+  createdAt DateTime @default(now())
+
+  // user who is following
+  follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  // user who is being followed
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  // many-to-many relation between users for following
   @@id([followerId, followingId])
 }
 
 model Tag {
-  id   String  @id @default(cuid())
-  name  String  @unique
-  posts Post[]
+  // Tag model - details of a tag that can be associated with a post
+  id   String @id @default(cuid())
+  name String @unique
+
+  // relations
+  posts Post[] // posts associated with this tag
 }
