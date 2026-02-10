@@ -9,6 +9,9 @@ import { hashPassword, comparePassword } from "../../utils/HashPassword.js";
 import fs from "fs";
 import uploadOnCloud from "../../utils/CloudinaryFileUpload.js";
 import { MAX_RESPONSE_PER_PAGE } from "../../constants.js";
+import redis from "../../db/redis.db.js";
+import sendEmail from "../../utils/NodeMailer.js";
+import jwt from "jsonwebtoken";
 
 /**
  * Cookie Parser Options for Secure Cookies
@@ -49,139 +52,135 @@ export const getUser = async (req: any, res: any) => {
  * @returns JSON response with registration status
  */
 export const registerUser = async (req: any, res: any) => {
-    const avatar = req.file;
-
-    const cleanUpFile = () => {
-        if (avatar && avatar.path) {
-            try {
-                fs.unlinkSync(avatar.path);
-            } catch (err) {
-                console.error("Error cleaning up file:", err);
-            }
-        }
-    };
-
-    const user = req.user;
-    if (user) {
-        cleanUpFile();
-        return res
-            .status(400)
-            .json(
-                new ApiResponse(400, "User already authenticated", null, false)
-            );
-    }
-
-    const { username, email, fullname, password, dob } = req.body;
-
-    // Validation Checks
-    if (
-        [username, email, fullname, password].some(
-            (str) => !str || str.trim().length === 0
-        ) ||
-        typeof username !== "string" ||
-        typeof email !== "string" ||
-        typeof fullname !== "string" ||
-        typeof password !== "string"
-    ) {
-        cleanUpFile();
-        return res
-            .status(400)
-            .json(
-                new ApiResponse(
-                    400,
-                    "Required fields must be non-empty strings",
-                    null,
-                    false
-                )
-            );
-    }
-
-    if (!dob || isNaN(Date.parse(dob))) {
-        cleanUpFile();
-        return res
-            .status(400)
-            .json(
-                new ApiResponse(
-                    400,
-                    "Invalid Date of Birth format",
-                    null,
-                    false
-                )
-            );
-    }
+    const { email, password, fullname } = req.body;
 
     if (
-        password.length < Number(process.env.PASSWORD_MIN_LENGTH || "6") ||
-        password.length > Number(process.env.PASSWORD_MAX_LENGTH || "16")
+        [email, password, fullname].some(
+            (field) => !field || typeof field !== "string"
+        )
     ) {
-        cleanUpFile();
+        // Input validation failed - missing or invalid fields
         return res
             .status(400)
             .json(
-                new ApiResponse(
-                    400,
-                    `Password must be between ${process.env.PASSWORD_MIN_LENGTH} and ${process.env.PASSWORD_MAX_LENGTH} characters`,
-                    null,
-                    false
-                )
+                new ApiResponse(400, "Missing or invalid fields", null, false)
             );
     }
 
     try {
-        // Database Checks
-        const existingUser = await prisma.user.findFirst({
-            where: { OR: [{ username }, { email }] },
+        const existingUser = await prisma.user.findUnique({
+            where: { email: email },
         });
 
         if (existingUser) {
-            cleanUpFile();
+            // User with the given email already exists
             return res
                 .status(409)
                 .json(
+                    new ApiResponse(409, "Email already in use", null, false)
+                );
+        }
+
+        // Hash the password
+        const hashedPassword = await hashPassword(password);
+
+        const token = crypto.randomUUID();
+
+        await redis.set(
+            `user:verify:${email}`,
+            JSON.stringify({
+                email,
+                fullname,
+                password: hashedPassword,
+                token,
+            }),
+            {
+                expiration: {
+                    type: "EX",
+                    value: 3600, // 1 hour expiration for verification data
+                },
+            }
+        );
+
+        await sendEmail(
+            email,
+            "Verify your email for Blogger",
+            `Please verify your email by clicking the following link: ${process.env.CORS_ORIGIN}/verify-email?email=${encodeURIComponent(email)}&token=${token}`,
+            `<p>Please verify your email by clicking the following link:</p><p><a href="${process.env.CORS_ORIGIN}/verify-email?email=${encodeURIComponent(email)}&token=${token}">Verify Email</a></p>`
+        );
+
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                "Registration successful. Please verify your email.",
+                null,
+                true
+            )
+        );
+    } catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json(new ApiResponse(500, "Internal Server Error", null, false));
+    }
+};
+
+export const verifyEmail = async (req: any, res: any) => {
+    const { email, token } = req.query;
+
+    if ([email, token].some((field) => !field || typeof field !== "string")) {
+        // Input validation failed - missing or invalid fields
+        return res
+            .status(400)
+            .json(
+                new ApiResponse(400, "Missing or invalid fields", null, false)
+            );
+    }
+
+    try {
+        const storedToken = await redis.get(`user:verify:${email}`);
+
+        if (!storedToken || JSON.parse(storedToken).token !== token) {
+            // Invalid or expired token
+            return res
+                .status(400)
+                .json(
                     new ApiResponse(
-                        409,
-                        "Username or email already in use",
+                        400,
+                        "Invalid or expired token",
                         null,
                         false
                     )
                 );
         }
 
-        // Success Path
+        if (await prisma.user.findUnique({ where: { email: email } })) {
+            // User with the given email already exists (should not happen if registration flow is correct)
+            await redis.del(`user:verify:${email}`);
+            return res
+                .status(409)
+                .json(
+                    new ApiResponse(409, "Email already verified", null, false)
+                );
+        }
 
-        // Upload to Cloudinary/S3
-        const avatarUrl = avatar ? await uploadOnCloud(avatar.path) : null;
+        const decoded = JSON.parse(storedToken);
 
-        // Hash Password
-        const hashedPassword = await hashPassword(password);
-
-        // Create User
-        const newUser = await prisma.user.create({
+        const user = await prisma.user.create({
             data: {
-                username,
-                email,
-                fullname,
-                password: hashedPassword,
-                dob: new Date(dob),
-                avatar: avatarUrl ? avatarUrl.url : null,
-            },
-            select: {
-                id: true,
-                username: true,
-                email: true,
-                fullname: true,
-                avatar: true,
-                dob: true,
+                email: decoded.email,
+                fullname: decoded.fullname,
+                password: decoded.password,
             },
         });
 
-        // Return Success (201 Created)
-        res.status(201).json(
-            new ApiResponse(201, "User registered successfully", newUser, true)
+        await redis.del(`user:verify:${email}`);
+
+        res.status(200).json(
+            new ApiResponse(200, "Email verified successfully", user, true)
         );
     } catch (error) {
         console.log(error);
-        cleanUpFile();
         return res
             .status(500)
             .json(new ApiResponse(500, "Internal Server Error", null, false));
