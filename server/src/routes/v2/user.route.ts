@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     createPost,
+    deleteUser,
     getUser,
     loginUser,
     logoutUser,
@@ -9,6 +10,7 @@ import {
     registerUser,
     searchUsers,
     showPostsByPageNumber,
+    updateUser,
     userProfile,
     verifyEmail,
 } from "../../controllers/v2/user.controller.js";
@@ -21,7 +23,9 @@ router.get("/search", verifyJWT, searchUsers);
 router.post("/register", registerUser);
 router.post("/verify-email", verifyEmail);
 router.post("/login", loginUser);
+router.post("/update", verifyJWT, upload.single("avatar"), updateUser);
 router.get("/logout", verifyJWT, logoutUser);
+router.delete("/", verifyJWT, deleteUser);
 router.post("/post/create", verifyJWT, createPost);
 router.get("/post/show/:page", verifyJWT, showPostsByPageNumber);
 router.get("/profile", verifyJWT, userProfile);

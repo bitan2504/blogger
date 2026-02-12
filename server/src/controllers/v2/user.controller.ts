@@ -11,7 +11,6 @@ import uploadOnCloud from "../../utils/CloudinaryFileUpload.js";
 import { MAX_RESPONSE_PER_PAGE } from "../../constants.js";
 import redis from "../../db/redis.db.js";
 import sendEmail from "../../utils/NodeMailer.js";
-import jwt from "jsonwebtoken";
 
 /**
  * Cookie Parser Options for Secure Cookies
@@ -188,6 +187,66 @@ export const verifyEmail = async (req: any, res: any) => {
 };
 
 /**
+ * Update user profile details
+ * @route POST /api/v2/user/update
+ * @param req Express request object
+ * @param res Express response object
+ * @returns JSON response with profile update status
+ */
+export const updateUser = async (req: any, res: any) => {
+    const user = req.user;
+    const { fullname, dob } = req.body;
+    let avatarUrl;
+
+    if (!user) {
+        return res
+            .status(401)
+            .json(new ApiResponse(401, "Unauthorized", null, false));
+    }
+
+    if (req.file) {
+        // Handle avatar upload to cloud storage
+        try {
+            avatarUrl = await uploadOnCloud(req.file.path);
+        } catch (error) {
+            console.log("Error uploading avatar:", error);
+            res.status(500).json(
+                new ApiResponse(500, "Failed to upload avatar", null, false)
+            );
+        } finally {
+            // Delete the local file with or without success
+            fs.unlinkSync(req.file.path);
+        }
+    }
+
+    try {
+        // Update user profile with new details
+        const updatedUser = await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                fullname: fullname || user.fullname,
+                dob: dob || user.dob,
+                avatar: avatarUrl || user.avatar,
+            },
+        });
+
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                "Profile updated successfully",
+                updatedUser,
+                true
+            )
+        );
+    } catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json(new ApiResponse(500, "Internal Server Error", null, false));
+    }
+};
+
+/**
  * Login an existing user
  * @route POST /api/v2/user/login
  * @param req Express request object
@@ -195,16 +254,14 @@ export const verifyEmail = async (req: any, res: any) => {
  * @returns JSON response with login status
  */
 export const loginUser = async (req: any, res: any) => {
-    const { uid, password } = req.body;
+    const { email, password } = req.body;
 
-    /**
-     * Input Validation
-     */
     // Check for missing fields
     if (
-        [uid, password].some((field) => !field) ||
-        typeof uid !== "string" ||
-        typeof password !== "string"
+        [email, password].some(
+            (field) =>
+                !field || typeof field !== "string" || field.trim() === ""
+        )
     ) {
         return res
             .status(400)
@@ -214,9 +271,7 @@ export const loginUser = async (req: any, res: any) => {
     try {
         // checks for user with given credentials
         const user = await prisma.user.findFirst({
-            where: {
-                OR: [{ username: uid }, { email: uid }],
-            },
+            where: { email: email },
         });
 
         if (!user || !(await comparePassword(password, user.password))) {
@@ -229,12 +284,10 @@ export const loginUser = async (req: any, res: any) => {
         // generate access token and refresh token
         const accessToken = generateAccessToken({
             id: user.id,
-            username: user.username,
             email: user.email,
         });
         const refreshToken = generateRefreshToken({ id: user.id });
 
-        // update the recent refresh token
         await prisma.user.update({
             where: { id: user.id },
             data: { refreshToken: refreshToken },
@@ -288,6 +341,64 @@ export const logoutUser = async (req: any, res: any) => {
             .clearCookie("refreshToken", securedCookieParserOptions)
             .clearCookie("accessToken", securedCookieParserOptions)
             .json(new ApiResponse(200, "Logout successful", null, true));
+    } catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json(new ApiResponse(500, "Internal Server Error", null, false));
+    }
+};
+
+/**
+ * Delete an authenticated user
+ * @route DELETE /api/v2/user
+ * @param req Express request object
+ * @param res Express response object
+ * @returns JSON response with user deletion status
+ */
+export const deleteUser = async (req: any, res: any) => {
+    const user = req.user;
+    const { password } = req.body;
+
+    if (!user) {
+        // No authenticated user found
+        return res
+            .status(401)
+            .json(new ApiResponse(401, "Unauthorized", null, false));
+    }
+
+    try {
+        const existingUser = await prisma.user.findUnique({
+            where: { id: user.id },
+        });
+
+        if (
+            !existingUser ||
+            !(await comparePassword(password, existingUser.password))
+        ) {
+            // User with given credentials does not exist
+            return res
+                .status(401)
+                .json(new ApiResponse(401, "Invalid credentials", null, false));
+        }
+
+        // Delete the user
+        const deleteUser = await prisma.user.delete({
+            where: { id: user.id },
+        });
+
+        if (!deleteUser) {
+            // User deletion failed
+            return res
+                .status(500)
+                .json(
+                    new ApiResponse(500, "Failed to delete user", null, false)
+                );
+        }
+
+        res.status(200).json(
+            new ApiResponse(200, "User deleted successfully", null, true)
+        );
     } catch (error) {
         console.log(error);
         return res
