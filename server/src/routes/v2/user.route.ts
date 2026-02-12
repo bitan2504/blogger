@@ -26,6 +26,7 @@ router.post("/login", loginUser);
 router.post("/update", verifyJWT, upload.single("avatar"), updateUser);
 router.get("/logout", verifyJWT, logoutUser);
 router.delete("/", verifyJWT, deleteUser);
+
 router.post("/post/create", verifyJWT, createPost);
 router.get("/post/show/:page", verifyJWT, showPostsByPageNumber);
 router.get("/profile", verifyJWT, userProfile);

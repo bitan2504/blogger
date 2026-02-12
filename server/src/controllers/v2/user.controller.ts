@@ -104,8 +104,8 @@ export const registerUser = async (req: any, res: any) => {
         await sendEmail(
             email,
             "Verify your email for Blogger",
-            `Please verify your email by clicking the following link: ${process.env.CORS_ORIGIN}/verify-email?email=${encodeURIComponent(email)}&token=${token}`,
-            `<p>Please verify your email by clicking the following link:</p><p><a href="${process.env.CORS_ORIGIN}/verify-email?email=${encodeURIComponent(email)}&token=${token}">Verify Email</a></p>`
+            `Please verify your email by clicking the following link: ${process.env.CORS_ORIGIN}/user/verify-email?email=${encodeURIComponent(email)}&token=${token}`,
+            `<p>Please verify your email by clicking the following link:</p><p><a href="${process.env.CORS_ORIGIN}/user/verify-email?email=${encodeURIComponent(email)}&token=${token}">Verify Email</a></p>`
         );
 
         res.status(200).json(
@@ -125,7 +125,8 @@ export const registerUser = async (req: any, res: any) => {
 };
 
 export const verifyEmail = async (req: any, res: any) => {
-    const { email, token } = req.query;
+    const { email, token } = req.body;
+    console.log("Verifying email with token:", email, token);
 
     if ([email, token].some((field) => !field || typeof field !== "string")) {
         // Input validation failed - missing or invalid fields
@@ -287,19 +288,6 @@ export const loginUser = async (req: any, res: any) => {
             email: user.email,
         });
         const refreshToken = generateRefreshToken({ id: user.id });
-
-        await prisma.user.update({
-            where: { id: user.id },
-            data: { refreshToken: refreshToken },
-            select: {
-                id: true,
-                username: true,
-                email: true,
-                fullname: true,
-                avatar: true,
-                dob: true,
-            },
-        });
 
         res.status(200)
             .cookie("refreshToken", refreshToken, securedCookieParserOptions)

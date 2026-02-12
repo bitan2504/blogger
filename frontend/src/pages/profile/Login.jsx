@@ -23,7 +23,7 @@ export default function Login({ active, setActive, setNavroute }) {
     }, []);
 
     const [formData, setFormData] = useState({
-        uid: "",
+        email: "",
         password: "",
     });
     const [showPassword, setShowPassword] = useState(false);
@@ -48,8 +48,8 @@ export default function Login({ active, setActive, setNavroute }) {
 
     const validate = () => {
         const newErrors = {};
-        if (!formData.uid.trim())
-            newErrors.uid = "Username or Email is required.";
+        if (!formData.email.trim())
+            newErrors.email = "Username or Email is required.";
         if (!formData.password) {
             newErrors.password = "Password is required.";
         } else if (formData.password.length < 6) {
@@ -255,22 +255,22 @@ export default function Login({ active, setActive, setNavroute }) {
                                                     </div>
                                                     <input
                                                         type="text"
-                                                        name="uid"
-                                                        value={formData.uid}
+                                                        name="email"
+                                                        value={formData.email}
                                                         onChange={handleChange}
                                                         placeholder="Enter your username or email"
                                                         className={`w-full pl-12 pr-4 py-4 bg-white rounded-xl border ${
-                                                            errors.uid
+                                                            errors.email
                                                                 ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-100"
                                                                 : "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                                                         } outline-none transition-all duration-200 focus:shadow-lg text-base`}
                                                         disabled={isLoading}
                                                     />
                                                 </div>
-                                                {errors.uid && (
+                                                {errors.email && (
                                                     <div className="mt-2 flex items-center gap-2 text-red-600 text-sm">
                                                         <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                                        {errors.uid}
+                                                        {errors.email}
                                                     </div>
                                                 )}
                                             </div>

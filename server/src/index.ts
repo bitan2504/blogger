@@ -6,8 +6,10 @@ import process from "process";
 import app from "./app.js";
 
 const numCPUs = availableParallelism();
+const port = process.env.PORT || 3000;
+const nodeEnv = process.env.NODE_ENV || "development";
 
-if (cluster.isPrimary) {
+if (cluster.isPrimary && nodeEnv !== "development") {
     console.log(`Primary ${process.pid} is running`);
 
     // Fork workers.
@@ -21,8 +23,6 @@ if (cluster.isPrimary) {
         );
     });
 } else {
-    const port = process.env.PORT || 3000;
-    const nodeEnv = process.env.NODE_ENV || "development";
     
     console.log(`Worker ${process.pid} started`);
 

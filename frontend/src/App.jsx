@@ -7,10 +7,11 @@ import Login from "./pages/profile/Login.jsx";
 import Top from "./pages/home/Top.jsx";
 import ConnectPage from "./pages/connect/ConnectPage.jsx";
 import axios from "axios";
-import PostPage from "./pages/Post/PostPage.jsx";
+import PostPage from "./pages/post/PostPage.jsx";
 import AllProfile from "./pages/profile/AllProfile.jsx";
 import Register from "./pages/profile/Register.jsx";
-import CreatePost from "./pages/Post/CreatePost.jsx";
+import CreatePost from "./pages/post/CreatePost.jsx";
+import { VerifyEmail } from "./pages/profile/VerifyEmail.jsx";
 
 function App() {
     const [active, setActive] = useState(false);
@@ -98,6 +99,15 @@ function App() {
                             path="/user/register"
                             element={
                                 <Register
+                                    active={active}
+                                    setNavroute={setNavroute}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/user/verify-email"
+                            element={
+                                <VerifyEmail
                                     active={active}
                                     setNavroute={setNavroute}
                                 />
