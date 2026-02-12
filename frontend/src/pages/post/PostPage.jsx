@@ -1,23 +1,17 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import MessagePage from "../../components/MessagePage.jsx";
 import axios from "axios";
 import PostCardL from "../../components/PostCardL.jsx";
 import { 
   ArrowLeft, 
   Home, 
   RefreshCw, 
-  Users, 
   TrendingUp,
   Sparkles,
   Flame,
   Clock,
-  Eye,
   MessageCircle,
-  Heart,
   Share2,
-  Bookmark,
-  MoreVertical
 } from "lucide-react";
 import PostCardS from "../../components/PostCardS.jsx";
 

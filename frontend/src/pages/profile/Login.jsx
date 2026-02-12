@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MessagePage from "../../components/MessagePage.jsx";
@@ -16,8 +16,13 @@ import {
     Users,
     Globe,
 } from "lucide-react";
+import { UserContext } from "../../context/UserContext.jsx";
+import { NavRouteContext } from "../../context/NavRouteContext.jsx";
 
-export default function Login({ active, setActive, setNavroute }) {
+export default function Login() {
+    const { active, setActive } = useContext(UserContext);
+    const { setNavroute } = useContext(NavRouteContext);
+    
     useEffect(() => {
         setNavroute("home-container");
     }, []);

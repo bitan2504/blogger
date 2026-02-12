@@ -1,8 +1,11 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { NavRouteContext } from "../../context/NavRouteContext";
 
-export function VerifyEmail({ active, setNavroute }) {
+export function VerifyEmail() {
+    const { setNavroute } = useContext(NavRouteContext);
+
     // state to hold the message to display to the user
     const [message, setMessage] = useState(null);
 

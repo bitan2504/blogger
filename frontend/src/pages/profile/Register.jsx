@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import MessagePage from "../../components/MessagePage";
@@ -12,8 +12,13 @@ import {
     AlertCircle,
     BookOpen,
 } from "lucide-react";
+import { UserContext } from "../../context/UserContext";
+import { NavRouteContext } from "../../context/NavRouteContext";
 
-const Register = ({ user, setNavroute }) => {
+const Register = () => {
+    const { user } = useContext(UserContext);
+    const { setNavroute } = useContext(NavRouteContext);
+
     useEffect(() => {
         setNavroute("home-container");
     }, []);

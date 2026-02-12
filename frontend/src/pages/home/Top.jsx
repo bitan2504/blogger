@@ -1,10 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Flame, Users, ChevronRight, Filter, Search, Plus, ChevronLeft } from "lucide-react";
 import axios from "axios";
 import PostCardM from "../../components/PostCardM";
+import { NavRouteContext } from "../../context/NavRouteContext";
+import { UserContext } from "../../context/UserContext";
 
-const Home = ({ active, setNavroute }) => {
+const Home = () => {
+    const { active } = useContext(UserContext);
+    const { setNavroute } = useContext(NavRouteContext);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const containerRef = useRef(null);
