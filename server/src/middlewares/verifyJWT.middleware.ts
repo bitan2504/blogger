@@ -1,5 +1,11 @@
 import prisma from "../db/prisma.db.js";
 import jwt from "jsonwebtoken";
+import { Request, UserResponse } from "../interfaces.js";
+import express from "express";
+
+export interface AuthRequest extends Request {
+    user?: UserResponse | null;
+}
 
 /**
  * Middleware to verify JWT from cookies
@@ -7,12 +13,21 @@ import jwt from "jsonwebtoken";
  * @param res Express response object
  * @param next Next function callback
  */
-const verifyJWT = async (req: any, res: any, next: any) => {
-    const token = req.cookies?.accessToken;
+const verifyJWT = async (
+    req: AuthRequest,
+    res: express.Response,
+    next: express.NextFunction
+): Promise<void> => {
+    const token: string = req.cookies?.accessToken;
+    const JWT_ACCESS_TOKEN_SECRET: string | undefined =
+        process.env.JWT_ACCESS_TOKEN_SECRET;
 
     if (!token) {
+        // No token provided, user is not authenticated
+        console.log("No JWT token found in cookies.");
         req.user = null;
-        return next();
+        next();
+        return;
     }
 
     try {
@@ -20,7 +35,7 @@ const verifyJWT = async (req: any, res: any, next: any) => {
         console.log("Verifying token:", token);
         const decoded = jwt.verify(
             token,
-            process.env.JWT_ACCESS_TOKEN_SECRET as string
+            JWT_ACCESS_TOKEN_SECRET as string
         ) as { id: string; username: string; email: string };
 
         console.log("Decoded JWT payload:", decoded.id);
@@ -33,15 +48,15 @@ const verifyJWT = async (req: any, res: any, next: any) => {
             },
             select: {
                 id: true,
-                username: true,
                 email: true,
                 fullname: true,
                 avatar: true,
+                dob: true,
             },
         });
 
         console.log("User fetched from DB:", user);
-        req.user = user || null;
+        req.user = user ? (user as UserResponse) : null;
     } catch (error) {
         // Token might be expired or malformed
         console.error("JWT Verification Error:", error);

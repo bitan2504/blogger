@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import compression from "compression";
 import helmet from "helmet";
 import ApiResponse from "./utils/ApiResponse.js";
+import { Request } from "./interfaces.js";
 
 const app = express();
 
@@ -24,7 +25,10 @@ app.use(compression());
 // Body parser middleware
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true, limit: "64kb" }));
+
 app.use(express.json({ limit: "64kb" }));
+
+// Cookie parser middleware
 app.use(cookieParser());
 
 // CORS configuration
@@ -71,7 +75,7 @@ app.use((req, res) => {
 app.use(
     (
         err: any,
-        req: express.Request,
+        req: Request,
         res: express.Response,
         next: express.NextFunction
     ) => {

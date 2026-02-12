@@ -16,6 +16,7 @@ import {
 } from "../../controllers/v2/user.controller.js";
 import verifyJWT from "../../middlewares/verifyJWT.middleware.js";
 import { upload } from "../../middlewares/multerFileUpload.middleware.js";
+import express from "express";
 const router = Router();
 
 router.get("/getUser", verifyJWT, getUser);
