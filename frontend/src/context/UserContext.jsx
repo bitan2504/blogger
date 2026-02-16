@@ -30,8 +30,9 @@ export function UserProvider({ children }) {
     };
 
     const login = async (uid, password) => {
+        let res = null;
         try {
-            const res = await axios.post(
+            res = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/user/login`,
                 {
                     uid,
@@ -47,18 +48,50 @@ export function UserProvider({ children }) {
             if (res.data.data) {
                 setUser(res.data.data.user);
             } else {
-                setUser(null);
+                throw new Error("Login failed");
             }
+        } catch (error) {
+            console.error(error);
+            setActive(false);
+            setUser(null);
+        }
+        return res?.data;
+    };
 
-            return res.data;
+    const logout = async () => {
+        let res = null;
+        try {
+            res = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/user/logout`,
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
+
+            if (res.data.success) {
+                setUser(null);
+                setActive(false);
+            } else {
+                throw new Error("Logout failed");
+            }
         } catch (error) {
             console.error(error);
         }
+        return res?.data;
     };
 
     return (
         <UserContext.Provider
-            value={{ user, setUser, refreshToken, login, active, setActive }}
+            value={{
+                user,
+                setUser,
+                refreshToken,
+                login,
+                active,
+                setActive,
+                logout,
+            }}
         >
             {children}
         </UserContext.Provider>
