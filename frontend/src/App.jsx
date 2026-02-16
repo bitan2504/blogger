@@ -14,7 +14,6 @@ import { UserContext } from "./context/UserContext.jsx";
 
 function App() {
     const { user, refreshToken, active } = useContext(UserContext);
-    const [navroute, setNavroute] = useState("");
 
     useEffect(() => {
         refreshToken();
@@ -22,54 +21,31 @@ function App() {
 
     return (
         <BrowserRouter>
-            <Navbar active={active} user={user} navroute={navroute} />
+            <Navbar />
             {/* <div id="main-container"> */}
             <div id="body-container">
                 <Routes>
-                    <Route
-                        path="/"
-                        element={<Home setNavroute={setNavroute} />}
-                    />
+                    <Route path="/" element={<Home />} />
                     <Route path="/home">
-                        <Route
-                            path="/home"
-                            element={<Home setNavroute={setNavroute} />}
-                        />
-                        <Route
-                            path="/home/top"
-                            element={<Top setNavroute={setNavroute} />}
-                        />
+                        <Route path="/home" element={<Home />} />
+                        <Route path="/home/top" element={<Top />} />
                     </Route>
                     <Route path="/user">
-                        <Route
-                            path="/user/profile"
-                            element={<Profile setNavroute={setNavroute} />}
-                        />
+                        <Route path="/user/profile" element={<Profile />} />
                         <Route
                             path="/user/profile/:username"
                             element={<AllProfile />}
                         />
-                        <Route
-                            path="/user/login"
-                            element={<Login setNavroute={setNavroute} />}
-                        />
-                        <Route
-                            path="/user/register"
-                            element={<Register setNavroute={setNavroute} />}
-                        />
+                        <Route path="/user/login" element={<Login />} />
+                        <Route path="/user/register" element={<Register />} />
                         <Route path="/user/post">
                             <Route
                                 path="/user/post/create"
-                                element={
-                                    <CreatePost setNavroute={setNavroute} />
-                                }
+                                element={<CreatePost />}
                             />
                         </Route>
                     </Route>
-                    <Route
-                        path="/connect"
-                        element={<ConnectPage setNavroute={setNavroute} />}
-                    />
+                    <Route path="/connect" element={<ConnectPage />} />
                     <Route path="/post">
                         <Route path=":postID" element={<PostPage />} />
                     </Route>

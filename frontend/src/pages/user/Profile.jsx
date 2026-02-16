@@ -20,9 +20,11 @@ import {
     Bell,
 } from "lucide-react";
 import { UserContext } from "../../context/UserContext.jsx";
+import { NavrouteContext } from "../../context/NavrouteContext.jsx";
 
-const Profile = ({ setNavroute }) => {
+const Profile = () => {
     const { active, setActive } = useContext(UserContext);
+    const { setNavroute } = useContext(NavrouteContext);
     useEffect(() => {
         setNavroute("profile-container");
     }, []);

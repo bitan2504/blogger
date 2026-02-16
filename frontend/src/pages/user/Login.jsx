@@ -17,9 +17,11 @@ import {
     Globe,
 } from "lucide-react";
 import { UserContext } from "../../context/UserContext.jsx";
+import { NavrouteContext } from "../../context/NavrouteContext.jsx";
 
-export default function Login({ setNavroute }) {
+export default function Login() {
     const { active, setActive, login } = useContext(UserContext);
+    const { setNavroute } = useContext(NavrouteContext);
 
     useEffect(() => {
         setNavroute("home-container");

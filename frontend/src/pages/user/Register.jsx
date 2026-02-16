@@ -15,9 +15,11 @@ import {
     BookOpen,
 } from "lucide-react";
 import { UserContext } from "../../context/UserContext";
+import { NavrouteContext } from "../../context/NavrouteContext";
 
-const Register = ({ setNavroute }) => {
+const Register = () => {
     const { user } = useContext(UserContext);
+    const { setNavroute } = useContext(NavrouteContext);
 
     useEffect(() => {
         setNavroute("home-container");

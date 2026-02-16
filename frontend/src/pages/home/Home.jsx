@@ -15,9 +15,11 @@ import axios from "axios";
 import PostCardM from "../../components/PostCardM";
 import PostCardS from "../../components/PostCardS";
 import { UserContext } from "../../context/UserContext";
+import { NavrouteContext } from "../../context/NavrouteContext";
 
-const Home = ({ setNavroute }) => {
+const Home = () => {
     const { active } = useContext(UserContext);
+    const { setNavroute } = useContext(NavrouteContext);
     const [posts, setPosts] = useState([]);
     const [trending, setTrending] = useState([]);
     const [loading, setLoading] = useState(true);

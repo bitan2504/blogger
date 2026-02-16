@@ -4,9 +4,11 @@ import MessagePage from "../../components/MessagePage.jsx";
 import ProfileCardM from "../../components/ProfileCardM.jsx";
 import { Search, Users, ChevronLeft, ChevronRight, Loader } from "lucide-react";
 import { UserContext } from "../../context/UserContext.jsx";
+import { NavrouteContext } from "../../context/NavrouteContext.jsx";
 
-const ConnectPage = ({ setNavroute }) => {
+const ConnectPage = () => {
     const { active, user: currentUser } = useContext(UserContext);
+    const { setNavroute } = useContext(NavrouteContext);
     useEffect(() => {
         setNavroute("connect-container");
     }, []);
