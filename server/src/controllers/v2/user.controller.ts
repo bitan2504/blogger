@@ -111,139 +111,52 @@ export const refreshToken = async (
  * @returns JSON response with registration status
  */
 export const registerUser = async (req: any, res: any) => {
-    const avatar = req.file;
+    const { username, password, fullname } = req.body;
 
-    const cleanUpFile = () => {
-        if (avatar && avatar.path) {
-            try {
-                fs.unlinkSync(avatar.path);
-            } catch (err) {
-                console.error("Error cleaning up file:", err);
-            }
-        }
-    };
-
-    const user = req.user;
-    if (user) {
-        cleanUpFile();
+    if ([username, password, fullname].some((field) => !field)) {
         return res
             .status(400)
-            .json(
-                new ApiResponse(400, "User already authenticated", null, false)
-            );
-    }
-
-    const { username, email, fullname, password, dob } = req.body;
-
-    // Validation Checks
-    if (
-        [username, email, fullname, password].some(
-            (str) => !str || str.trim().length === 0
-        ) ||
-        typeof username !== "string" ||
-        typeof email !== "string" ||
-        typeof fullname !== "string" ||
-        typeof password !== "string"
-    ) {
-        cleanUpFile();
-        return res
-            .status(400)
-            .json(
-                new ApiResponse(
-                    400,
-                    "Required fields must be non-empty strings",
-                    null,
-                    false
-                )
-            );
-    }
-
-    if (!dob || isNaN(Date.parse(dob))) {
-        cleanUpFile();
-        return res
-            .status(400)
-            .json(
-                new ApiResponse(
-                    400,
-                    "Invalid Date of Birth format",
-                    null,
-                    false
-                )
-            );
-    }
-
-    if (
-        password.length < Number(process.env.PASSWORD_MIN_LENGTH || "6") ||
-        password.length > Number(process.env.PASSWORD_MAX_LENGTH || "16")
-    ) {
-        cleanUpFile();
-        return res
-            .status(400)
-            .json(
-                new ApiResponse(
-                    400,
-                    `Password must be between ${process.env.PASSWORD_MIN_LENGTH} and ${process.env.PASSWORD_MAX_LENGTH} characters`,
-                    null,
-                    false
-                )
-            );
+            .json(new ApiResponse(400, "Missing required fields", null, false));
     }
 
     try {
-        // Database Checks
         const existingUser = await prisma.user.findFirst({
-            where: { OR: [{ username }, { email }] },
+            where: { username },
         });
 
         if (existingUser) {
-            cleanUpFile();
             return res
                 .status(409)
                 .json(
-                    new ApiResponse(
-                        409,
-                        "Username or email already in use",
-                        null,
-                        false
-                    )
+                    new ApiResponse(409, "Username already exists", null, false)
                 );
         }
 
-        // Success Path
-
-        // Upload to Cloudinary/S3
-        const avatarUrl = avatar ? await uploadOnCloud(avatar.path) : null;
-
-        // Hash Password
         const hashedPassword = await hashPassword(password);
 
-        // Create User
         const newUser = await prisma.user.create({
             data: {
                 username,
-                email,
-                fullname,
                 password: hashedPassword,
-                dob: new Date(dob),
-                avatar: avatarUrl ? avatarUrl.url : null,
-            },
-            select: {
-                id: true,
-                username: true,
-                email: true,
-                fullname: true,
-                avatar: true,
-                dob: true,
+                fullname,
             },
         });
 
-        // Return Success (201 Created)
         res.status(201).json(
-            new ApiResponse(201, "User registered successfully", newUser, true)
+            new ApiResponse(
+                201,
+                "User registered successfully",
+                {
+                    user: {
+                        ...newUser,
+                        password: undefined, // Exclude password from response
+                    },
+                },
+                true
+            )
         );
     } catch (error) {
         console.log(error);
-        cleanUpFile();
         return res
             .status(500)
             .json(new ApiResponse(500, "Internal Server Error", null, false));
@@ -287,12 +200,8 @@ export const loginUser = async (req: any, res: any) => {
         }
 
         // generate access token and refresh token
-        const accessToken = generateAccessToken({
-            id: user.id,
-            username: user.username,
-            email: user.email,
-        });
-        const refreshToken = generateRefreshToken({ id: user.id });
+        const accessToken: string = generateAccessToken(user);
+        const refreshToken: string = generateRefreshToken(user);
 
         // update the recent refresh token
         const updatedUser = await prisma.user.update({

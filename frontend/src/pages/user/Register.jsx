@@ -3,13 +3,10 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import MessagePage from "../../components/MessagePage";
 import {
-    Mail,
     Lock,
     User,
     Eye,
     EyeOff,
-    Calendar,
-    Upload,
     CheckCircle,
     AlertCircle,
     BookOpen,
@@ -28,11 +25,8 @@ const Register = () => {
     const [formData, setFormData] = useState({
         username: "",
         fullname: "",
-        email: "",
         password: "",
         confirmPassword: "",
-        dob: "",
-        avatar: null,
     });
 
     const [avatarPreview, setAvatarPreview] = useState(null);
@@ -89,9 +83,6 @@ const Register = () => {
             newErrors.username = "Username is required.";
         if (!formData.fullname.trim())
             newErrors.fullname = "Full name is required.";
-        if (!formData.email.trim()) newErrors.email = "Email is required.";
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-            newErrors.email = "Please enter a valid email address.";
         if (!formData.password) newErrors.password = "Password is required.";
         else if (formData.password.length < 6)
             newErrors.password = "Password must be at least 6 characters.";
@@ -99,7 +90,6 @@ const Register = () => {
             newErrors.confirmPassword = "Please confirm your password.";
         if (formData.password !== formData.confirmPassword)
             newErrors.confirmPassword = "Passwords do not match.";
-        if (!formData.dob) newErrors.dob = "Date of birth is required.";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -115,12 +105,7 @@ const Register = () => {
                 const formDataToSend = new FormData();
                 formDataToSend.append("username", formData.username);
                 formDataToSend.append("fullname", formData.fullname);
-                formDataToSend.append("email", formData.email);
                 formDataToSend.append("password", formData.password);
-                formDataToSend.append("dob", formData.dob);
-                if (formData.avatar) {
-                    formDataToSend.append("avatar", formData.avatar);
-                }
 
                 const response = await axios.post(
                     `${import.meta.env.VITE_BACKEND_URL}/user/register`,
@@ -128,7 +113,7 @@ const Register = () => {
                     {
                         withCredentials: true,
                         headers: {
-                            "Content-Type": "multipart/form-data",
+                            "Content-Type": "Application/json",
                         },
                     }
                 );
@@ -303,59 +288,6 @@ const Register = () => {
                                 )}
                             </div>
 
-                            {/* Email */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Email Address
-                                </label>
-                                <div className="relative">
-                                    <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        placeholder="bitandas@example.com"
-                                        className={`w-full pl-10 pr-4 py-2.5 border rounded-lg font-medium outline-none transition-colors ${
-                                            errors.email
-                                                ? "border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500/20 bg-red-50"
-                                                : "border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 bg-white"
-                                        }`}
-                                    />
-                                </div>
-                                {errors.email && (
-                                    <p className="text-red-600 text-xs mt-1.5">
-                                        {errors.email}
-                                    </p>
-                                )}
-                            </div>
-
-                            {/* Date of Birth */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Date of Birth
-                                </label>
-                                <div className="relative">
-                                    <Calendar className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                                    <input
-                                        type="date"
-                                        name="dob"
-                                        value={formData.dob}
-                                        onChange={handleChange}
-                                        className={`w-full pl-10 pr-4 py-2.5 border rounded-lg font-medium outline-none transition-colors ${
-                                            errors.dob
-                                                ? "border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500/20 bg-red-50"
-                                                : "border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 bg-white"
-                                        }`}
-                                    />
-                                </div>
-                                {errors.dob && (
-                                    <p className="text-red-600 text-xs mt-1.5">
-                                        {errors.dob}
-                                    </p>
-                                )}
-                            </div>
-
                             {/* Password */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -442,49 +374,6 @@ const Register = () => {
                                         {errors.confirmPassword}
                                     </p>
                                 )}
-                            </div>
-
-                            {/* Avatar Upload */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Profile Picture
-                                    <span className="text-gray-400">
-                                        {" "}
-                                        (Optional)
-                                    </span>
-                                </label>
-                                <input
-                                    type="file"
-                                    name="avatar"
-                                    onChange={handleChange}
-                                    accept="image/*"
-                                    className="hidden"
-                                    id="avatar-input"
-                                />
-                                <label
-                                    htmlFor="avatar-input"
-                                    className="flex items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/30 transition-colors bg-gray-50"
-                                >
-                                    {avatarPreview ? (
-                                        <div className="flex items-center gap-3">
-                                            <img
-                                                src={avatarPreview}
-                                                alt="Preview"
-                                                className="w-10 h-10 rounded-full object-cover"
-                                            />
-                                            <span className="text-sm text-gray-600">
-                                                Click to change
-                                            </span>
-                                        </div>
-                                    ) : (
-                                        <div className="text-center">
-                                            <Upload className="w-5 h-5 mx-auto text-gray-400 mb-1" />
-                                            <span className="text-sm text-gray-600">
-                                                Upload an image
-                                            </span>
-                                        </div>
-                                    )}
-                                </label>
                             </div>
 
                             {/* Submit Button */}
