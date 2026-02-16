@@ -6,8 +6,6 @@ import {
     TrendingUp,
     Users,
     ChevronRight,
-    Filter,
-    Search,
     Sparkles,
     Plus,
 } from "lucide-react";
@@ -18,13 +16,13 @@ import { UserContext } from "../../context/UserContext";
 import { NavrouteContext } from "../../context/NavrouteContext";
 
 const Home = () => {
-    const { active } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const { setNavroute } = useContext(NavrouteContext);
     const [posts, setPosts] = useState([]);
     const [trending, setTrending] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState("");
-    const [searchQuery, setSearchQuery] = useState("");
+    // const [searchQuery, setSearchQuery] = useState("");
     const containerRef = useRef(null);
 
     useEffect(() => {
@@ -66,7 +64,7 @@ const Home = () => {
 
     const filters = [
         { id: "", label: "All Posts" },
-        { id: "following", label: "Following", disabled: !active },
+        { id: "following", label: "Following", disabled: !user },
         { id: "likes", label: "Popular" },
         { id: "date", label: "Recent" },
     ];
@@ -226,7 +224,7 @@ const Home = () => {
                                     <p className="text-gray-600 mb-6">
                                         Be the first to share something amazing!
                                     </p>
-                                    {active && (
+                                    {user && (
                                         <Link
                                             to="/user/post/create"
                                             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
@@ -294,7 +292,7 @@ const Home = () => {
                                     Quick Actions
                                 </h3>
                                 <div className="space-y-2">
-                                    {active && (
+                                    {user && (
                                         <Link
                                             to="/user/post/create"
                                             className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors group"

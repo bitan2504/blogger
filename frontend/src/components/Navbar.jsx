@@ -6,13 +6,8 @@ import { UserContext } from "../context/UserContext";
 
 export default function Navbar() {
     const { navroute } = useContext(NavrouteContext);
-    const { user, active } = useContext(UserContext);
-    const [username, setUsername] = useState(null);
+    const { user } = useContext(UserContext);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        setUsername(user?.username ?? null);
-    }, [user]);
 
     const baseItem =
         "group relative flex items-center justify-center rounded-lg p-3 transition-colors duration-200";
@@ -48,7 +43,7 @@ export default function Navbar() {
                         to="/home"
                         className={`${baseItem} ${
                             navroute === "home-container" && activeItem
-                        } ${!active ? "text-gray-600 hover:text-blue-600 hover:bg-gray-50" : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"}`}
+                        } ${!user ? "text-gray-600 hover:text-blue-600 hover:bg-gray-50" : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"}`}
                     >
                         <Home size={20} />
                         <span className="ml-2 text-sm font-medium">Home</span>
@@ -58,7 +53,7 @@ export default function Navbar() {
                         to="/home/top"
                         className={`${baseItem} ${
                             navroute === "top-container" && activeItem
-                        } ${!active ? "text-gray-600 hover:text-blue-600 hover:bg-gray-50" : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"}`}
+                        } ${!user ? "text-gray-600 hover:text-blue-600 hover:bg-gray-50" : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"}`}
                     >
                         <Flame size={20} />
                         <span className="ml-2 text-sm font-medium">
@@ -70,7 +65,7 @@ export default function Navbar() {
                         to="/connect"
                         className={`${baseItem} ${
                             navroute === "connect-container" && activeItem
-                        } ${!active ? "text-gray-600 hover:text-blue-600 hover:bg-gray-50" : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"}`}
+                        } ${!user ? "text-gray-600 hover:text-blue-600 hover:bg-gray-50" : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"}`}
                     >
                         <Link size={20} />
                         <span className="ml-2 text-sm font-medium">
@@ -82,7 +77,7 @@ export default function Navbar() {
                     <div className="w-px h-8 bg-gray-200 mx-3"></div>
 
                     {/* Auth Section */}
-                    {!active ? (
+                    {!user ? (
                         <NavLink
                             to="/user/login"
                             className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
@@ -100,19 +95,19 @@ export default function Navbar() {
                                 {user?.avatar ? (
                                     <img
                                         src={user.avatar}
-                                        alt={username}
+                                        alt={user.username}
                                         className="w-6 h-6 rounded-full object-cover"
                                     />
                                 ) : (
                                     <div className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600">
                                         <span className="text-white text-xs font-bold">
-                                            {username
+                                            {user?.username
                                                 ?.charAt(0)
                                                 ?.toUpperCase() || "U"}
                                         </span>
                                     </div>
                                 )}
-                                <span className="font-medium">@{username}</span>
+                                <span className="font-medium">@{user.username}</span>
                             </button>
 
                             {/* Create Post Button */}

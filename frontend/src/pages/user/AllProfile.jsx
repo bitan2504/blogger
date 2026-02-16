@@ -5,7 +5,7 @@ import ProfileCardL from "../../components/ProfileCardL.jsx";
 import { UserContext } from "../../context/UserContext.jsx";
 
 const AllProfile = () => {
-    const { active, user: currentUser } = useContext(UserContext);
+    const { user: currentUser } = useContext(UserContext);
     const params = useParams();
     const username = params.username;
 
@@ -66,7 +66,6 @@ const AllProfile = () => {
             currentUser={currentUser}
             user={user}
             posts={posts}
-            active={active}
         />
     );
 };

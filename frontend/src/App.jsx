@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useEffect, useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/home/Home.jsx";
 import Navbar from "./components/Navbar.jsx";
@@ -13,7 +13,7 @@ import CreatePost from "./pages/post/CreatePost.jsx";
 import { UserContext } from "./context/UserContext.jsx";
 
 function App() {
-    const { user, refreshToken, active } = useContext(UserContext);
+    const { refreshToken } = useContext(UserContext);
 
     useEffect(() => {
         refreshToken();

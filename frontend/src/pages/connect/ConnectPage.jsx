@@ -7,7 +7,7 @@ import { UserContext } from "../../context/UserContext.jsx";
 import { NavrouteContext } from "../../context/NavrouteContext.jsx";
 
 const ConnectPage = () => {
-    const { active, user: currentUser } = useContext(UserContext);
+    const { user: currentUser } = useContext(UserContext);
     const { setNavroute } = useContext(NavrouteContext);
     useEffect(() => {
         setNavroute("connect-container");
@@ -88,7 +88,7 @@ const ConnectPage = () => {
         // Optional: Update user follow status in state
     };
 
-    if (!active) {
+    if (!currentUser) {
         return <MessagePage message={"Please login to connect with users"} />;
     }
 
@@ -170,7 +170,6 @@ const ConnectPage = () => {
                                         <ProfileCardM
                                             key={user.id}
                                             user={user}
-                                            active={active}
                                             currentUser={currentUser}
                                             onFollowStatusChange={
                                                 handleFollowStatusChange

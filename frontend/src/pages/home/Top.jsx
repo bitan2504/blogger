@@ -15,7 +15,7 @@ import { UserContext } from "../../context/UserContext";
 import { NavrouteContext } from "../../context/NavrouteContext";
 
 const Home = () => {
-    const { active } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const { setNavroute } = useContext(NavrouteContext);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -200,8 +200,9 @@ const Home = () => {
                             <div className="flex flex-wrap gap-3">
                                 {seaerchKeywords && (
                                     <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 border-2 border-blue-400 text-white rounded-2xl text-sm font-bold shadow-lg hover:shadow-xl transition-all">
-                                        <Search size={16} strokeWidth={2.5} />"
-                                        {seaerchKeywords}"
+                                        <Search size={16} strokeWidth={2.5} />
+                                        &ldquo;
+                                        {seaerchKeywords}&rdquo;
                                         <button
                                             onClick={() =>
                                                 setSearchKeywords("")
@@ -378,7 +379,7 @@ const Home = () => {
                                         Try adjusting your filters or search
                                         terms
                                     </p>
-                                    {active && (
+                                    {user && (
                                         <Link
                                             to="/user/post/create"
                                             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
@@ -560,7 +561,7 @@ const Home = () => {
                                     Quick Actions
                                 </h3>
                                 <div className="space-y-3">
-                                    {active && (
+                                    {user && (
                                         <Link
                                             to="/user/post/create"
                                             className="flex items-center justify-between p-3 rounded-lg bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors group font-medium"

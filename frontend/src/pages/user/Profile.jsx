@@ -23,14 +23,13 @@ import { UserContext } from "../../context/UserContext.jsx";
 import { NavrouteContext } from "../../context/NavrouteContext.jsx";
 
 const Profile = () => {
-    const { active, setActive } = useContext(UserContext);
+    const { user, setActive } = useContext(UserContext);
     const { setNavroute } = useContext(NavrouteContext);
     useEffect(() => {
         setNavroute("profile-container");
     }, []);
 
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
     const [avatarLoc, setAvatarLoc] = useState("/default/DEFAULT_AVATAR.jpg");
     const [loading, setLoading] = useState(true);
@@ -46,7 +45,6 @@ const Profile = () => {
                 );
 
                 if (response.data.success) {
-                    setUser(response.data.data.user);
                     setPosts(response.data.data.posts || []);
 
                     if (response.data.data?.user?.avatar) {
@@ -80,7 +78,7 @@ const Profile = () => {
         }
     };
 
-    if (!active) {
+    if (!user) {
         return <MessagePage message={"User not logged in"} />;
     }
 

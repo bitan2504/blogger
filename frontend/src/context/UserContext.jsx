@@ -6,7 +6,6 @@ export const UserContext = createContext();
 
 export function UserProvider({ children }) {
     const [user, setUser] = useState(null);
-    const [active, setActive] = useState(false);
 
     const refreshToken = async () => {
         try {
@@ -44,7 +43,6 @@ export function UserProvider({ children }) {
             );
 
             console.log(res.data);
-            setActive(res.data.success);
             if (res.data.data) {
                 setUser(res.data.data.user);
             } else {
@@ -52,7 +50,6 @@ export function UserProvider({ children }) {
             }
         } catch (error) {
             console.error(error);
-            setActive(false);
             setUser(null);
         }
         return res?.data;
@@ -85,11 +82,8 @@ export function UserProvider({ children }) {
         <UserContext.Provider
             value={{
                 user,
-                setUser,
                 refreshToken,
                 login,
-                active,
-                setActive,
                 logout,
             }}
         >
