@@ -19,7 +19,7 @@ import { UserContext } from "../../context/UserContext.jsx";
 import { NavrouteContext } from "../../context/NavrouteContext.jsx";
 
 export default function Login() {
-    const { user, setActive, login } = useContext(UserContext);
+    const { user, login } = useContext(UserContext);
     const { setNavroute } = useContext(NavrouteContext);
 
     useEffect(() => {
@@ -74,7 +74,6 @@ export default function Login() {
                 const response = await login(formData.uid, formData.password);
 
                 if (response.success) {
-                    setActive(true);
                     setTimeout(() => {
                         navigate("/home");
                     }, 500);

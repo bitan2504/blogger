@@ -17,7 +17,6 @@ export function UserProvider({ children }) {
             );
 
             console.log(res.data);
-            setActive(res.data.success);
             if (res.data.data) {
                 setUser(res.data.data.user);
             } else {
@@ -68,7 +67,6 @@ export function UserProvider({ children }) {
 
             if (res.data.success) {
                 setUser(null);
-                setActive(false);
             } else {
                 throw new Error("Logout failed");
             }

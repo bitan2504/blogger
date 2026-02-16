@@ -23,7 +23,7 @@ import { UserContext } from "../../context/UserContext.jsx";
 import { NavrouteContext } from "../../context/NavrouteContext.jsx";
 
 const Profile = () => {
-    const { user, setActive } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const { setNavroute } = useContext(NavrouteContext);
     useEffect(() => {
         setNavroute("profile-container");
@@ -70,7 +70,6 @@ const Profile = () => {
                 }
             );
             if (res.data.success) {
-                setActive(null);
                 navigate("/");
             }
         } catch (error) {
