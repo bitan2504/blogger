@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MessagePage from "../../components/MessagePage.jsx";
@@ -16,8 +16,11 @@ import {
     Users,
     Globe,
 } from "lucide-react";
+import { UserContext } from "../../context/UserContext.jsx";
 
-export default function Login({ active, setActive, setNavroute }) {
+export default function Login({ setNavroute }) {
+    const { active, setActive, login } = useContext(UserContext);
+
     useEffect(() => {
         setNavroute("home-container");
     }, []);
@@ -67,18 +70,9 @@ export default function Login({ active, setActive, setNavroute }) {
             setLoginError("");
 
             try {
-                const response = await axios.post(
-                    `${import.meta.env.VITE_BACKEND_URL}/user/login`,
-                    formData,
-                    {
-                        withCredentials: true,
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
+                const response = await login(formData.uid, formData.password);
 
-                if (response.data.success) {
+                if (response.success) {
                     setActive(true);
                     setTimeout(() => {
                         navigate("/home");

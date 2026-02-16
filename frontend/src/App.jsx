@@ -1,44 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/home/Home.jsx";
 import Navbar from "./components/Navbar.jsx";
-import Profile from "./pages/profile/Profile.jsx";
-import Login from "./pages/profile/Login.jsx";
+import Profile from "./pages/user/Profile.jsx";
+import Login from "./pages/user/Login.jsx";
 import Top from "./pages/home/Top.jsx";
 import ConnectPage from "./pages/connect/ConnectPage.jsx";
-import axios from "axios";
-import PostPage from "./pages/Post/PostPage.jsx";
-import AllProfile from "./pages/profile/AllProfile.jsx";
-import Register from "./pages/profile/Register.jsx";
-import CreatePost from "./pages/Post/CreatePost.jsx";
+import PostPage from "./pages/post/PostPage.jsx";
+import AllProfile from "./pages/user/AllProfile.jsx";
+import Register from "./pages/user/Register.jsx";
+import CreatePost from "./pages/post/CreatePost.jsx";
+import { UserContext } from "./context/UserContext.jsx";
 
 function App() {
-    const [active, setActive] = useState(false);
-    const [user, setUser] = useState(null);
+    const { user, refreshToken, active } = useContext(UserContext);
     const [navroute, setNavroute] = useState("");
 
     useEffect(() => {
-        const getUser = async () => {
-            try {
-                const foundUser = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/user/getUser`,
-                    {
-                        withCredentials: true,
-                    }
-                );
-
-                setActive(foundUser.data.data ? true : false);
-                if (foundUser.data.data) {
-                    setUser(foundUser.data.data);
-                } else {
-                    setUser(null);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        getUser();
-    }, [active]);
+        refreshToken();
+    }, []);
 
     return (
         <BrowserRouter>
@@ -48,9 +28,7 @@ function App() {
                 <Routes>
                     <Route
                         path="/"
-                        element={
-                            <Home active={active} setNavroute={setNavroute} />
-                        }
+                        element={<Home setNavroute={setNavroute} />}
                     />
                     <Route path="/home">
                         <Route
@@ -65,65 +43,32 @@ function App() {
                     <Route path="/user">
                         <Route
                             path="/user/profile"
-                            element={
-                                <Profile
-                                    active={active}
-                                    setActive={setActive}
-                                    setNavroute={setNavroute}
-                                />
-                            }
+                            element={<Profile setNavroute={setNavroute} />}
                         />
                         <Route
                             path="/user/profile/:username"
-                            element={
-                                <AllProfile
-                                    active={active}
-                                    setActive={setActive}
-                                    setNavroute={setNavroute}
-                                    currentUser={user}
-                                />
-                            }
+                            element={<AllProfile />}
                         />
                         <Route
                             path="/user/login"
-                            element={
-                                <Login
-                                    active={active}
-                                    setActive={setActive}
-                                    setNavroute={setNavroute}
-                                />
-                            }
+                            element={<Login setNavroute={setNavroute} />}
                         />
                         <Route
                             path="/user/register"
-                            element={
-                                <Register
-                                    active={active}
-                                    setNavroute={setNavroute}
-                                />
-                            }
+                            element={<Register setNavroute={setNavroute} />}
                         />
                         <Route path="/user/post">
                             <Route
                                 path="/user/post/create"
                                 element={
-                                    <CreatePost
-                                        user={user}
-                                        setNavroute={setNavroute}
-                                    />
+                                    <CreatePost setNavroute={setNavroute} />
                                 }
                             />
                         </Route>
                     </Route>
                     <Route
                         path="/connect"
-                        element={
-                            <ConnectPage
-                                active={active}
-                                setNavroute={setNavroute}
-                                currentUser={user}
-                            />
-                        }
+                        element={<ConnectPage setNavroute={setNavroute} />}
                     />
                     <Route path="/post">
                         <Route path=":postID" element={<PostPage />} />

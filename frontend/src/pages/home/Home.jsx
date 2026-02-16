@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import {
     Flame,
@@ -14,8 +14,10 @@ import {
 import axios from "axios";
 import PostCardM from "../../components/PostCardM";
 import PostCardS from "../../components/PostCardS";
+import { UserContext } from "../../context/UserContext";
 
-const Home = ({ active, setNavroute }) => {
+const Home = ({ setNavroute }) => {
+    const { active } = useContext(UserContext);
     const [posts, setPosts] = useState([]);
     const [trending, setTrending] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -128,8 +130,8 @@ const Home = ({ active, setNavroute }) => {
                     </h1>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
                         Join thousands of creators sharing their ideas,
-                        insights, and stories. Connect, learn, and grow
-                        together in a vibrant community.
+                        insights, and stories. Connect, learn, and grow together
+                        in a vibrant community.
                     </p>
 
                     {/* Search Bar */}
@@ -258,13 +260,15 @@ const Home = ({ active, setNavroute }) => {
 
                                 <div className="space-y-3">
                                     {trending.length > 0 ? (
-                                        trending.slice(0, 5).map((item, index) => (
-                                            <PostCardS
-                                                key={item.id}
-                                                post={item}
-                                                index={index}
-                                            />
-                                        ))
+                                        trending
+                                            .slice(0, 5)
+                                            .map((item, index) => (
+                                                <PostCardS
+                                                    key={item.id}
+                                                    post={item}
+                                                    index={index}
+                                                />
+                                            ))
                                     ) : (
                                         <div className="text-center py-8">
                                             <p className="text-gray-500">
@@ -294,7 +298,10 @@ const Home = ({ active, setNavroute }) => {
                                             className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors group"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <Plus size={18} className="text-blue-600" />
+                                                <Plus
+                                                    size={18}
+                                                    className="text-blue-600"
+                                                />
                                                 <span className="font-medium text-gray-700">
                                                     Create Post
                                                 </span>
@@ -310,7 +317,10 @@ const Home = ({ active, setNavroute }) => {
                                         className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors group"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <Users size={18} className="text-green-600" />
+                                            <Users
+                                                size={18}
+                                                className="text-green-600"
+                                            />
                                             <span className="font-medium text-gray-700">
                                                 Find Friends
                                             </span>
@@ -325,7 +335,10 @@ const Home = ({ active, setNavroute }) => {
                                         className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors group"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <Flame size={18} className="text-orange-600" />
+                                            <Flame
+                                                size={18}
+                                                className="text-orange-600"
+                                            />
                                             <span className="font-medium text-gray-700">
                                                 Top Posts
                                             </span>

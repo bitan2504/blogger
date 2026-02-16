@@ -6,12 +6,10 @@ import jwt, { Secret, SignOptions } from "jsonwebtoken";
  * @returns Signed JWT access token
  */
 export const generateAccessToken = (params: any) => {
-    const secret =
-        (process.env.JWT_ACCESS_TOKEN_SECRET as Secret) || "fallback_secret";
+    const secret: string = process.env.JWT_ACCESS_TOKEN_SECRET || "";
     const options: SignOptions = {
-        expiresIn:
-            (process.env.JWT_ACCESS_TOKEN_EXPIRY as SignOptions["expiresIn"]) ||
-            "1d",
+        expiresIn: (process.env.JWT_ACCESS_TOKEN_EXPIRY ||
+            "15m") as SignOptions["expiresIn"],
     };
 
     return jwt.sign(params, secret, options);
@@ -23,12 +21,10 @@ export const generateAccessToken = (params: any) => {
  * @returns Signed JWT Refresh Token
  */
 export const generateRefreshToken = (params: any) => {
-    const secret =
-        (process.env.JWT_REFRESH_TOKEN_SECRET as Secret) || "fallback_secret";
+    const secret: string = process.env.JWT_REFRESH_TOKEN_SECRET || "";
     const options: SignOptions = {
-        expiresIn:
-            (process.env
-                .JWT_REFRESH_TOKEN_EXPIRY as SignOptions["expiresIn"]) || "10d",
+        expiresIn: (process.env.JWT_REFRESH_TOKEN_EXPIRY ||
+            "7d") as SignOptions["expiresIn"],
     };
 
     return jwt.sign(params, secret, options);

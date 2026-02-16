@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MessagePage from "../../components/MessagePage.jsx";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PostCardM from "../../components/PostCardM.jsx";
 import {
     User,
@@ -19,8 +19,10 @@ import {
     Bookmark,
     Bell,
 } from "lucide-react";
+import { UserContext } from "../../context/UserContext.jsx";
 
-const Profile = ({ active, setActive, setNavroute }) => {
+const Profile = ({ setNavroute }) => {
+    const { active, setActive } = useContext(UserContext);
     useEffect(() => {
         setNavroute("profile-container");
     }, []);
@@ -148,12 +150,18 @@ const Profile = ({ active, setActive, setNavroute }) => {
                                         <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                                             {user?.email && (
                                                 <div className="flex items-center gap-2">
-                                                    <Mail size={16} className="text-blue-600" />
+                                                    <Mail
+                                                        size={16}
+                                                        className="text-blue-600"
+                                                    />
                                                     <span>{user.email}</span>
                                                 </div>
                                             )}
                                             <div className="flex items-center gap-2">
-                                                <Calendar size={16} className="text-gray-500" />
+                                                <Calendar
+                                                    size={16}
+                                                    className="text-gray-500"
+                                                />
                                                 <span>
                                                     Joined{" "}
                                                     {new Date(
@@ -250,7 +258,7 @@ const Profile = ({ active, setActive, setNavroute }) => {
                                         ))}
                                     </div>
                                     <div className="flex justify-center">
-                                        <Link 
+                                        <Link
                                             to={`/user/posts?username=${user.username}`}
                                             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
                                         >
@@ -262,14 +270,18 @@ const Profile = ({ active, setActive, setNavroute }) => {
                             ) : (
                                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
                                     <div className="w-20 h-20 mx-auto mb-4 rounded-xl bg-gray-100 flex items-center justify-center">
-                                        <FileText size={32} className="text-gray-400" />
+                                        <FileText
+                                            size={32}
+                                            className="text-gray-400"
+                                        />
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900 mb-2">
                                         No posts yet
                                     </h3>
                                     <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                                        Start sharing your thoughts and ideas with the
-                                        community. Your first post could inspire others!
+                                        Start sharing your thoughts and ideas
+                                        with the community. Your first post
+                                        could inspire others!
                                     </p>
                                     <button className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
                                         <FileText size={18} />
@@ -294,57 +306,97 @@ const Profile = ({ active, setActive, setNavroute }) => {
                                         className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-gray-700 group"
                                     >
                                         <span className="flex items-center gap-3 font-medium">
-                                            <FileText size={18} className="text-blue-600" />
+                                            <FileText
+                                                size={18}
+                                                className="text-blue-600"
+                                            />
                                             Trending Posts
                                         </span>
-                                        <ChevronRight size={16} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
+                                        <ChevronRight
+                                            size={16}
+                                            className="text-gray-400 group-hover:translate-x-1 transition-transform"
+                                        />
                                     </Link>
 
                                     <button className="w-full flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-gray-700 group">
                                         <span className="flex items-center gap-3 font-medium">
-                                            <Bookmark size={18} className="text-green-600" />
+                                            <Bookmark
+                                                size={18}
+                                                className="text-green-600"
+                                            />
                                             Saved Posts
                                         </span>
-                                        <ChevronRight size={16} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
+                                        <ChevronRight
+                                            size={16}
+                                            className="text-gray-400 group-hover:translate-x-1 transition-transform"
+                                        />
                                     </button>
 
                                     <button className="w-full flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-gray-700 group">
                                         <span className="flex items-center gap-3 font-medium">
-                                            <Bell size={18} className="text-orange-600" />
+                                            <Bell
+                                                size={18}
+                                                className="text-orange-600"
+                                            />
                                             Notifications
                                         </span>
-                                        <ChevronRight size={16} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
+                                        <ChevronRight
+                                            size={16}
+                                            className="text-gray-400 group-hover:translate-x-1 transition-transform"
+                                        />
                                     </button>
 
                                     <button className="w-full flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-gray-700 group">
                                         <span className="flex items-center gap-3 font-medium">
-                                            <Share2 size={18} className="text-purple-600" />
+                                            <Share2
+                                                size={18}
+                                                className="text-purple-600"
+                                            />
                                             Share Profile
                                         </span>
-                                        <ChevronRight size={16} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
+                                        <ChevronRight
+                                            size={16}
+                                            className="text-gray-400 group-hover:translate-x-1 transition-transform"
+                                        />
                                     </button>
 
                                     <button className="w-full flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-gray-700 group">
                                         <span className="flex items-center gap-3 font-medium">
-                                            <Settings size={18} className="text-gray-600" />
+                                            <Settings
+                                                size={18}
+                                                className="text-gray-600"
+                                            />
                                             Settings
                                         </span>
-                                        <ChevronRight size={16} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
+                                        <ChevronRight
+                                            size={16}
+                                            className="text-gray-400 group-hover:translate-x-1 transition-transform"
+                                        />
                                     </button>
                                 </div>
                             </div>
 
                             {/* Profile Stats Card */}
                             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                                <h3 className="text-lg font-bold text-gray-900 mb-4">Profile Stats</h3>
+                                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                                    Profile Stats
+                                </h3>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                                        <span className="font-medium text-gray-700">Likes</span>
-                                        <span className="text-lg font-bold text-gray-900">{user?.likesCount || 0}</span>
+                                        <span className="font-medium text-gray-700">
+                                            Likes
+                                        </span>
+                                        <span className="text-lg font-bold text-gray-900">
+                                            {user?.likesCount || 0}
+                                        </span>
                                     </div>
                                     <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                                        <span className="font-medium text-gray-700">Comments</span>
-                                        <span className="text-lg font-bold text-gray-900">0</span>
+                                        <span className="font-medium text-gray-700">
+                                            Comments
+                                        </span>
+                                        <span className="text-lg font-bold text-gray-900">
+                                            0
+                                        </span>
                                     </div>
                                 </div>
                             </div>
