@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import MessagePage from "../../components/MessagePage.jsx";
 import {
     LogIn,
@@ -16,8 +15,13 @@ import {
     Users,
     Globe,
 } from "lucide-react";
+import { UserContext } from "../../context/UserContext.jsx";
+import { NavrouteContext } from "../../context/NavrouteContext.jsx";
 
-export default function Login({ active, setActive, setNavroute }) {
+export default function Login() {
+    const { user, setActive, login } = useContext(UserContext);
+    const { setNavroute } = useContext(NavrouteContext);
+
     useEffect(() => {
         setNavroute("home-container");
     }, []);
@@ -67,18 +71,9 @@ export default function Login({ active, setActive, setNavroute }) {
             setLoginError("");
 
             try {
-                const response = await axios.post(
-                    `${import.meta.env.VITE_BACKEND_URL}/user/login`,
-                    formData,
-                    {
-                        withCredentials: true,
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
+                const response = await login(formData.uid, formData.password);
 
-                if (response.data.success) {
+                if (response.success) {
                     setActive(true);
                     setTimeout(() => {
                         navigate("/home");
@@ -105,7 +100,7 @@ export default function Login({ active, setActive, setNavroute }) {
 
     return (
         <>
-            {active ? (
+            {user ? (
                 <MessagePage message={"User is logged in."} />
             ) : (
                 <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 pt-24 pb-20 px-4">
@@ -439,7 +434,7 @@ export default function Login({ active, setActive, setNavroute }) {
                                         {/* Sign Up Link */}
                                         <div className="text-center pt-8 border-t border-gray-100">
                                             <p className="text-gray-600 text-base">
-                                                Don't have an account?{" "}
+                                                Don&apos;t have an account?{" "}
                                                 <Link
                                                     to="/user/register"
                                                     className="font-semibold text-blue-600 hover:text-blue-700 transition-colors inline-flex items-center gap-2 group"
@@ -494,7 +489,7 @@ export default function Login({ active, setActive, setNavroute }) {
                     </div>
 
                     {/* Add CSS for animations */}
-                    <style jsx>{`
+                    <style>{`
                         @keyframes shake {
                             0%,
                             100% {

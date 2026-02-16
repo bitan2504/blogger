@@ -36,6 +36,9 @@ model Post {
   likes     Like[]
   tags      Tag[]
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([createdAt])
 }
 
 model Comment {
@@ -47,6 +50,10 @@ model Comment {
   updatedAt DateTime @default(now()) @updatedAt
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([postId])
+  @@index([createdAt])
 }
 
 model Like {
@@ -57,6 +64,7 @@ model Like {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, postId])
+  @@index([userId])
 }
 
 model Follow {
@@ -67,6 +75,8 @@ model Follow {
   following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@id([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
 }
 
 model Tag {

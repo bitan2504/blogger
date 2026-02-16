@@ -1,10 +1,22 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
-import { Flame, Users, ChevronRight, Filter, Search, Plus, ChevronLeft } from "lucide-react";
+import {
+    Flame,
+    Users,
+    ChevronRight,
+    Filter,
+    Search,
+    Plus,
+    ChevronLeft,
+} from "lucide-react";
 import axios from "axios";
 import PostCardM from "../../components/PostCardM";
+import { UserContext } from "../../context/UserContext";
+import { NavrouteContext } from "../../context/NavrouteContext";
 
-const Home = ({ active, setNavroute }) => {
+const Home = () => {
+    const { user } = useContext(UserContext);
+    const { setNavroute } = useContext(NavrouteContext);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const containerRef = useRef(null);
@@ -27,7 +39,14 @@ const Home = ({ active, setNavroute }) => {
 
     useEffect(() => {
         fetchPosts();
-    }, [currentPage, filterEndDate, filterStartDate, filterTags, orderBy, seaerchKeywords]);
+    }, [
+        currentPage,
+        filterEndDate,
+        filterStartDate,
+        filterTags,
+        orderBy,
+        seaerchKeywords,
+    ]);
 
     const fetchPosts = async () => {
         try {
@@ -56,12 +75,12 @@ const Home = ({ active, setNavroute }) => {
             );
             const fetchedPosts = response.data.data || [];
             setPosts(fetchedPosts);
-            
+
             // If we got fewer posts than requested, we're on the last page
             // Otherwise assume there might be more pages
             const hasMore = fetchedPosts.length === postsPerPage;
             setHasMorePages(hasMore);
-            
+
             // If total is provided in response, use it; otherwise estimate
             if (response.data.total) {
                 setTotalPages(Math.ceil(response.data.total / postsPerPage));
@@ -132,7 +151,8 @@ const Home = ({ active, setNavroute }) => {
                                 Trending Posts
                             </h1>
                             <p className="text-gray-600">
-                                Discover the most popular and trending content from our community
+                                Discover the most popular and trending content
+                                from our community
                             </p>
                         </div>
                     </div>
@@ -181,7 +201,8 @@ const Home = ({ active, setNavroute }) => {
                                 {seaerchKeywords && (
                                     <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 border-2 border-blue-400 text-white rounded-2xl text-sm font-bold shadow-lg hover:shadow-xl transition-all">
                                         <Search size={16} strokeWidth={2.5} />
-                                        "{seaerchKeywords}"
+                                        &ldquo;
+                                        {seaerchKeywords}&rdquo;
                                         <button
                                             onClick={() =>
                                                 setSearchKeywords("")
@@ -214,7 +235,8 @@ const Home = ({ active, setNavroute }) => {
                                 ))}
                                 {filterStartDate && (
                                     <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                                        📅 {filterStartDate.toLocaleDateString()}
+                                        📅{" "}
+                                        {filterStartDate.toLocaleDateString()}
                                         <button
                                             onClick={() =>
                                                 setFilterStartDate(null)
@@ -301,8 +323,7 @@ const Home = ({ active, setNavroute }) => {
                                                     <button
                                                         onClick={() =>
                                                             setCurrentPage(
-                                                                currentPage -
-                                                                    1
+                                                                currentPage - 1
                                                             )
                                                         }
                                                         className="w-9 h-9 rounded-lg font-semibold text-sm bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -319,8 +340,7 @@ const Home = ({ active, setNavroute }) => {
                                                     <button
                                                         onClick={() =>
                                                             setCurrentPage(
-                                                                currentPage +
-                                                                    1
+                                                                currentPage + 1
                                                             )
                                                         }
                                                         className="w-9 h-9 rounded-lg font-semibold text-sm bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -347,15 +367,19 @@ const Home = ({ active, setNavroute }) => {
                             ) : (
                                 <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
                                     <div className="w-16 h-16 mx-auto mb-4 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <Flame size={28} className="text-blue-600" />
+                                        <Flame
+                                            size={28}
+                                            className="text-blue-600"
+                                        />
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900 mb-2">
                                         No posts found
                                     </h3>
                                     <p className="text-gray-600 mb-6">
-                                        Try adjusting your filters or search terms
+                                        Try adjusting your filters or search
+                                        terms
                                     </p>
-                                    {active && (
+                                    {user && (
                                         <Link
                                             to="/user/post/create"
                                             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
@@ -537,13 +561,16 @@ const Home = ({ active, setNavroute }) => {
                                     Quick Actions
                                 </h3>
                                 <div className="space-y-3">
-                                    {active && (
+                                    {user && (
                                         <Link
                                             to="/user/post/create"
                                             className="flex items-center justify-between p-3 rounded-lg bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors group font-medium"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <Plus size={18} className="text-blue-600" />
+                                                <Plus
+                                                    size={18}
+                                                    className="text-blue-600"
+                                                />
                                                 <span>Create Post</span>
                                             </div>
                                             <ChevronRight
@@ -557,7 +584,10 @@ const Home = ({ active, setNavroute }) => {
                                         className="flex items-center justify-between p-3 rounded-lg bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors group font-medium"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <Users size={18} className="text-green-600" />
+                                            <Users
+                                                size={18}
+                                                className="text-green-600"
+                                            />
                                             <span>Find Friends</span>
                                         </div>
                                         <ChevronRight

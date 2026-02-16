@@ -1,9 +1,11 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ProfileCardL from "../../components/ProfileCardL.jsx";
+import { UserContext } from "../../context/UserContext.jsx";
 
-const AllProfile = ({ active, currentUser }) => {
+const AllProfile = () => {
+    const { user: currentUser } = useContext(UserContext);
     const params = useParams();
     const username = params.username;
 
@@ -64,7 +66,6 @@ const AllProfile = ({ active, currentUser }) => {
             currentUser={currentUser}
             user={user}
             posts={posts}
-            active={active}
         />
     );
 };

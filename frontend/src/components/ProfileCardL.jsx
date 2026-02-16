@@ -18,7 +18,7 @@ import {
     UserCheck,
 } from "lucide-react";
 
-const ProfileCardL = ({ active, currentUser, user, posts }) => {
+const ProfileCardL = ({ currentUser, user, posts }) => {
     const navigate = useNavigate();
     const [avatarLoc, setAvatarLoc] = useState("/default/DEFAULT_AVATAR.jpg");
     const [isFollowing, setIsFollowing] = useState(false);
@@ -35,7 +35,7 @@ const ProfileCardL = ({ active, currentUser, user, posts }) => {
     }, [user]);
 
     const handleToggleFollow = async () => {
-        if (!active) {
+        if (!user) {
             navigate("/login");
             return;
         }
@@ -96,7 +96,7 @@ const ProfileCardL = ({ active, currentUser, user, posts }) => {
                                             <h1 className="text-3xl font-bold text-gray-900">
                                                 @{user?.username}
                                             </h1>
-                                            {active &&
+                                            {user &&
                                                 currentUser?.username !==
                                                     user.username && (
                                                     <button

@@ -5,7 +5,6 @@ import { ChevronRight, UserPlus, UserCheck } from "lucide-react";
 
 export default function ProfileCardM({
     user,
-    active,
     currentUser,
     onFollowStatusChange,
 }) {
@@ -25,7 +24,7 @@ export default function ProfileCardM({
     }, [user]);
 
     const handleToggleFollow = async () => {
-        if (!active) {
+        if (!user) {
             navigate("/login");
             return;
         }

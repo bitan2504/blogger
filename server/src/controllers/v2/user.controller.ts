@@ -8,6 +8,7 @@ import {
 import { hashPassword, comparePassword } from "../../utils/HashPassword.js";
 import fs from "fs";
 import uploadOnCloud from "../../utils/CloudinaryFileUpload.js";
+import jwt from "jsonwebtoken";
 
 /**
  * Cookie Parser Options for Secure Cookies
@@ -19,25 +20,87 @@ export const securedCookieParserOptions: express.CookieOptions = {
 };
 
 /**
- * Get authenticated user details
- * @route GET /api/v2/user/getUser
+ * Refresh access token using refresh token
+ * @route GET /api/v2/user/refresh-token
  * @param req Express request object
  * @param res Express response object
+ * @returns JSON response with new access token and refresh token
  */
-export const getUser = async (req: any, res: any) => {
-    const user = req.user;
-    res.status(200).json(
-        new ApiResponse(
-            200,
-            "User retrieved successfully",
-            {
-                id: user.id,
-                username: user.username,
-                avatar: user.avatar,
-            },
-            true
-        )
-    );
+export const refreshToken = async (
+    req: express.Request,
+    res: express.Response
+) => {
+    const refreshToken =
+        req.headers.authorization?.split(" ")[1] || req.cookies.refreshToken;
+
+    if (!refreshToken) {
+        return res
+            .status(401)
+            .json(new ApiResponse(401, "Refresh token missing", null, false));
+    }
+
+    try {
+        const decoded: any = jwt.verify(
+            refreshToken,
+            process.env.JWT_REFRESH_TOKEN_SECRET!
+        );
+
+        if (!decoded || !decoded.id) {
+            return res
+                .status(401)
+                .json(
+                    new ApiResponse(401, "Invalid refresh token", null, false)
+                );
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: decoded.id },
+        });
+
+        if (!user || user.refreshToken !== refreshToken) {
+            return res
+                .status(401)
+                .json(
+                    new ApiResponse(
+                        401,
+                        "User not found or invalid refresh token",
+                        null,
+                        false
+                    )
+                );
+        }
+
+        const accessToken = generateAccessToken(user);
+        const newRefreshToken = generateRefreshToken(user);
+
+        const updatedUser = await prisma.user.update({
+            where: { id: user.id },
+            data: { refreshToken: newRefreshToken },
+        });
+
+        res.status(200)
+            .cookie("accessToken", accessToken, securedCookieParserOptions)
+            .cookie("refreshToken", newRefreshToken, securedCookieParserOptions)
+            .json(
+                new ApiResponse(
+                    200,
+                    "Tokens refreshed successfully",
+                    {
+                        user: {
+                            ...updatedUser,
+                            password: undefined, // Exclude password from response
+                        },
+                        accessToken,
+                        refreshToken: newRefreshToken,
+                    },
+                    true
+                )
+            );
+    } catch (error) {
+        return res
+            .status(500)
+            .json(new ApiResponse(500, "Internal server error", null, false));
+    }
 };
 
 /**
@@ -197,9 +260,6 @@ export const registerUser = async (req: any, res: any) => {
 export const loginUser = async (req: any, res: any) => {
     const { uid, password } = req.body;
 
-    /**
-     * Input Validation
-     */
     // Check for missing fields
     if (
         [uid, password].some((field) => !field) ||
@@ -235,23 +295,29 @@ export const loginUser = async (req: any, res: any) => {
         const refreshToken = generateRefreshToken({ id: user.id });
 
         // update the recent refresh token
-        await prisma.user.update({
+        const updatedUser = await prisma.user.update({
             where: { id: user.id },
             data: { refreshToken: refreshToken },
-            select: {
-                id: true,
-                username: true,
-                email: true,
-                fullname: true,
-                avatar: true,
-                dob: true,
-            },
         });
 
         res.status(200)
             .cookie("refreshToken", refreshToken, securedCookieParserOptions)
             .cookie("accessToken", accessToken, securedCookieParserOptions)
-            .json(new ApiResponse(200, "Login successful", null, true));
+            .json(
+                new ApiResponse(
+                    200,
+                    "Login successful",
+                    {
+                        user: {
+                            ...updatedUser,
+                            password: undefined, // Exclude password from response
+                        },
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                    },
+                    true
+                )
+            );
     } catch (error) {
         console.log(error);
         return res

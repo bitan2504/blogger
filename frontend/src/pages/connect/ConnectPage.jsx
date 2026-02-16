@@ -1,22 +1,18 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import MessagePage from "../../components/MessagePage.jsx";
 import ProfileCardM from "../../components/ProfileCardM.jsx";
-import {
-    Search,
-    Users,
-    ChevronLeft,
-    ChevronRight,
-    Loader,
-} from "lucide-react";
+import { Search, Users, ChevronLeft, ChevronRight, Loader } from "lucide-react";
+import { UserContext } from "../../context/UserContext.jsx";
+import { NavrouteContext } from "../../context/NavrouteContext.jsx";
 
-const ConnectPage = ({ active, setNavroute, currentUser }) => {
+const ConnectPage = () => {
+    const { user: currentUser } = useContext(UserContext);
+    const { setNavroute } = useContext(NavrouteContext);
     useEffect(() => {
         setNavroute("connect-container");
     }, []);
 
-    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -63,9 +59,7 @@ const ConnectPage = ({ active, setNavroute, currentUser }) => {
             if (response.data.success) {
                 const allUsers = response.data.data;
                 setUsers(allUsers);
-                setTotalPages(
-                    Math.ceil(allUsers.length / usersPerPage) || 1
-                );
+                setTotalPages(Math.ceil(allUsers.length / usersPerPage) || 1);
             }
         } catch (err) {
             console.error("Error searching users:", err);
@@ -94,7 +88,7 @@ const ConnectPage = ({ active, setNavroute, currentUser }) => {
         // Optional: Update user follow status in state
     };
 
-    if (!active) {
+    if (!currentUser) {
         return <MessagePage message={"Please login to connect with users"} />;
     }
 
@@ -137,13 +131,16 @@ const ConnectPage = ({ active, setNavroute, currentUser }) => {
                         <div className="mt-4 text-sm text-gray-600">
                             {loading ? (
                                 <div className="flex items-center gap-2">
-                                    <Loader size={16} className="animate-spin" />
+                                    <Loader
+                                        size={16}
+                                        className="animate-spin"
+                                    />
                                     Searching...
                                 </div>
                             ) : hasSearched ? (
                                 <span>
-                                    {users.length} user{users.length !== 1 ? "s" : ""}{" "}
-                                    found
+                                    {users.length} user
+                                    {users.length !== 1 ? "s" : ""} found
                                 </span>
                             ) : null}
                         </div>
@@ -160,7 +157,9 @@ const ConnectPage = ({ active, setNavroute, currentUser }) => {
                                         size={40}
                                         className="animate-spin text-blue-600 mx-auto mb-4"
                                     />
-                                    <p className="text-gray-600">Searching...</p>
+                                    <p className="text-gray-600">
+                                        Searching...
+                                    </p>
                                 </div>
                             </div>
                         ) : users.length > 0 ? (
@@ -171,7 +170,6 @@ const ConnectPage = ({ active, setNavroute, currentUser }) => {
                                         <ProfileCardM
                                             key={user.id}
                                             user={user}
-                                            active={active}
                                             currentUser={currentUser}
                                             onFollowStatusChange={
                                                 handleFollowStatusChange
@@ -193,26 +191,34 @@ const ConnectPage = ({ active, setNavroute, currentUser }) => {
                                         </button>
 
                                         <div className="flex items-center gap-2">
-                                            {Array.from({ length: totalPages }, (_, i) => (
-                                                <button
-                                                    key={i + 1}
-                                                    onClick={() =>
-                                                        setCurrentPage(i + 1)
-                                                    }
-                                                    className={`w-10 h-10 rounded-lg font-semibold transition-colors ${
-                                                        currentPage === i + 1
-                                                            ? "bg-blue-600 text-white"
-                                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                                    }`}
-                                                >
-                                                    {i + 1}
-                                                </button>
-                                            ))}
+                                            {Array.from(
+                                                { length: totalPages },
+                                                (_, i) => (
+                                                    <button
+                                                        key={i + 1}
+                                                        onClick={() =>
+                                                            setCurrentPage(
+                                                                i + 1
+                                                            )
+                                                        }
+                                                        className={`w-10 h-10 rounded-lg font-semibold transition-colors ${
+                                                            currentPage ===
+                                                            i + 1
+                                                                ? "bg-blue-600 text-white"
+                                                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                                        }`}
+                                                    >
+                                                        {i + 1}
+                                                    </button>
+                                                )
+                                            )}
                                         </div>
 
                                         <button
                                             onClick={handleNextPage}
-                                            disabled={currentPage === totalPages}
+                                            disabled={
+                                                currentPage === totalPages
+                                            }
                                             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                         >
                                             Next
@@ -223,22 +229,29 @@ const ConnectPage = ({ active, setNavroute, currentUser }) => {
 
                                 {/* Results Info */}
                                 <div className="text-center text-sm text-gray-600 py-4">
-                                    Showing {(currentPage - 1) * usersPerPage + 1} -{" "}
-                                    {Math.min(currentPage * usersPerPage, users.length)}{" "}
+                                    Showing{" "}
+                                    {(currentPage - 1) * usersPerPage + 1} -{" "}
+                                    {Math.min(
+                                        currentPage * usersPerPage,
+                                        users.length
+                                    )}{" "}
                                     of {users.length} results
                                 </div>
                             </div>
                         ) : (
                             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
                                 <div className="w-20 h-20 mx-auto mb-4 rounded-xl bg-gray-100 flex items-center justify-center">
-                                    <Users size={32} className="text-gray-400" />
+                                    <Users
+                                        size={32}
+                                        className="text-gray-400"
+                                    />
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-900 mb-2">
                                     No users found
                                 </h3>
                                 <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                                    Try searching with different keywords or browse
-                                    all users.
+                                    Try searching with different keywords or
+                                    browse all users.
                                 </p>
                             </div>
                         )}
@@ -255,8 +268,8 @@ const ConnectPage = ({ active, setNavroute, currentUser }) => {
                             Discover New Users
                         </h3>
                         <p className="text-gray-600 mb-2 max-w-md mx-auto">
-                            Search for users by their name or username to see their
-                            profiles and follow them.
+                            Search for users by their name or username to see
+                            their profiles and follow them.
                         </p>
                         <p className="text-gray-500 text-sm max-w-md mx-auto">
                             Start typing above to begin searching...

@@ -1,23 +1,17 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import MessagePage from "../../components/MessagePage.jsx";
 import axios from "axios";
 import PostCardL from "../../components/PostCardL.jsx";
 import { 
   ArrowLeft, 
   Home, 
   RefreshCw, 
-  Users, 
   TrendingUp,
   Sparkles,
   Flame,
   Clock,
-  Eye,
   MessageCircle,
-  Heart,
   Share2,
-  Bookmark,
-  MoreVertical
 } from "lucide-react";
 import PostCardS from "../../components/PostCardS.jsx";
 
@@ -103,7 +97,7 @@ export default function PostPage() {
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 mb-3">Post Not Available</h2>
                         <p className="text-gray-600 mb-8">
-                            The post you're looking for doesn't exist or has been removed.
+                            The post you&apos;re looking for doesn&apos;t exist or has been removed.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center">
                             <Link

@@ -1,5 +1,21 @@
 import prisma from "../db/prisma.db.js";
 import jwt from "jsonwebtoken";
+import { Request } from "express";
+
+declare global {
+    namespace Express {
+        interface Request {
+            user?: {
+                id: string;
+                username: string;
+                email: string;
+                fullname: string;
+                avatar: string | null;
+                dob: Date | null;
+            } | null;
+        }
+    }
+}
 
 /**
  * Middleware to verify JWT from cookies
@@ -7,8 +23,9 @@ import jwt from "jsonwebtoken";
  * @param res Express response object
  * @param next Next function callback
  */
-const verifyJWT = async (req: any, res: any, next: any) => {
-    const token = req.cookies?.accessToken;
+const verifyJWT = async (req: Request, res: any, next: any) => {
+    const token =
+        req.headers.authorization?.split(" ")[1] || req.cookies?.accessToken;
 
     if (!token) {
         req.user = null;
@@ -21,7 +38,14 @@ const verifyJWT = async (req: any, res: any, next: any) => {
         const decoded = jwt.verify(
             token,
             process.env.JWT_ACCESS_TOKEN_SECRET as string
-        ) as { id: string; username: string; email: string };
+        ) as {
+            id: string;
+            username: string;
+            email: string;
+            fullname: string;
+            avatar: string | null;
+            dob: Date | null;
+        };
 
         console.log("Decoded JWT payload:", decoded.id);
         // Fetch user (Explicit select)
@@ -37,6 +61,7 @@ const verifyJWT = async (req: any, res: any, next: any) => {
                 email: true,
                 fullname: true,
                 avatar: true,
+                dob: true,
             },
         });
 
