@@ -9,6 +9,10 @@ import {
 } from "../../utils/AuthToken.js";
 import { hashPassword, comparePassword } from "../../utils/HashPassword.js";
 import { AuthRequest, AuthUser } from "../../middlewares/auth.middleware.js";
+import uploadOnCloud from "../../utils/CloudinaryFileUpload.js";
+import fs from "fs";
+import jwt, { SignOptions } from "jsonwebtoken";
+import sendMail from "../../utils/SendEmail.js";
 
 /**
  * Cookie Parser Options for Secure Cookies
@@ -307,6 +311,87 @@ export const createPost = async (req: AuthRequest, res: Response) => {
         return res
             .status(500)
             .json(new ApiResponse(500, "Internal Server Error", null, false));
+    }
+};
+
+/**
+ * Update user profile details
+ * @route PATCH /api/v2/user/profile/update
+ * @param req Express request object
+ * @param res Express response object
+ * @returns JSON response with profile update status
+ */
+export const updateProfile = async (req: AuthRequest, res: Response) => {
+    const user: AuthUser = req.user as AuthUser;
+    const { username, fullname, bio, dob } = req.body;
+    const avatar = req.file;
+
+    try {
+        let avatarUrl: string | undefined = undefined;
+
+        if (avatar) {
+            const upload = await uploadOnCloud(avatar.path);
+            avatarUrl = upload?.url;
+        }
+
+        if (username) {
+            const existingUser = await prisma.user.findUnique({
+                where: { username },
+            });
+
+            if (existingUser && existingUser.id !== user.id) {
+                // Username already exists for another user
+                return res
+                    .status(409)
+                    .json(
+                        new ApiResponse(
+                            409,
+                            "Username already exists",
+                            null,
+                            false
+                        )
+                    );
+            }
+        }
+
+        const updateUser = await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                username: username || undefined,
+                fullname: fullname || undefined,
+                avatar: avatarUrl || undefined,
+                bio: bio || undefined,
+                dob: dob ? new Date(dob) : undefined,
+            },
+        });
+
+        const accessToken = generateAccessToken(updateUser);
+
+        res.status(200)
+            .cookie("accessToken", accessToken, securedCookieParserOptions)
+            .json(
+                new ApiResponse(
+                    200,
+                    "Profile updated successfully",
+                    {
+                        user: {
+                            ...updateUser,
+                            password: undefined, // Exclude password from response
+                        },
+                        accessToken,
+                    },
+                    true
+                )
+            );
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(
+            new ApiResponse(500, "Internal Server Error", null, false)
+        );
+    } finally {
+        if (avatar && fs.existsSync(avatar.path)) {
+            fs.unlinkSync(avatar.path);
+        }
     }
 };
 
