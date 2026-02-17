@@ -57,9 +57,8 @@ export function UserProvider({ children }) {
     const logout = async () => {
         let res = null;
         try {
-            res = await axios.post(
+            res = await axios.get(
                 `${import.meta.env.VITE_BACKEND_URL}/user/logout`,
-                {},
                 {
                     withCredentials: true,
                 }

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import MessagePage from "../../components/MessagePage.jsx";
 import {
     LogIn,
     Lock,
@@ -17,6 +16,7 @@ import {
 } from "lucide-react";
 import { UserContext } from "../../context/UserContext.jsx";
 import { NavrouteContext } from "../../context/NavrouteContext.jsx";
+import Redirect from "../../components/Redirect.jsx";
 
 export default function Login() {
     const { user, login } = useContext(UserContext);
@@ -100,7 +100,7 @@ export default function Login() {
     return (
         <>
             {user ? (
-                <MessagePage message={"User is logged in."} />
+                <Redirect to="/home" message="You are already logged in." />
             ) : (
                 <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 pt-24 pb-20 px-4">
                     {/* Decorative Background Elements */}

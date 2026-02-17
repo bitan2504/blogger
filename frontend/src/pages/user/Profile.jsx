@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import MessagePage from "../../components/MessagePage.jsx";
 import { useContext, useEffect, useState } from "react";
 import PostCardM from "../../components/PostCardM.jsx";
 import {
@@ -21,9 +20,10 @@ import {
 } from "lucide-react";
 import { UserContext } from "../../context/UserContext.jsx";
 import { NavrouteContext } from "../../context/NavrouteContext.jsx";
+import Redirect from "../../components/Redirect.jsx";
 
 const Profile = () => {
-    const { user } = useContext(UserContext);
+    const { user, logout } = useContext(UserContext);
     const { setNavroute } = useContext(NavrouteContext);
     useEffect(() => {
         setNavroute("profile-container");
@@ -63,12 +63,7 @@ const Profile = () => {
     const handleLogout = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.get(
-                `${import.meta.env.VITE_BACKEND_URL}/user/logout`,
-                {
-                    withCredentials: true,
-                }
-            );
+            const res = await logout();
             if (res.data.success) {
                 navigate("/");
             }
@@ -78,7 +73,12 @@ const Profile = () => {
     };
 
     if (!user) {
-        return <MessagePage message={"User not logged in"} />;
+        return (
+            <Redirect
+                to="/user/login"
+                message="You need to be logged in to view your profile."
+            />
+        );
     }
 
     if (loading) {

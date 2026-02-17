@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import MessagePage from "../../components/MessagePage";
 import {
     Lock,
     User,
@@ -13,6 +12,7 @@ import {
 } from "lucide-react";
 import { UserContext } from "../../context/UserContext";
 import { NavrouteContext } from "../../context/NavrouteContext";
+import Redirect from "../../components/Redirect";
 
 const Register = () => {
     const { user } = useContext(UserContext);
@@ -136,7 +136,7 @@ const Register = () => {
     };
 
     if (user) {
-        return <MessagePage message={"User is already logged in"} />;
+        return <Redirect to="/home" message="You are already logged in." />;
     }
 
     return (

@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import MessagePage from "../../components/MessagePage";
 import {
     PenTool,
     FileText,
@@ -13,6 +12,7 @@ import {
 } from "lucide-react";
 import { UserContext } from "../../context/UserContext";
 import { NavrouteContext } from "../../context/NavrouteContext";
+import Redirect from "../../components/Redirect";
 
 const CreatePost = () => {
     const { user } = useContext(UserContext);
@@ -135,7 +135,12 @@ const CreatePost = () => {
     };
 
     if (!user) {
-        return <MessagePage message={"Please log in to create a post"} />;
+        return (
+            <Redirect
+                to="/user/login"
+                message="You need to be logged in to create a post."
+            />
+        );
     }
 
     return (

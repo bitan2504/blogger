@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import MessagePage from "../../components/MessagePage.jsx";
 import ProfileCardM from "../../components/ProfileCardM.jsx";
 import { Search, Users, ChevronLeft, ChevronRight, Loader } from "lucide-react";
 import { UserContext } from "../../context/UserContext.jsx";
 import { NavrouteContext } from "../../context/NavrouteContext.jsx";
+import Redirect from "../../components/Redirect.jsx";
 
 const ConnectPage = () => {
     const { user: currentUser } = useContext(UserContext);
@@ -89,7 +89,12 @@ const ConnectPage = () => {
     };
 
     if (!currentUser) {
-        return <MessagePage message={"Please login to connect with users"} />;
+        return (
+            <Redirect
+                to="user/login"
+                message="You need to be logged in to access the Connect page."
+            />
+        );
     }
 
     return (
