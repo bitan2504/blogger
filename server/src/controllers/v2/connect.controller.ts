@@ -1,5 +1,7 @@
 import prisma from "../../db/prisma.db.js";
+import { AuthRequest, AuthUser } from "../../middlewares/auth.middleware.js";
 import ApiResponse from "../../utils/ApiResponse.js";
+import { Response } from "express";
 
 /**
  * Get posts by username with pagination
@@ -8,10 +10,10 @@ import ApiResponse from "../../utils/ApiResponse.js";
  * @param res Express response object
  * @returns JSON response with posts data
  */
-export const getPostByUsername = async (req: any, res: any) => {
+export const getPostByUsername = async (req: AuthRequest, res: Response) => {
     const user = req.user;
-    const pageNumber = parseInt(req.params?.page || "1");
-    const postPerPage = parseInt(process.env.POSTS_PER_PAGE || "10");
+    const pageNumber = parseInt(String(req.params?.page) || "1");
+    const postPerPage = parseInt(String(process.env.POSTS_PER_PAGE) || "10");
     const username = req.params?.username;
 
     // Validate user authentication
@@ -87,12 +89,12 @@ export const getPostByUsername = async (req: any, res: any) => {
  * @param res Express response object
  * @returns JSON response indicating follow/unfollow status
  */
-export const toggleFollow = async (req: any, res: any) => {
-    const user = req.user;
+export const toggleFollow = async (req: AuthRequest, res: Response) => {
+    const user: AuthUser = req.user as AuthUser;
     const username = req.params?.username;
 
     // Validate user authentication
-    if (!username) {
+    if (!username || typeof username !== "string" || username.trim() === "") {
         return res
             .status(400)
             .json(new ApiResponse(400, "Username is required", null, false));

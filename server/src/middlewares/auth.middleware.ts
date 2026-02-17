@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import ApiResponse from "../utils/ApiResponse.js";
 import { AccessTokenPayload, verifyAccessToken } from "../utils/AuthToken.js";
@@ -7,8 +6,10 @@ export interface AuthRequest extends Request {
     user?: AccessTokenPayload | null;
 }
 
+export interface AuthUser extends AccessTokenPayload {}
+
 /**
- * Middleware to verify JWT from cookies
+ * Middleware to Authenticate Requests using JWT Access Tokens
  * @param req Express request object
  * @param res Express response object
  * @param next Next function callback
@@ -27,7 +28,7 @@ const authMiddleware = async (
         if (!user) {
             throw new Error("Invalid token");
         }
-        
+
         req.user = user;
         next();
     } catch (error) {

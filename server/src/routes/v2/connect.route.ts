@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import verifyJWT from "../../middlewares/verifyJWT.middleware.js";
 import {
     getPostByUsername,
@@ -7,7 +7,15 @@ import {
 
 const router = Router();
 
-router.get("/:username/posts/:page", verifyJWT, getPostByUsername);
-router.get("/follow/toggle/:username", verifyJWT, toggleFollow);
+router.get(
+    "/:username/posts/:page",
+    verifyJWT as RequestHandler,
+    getPostByUsername
+);
+router.get(
+    "/follow/toggle/:username",
+    verifyJWT as RequestHandler,
+    toggleFollow
+);
 
 export default router;

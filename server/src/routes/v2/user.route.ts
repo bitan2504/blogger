@@ -22,10 +22,11 @@ router.post("/login", loginUser);
 router.get("/logout", authMiddleware as RequestHandler, logoutUser);
 router.get("/profile", authMiddleware as RequestHandler, userProfile);
 
-router.get("/search", verifyJWT, searchUsers);
-router.post("/post/create", verifyJWT, createPost);
-router.get("/post/show/:page", verifyJWT, showPostsByPageNumber);
-router.get("/profile/posts/:page", verifyJWT, profilePagePosts);
-router.get("/:username", verifyJWT, publicProfile);
+router.post("/post/create", authMiddleware as RequestHandler, createPost);
+router.get("/post/show/:page", authMiddleware as RequestHandler, showPostsByPageNumber);
+router.get("/profile/posts/:page", authMiddleware as RequestHandler, profilePagePosts);
+
+router.get("/:username", verifyJWT as RequestHandler, publicProfile);
+router.get("/search", verifyJWT as RequestHandler, searchUsers);
 
 export default router;

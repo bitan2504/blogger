@@ -1,4 +1,6 @@
 import prisma from "../../db/prisma.db.js";
+import { AuthRequest, AuthUser } from "../../middlewares/auth.middleware.js";
+import { Response } from "express";
 import ApiResponse from "../../utils/ApiResponse.js";
 
 /**
@@ -8,9 +10,9 @@ import ApiResponse from "../../utils/ApiResponse.js";
  * @param res Response object to send the paginated posts
  * @returns ApiResponse containing the paginated posts
  */
-export const getPosts = async (req: any, res: any) => {
-    const user = req.user;
-    const pageNumber = parseInt(req.query.pageNumber) || 1;
+export const getPosts = async (req: AuthRequest, res: Response) => {
+    const user: AuthUser = req.user as AuthUser;
+    const pageNumber = parseInt(String(req.query.pageNumber) || "1");
     const pageSize = parseInt(process.env.POSTS_PER_PAGE || "10");
     const skip = (pageNumber - 1) * pageSize;
     const TRUNCATE_LIMIT = 200;
@@ -73,7 +75,7 @@ export const getPosts = async (req: any, res: any) => {
 
     // Author filter
     if (req.query?.usernames) {
-        const usernames = req.query.usernames
+        const usernames = (req.query.usernames as string)
             .split(",")
             .map((u: string) => u.trim());
         pipeline.where.author = {
@@ -83,8 +85,7 @@ export const getPosts = async (req: any, res: any) => {
     }
 
     // Sorting
-    const order =
-        req.query?.asc === true || req.query?.asc === "true" ? "asc" : "desc";
+    const order = req.query?.asc === "true" ? "asc" : "desc";
     if (req.query?.orderBy === "likes") {
         pipeline.orderBy = { likes: { _count: order } };
     } else if (req.query?.orderBy === "comments") {
@@ -158,11 +159,11 @@ export const getPosts = async (req: any, res: any) => {
  * @param res Response object
  * @returns ApiResponse containing the post details
  */
-export const getPostById = async (req: any, res: any) => {
+export const getPostById = async (req: AuthRequest, res: Response) => {
     const postId = req.params?.postId;
-    const user = req.user;
+    const user: AuthUser = req.user as AuthUser;
 
-    if (!postId) {
+    if (!postId || typeof postId !== "string") {
         // Missing postId parameter
         return res
             .status(400)
@@ -306,12 +307,17 @@ export const getPostById = async (req: any, res: any) => {
  * @param res Response object
  * @returns ApiResponse for comment creation
  */
-export const commentOnPost = async (req: any, res: any) => {
-    const user = req.user;
+export const commentOnPost = async (req: AuthRequest, res: Response) => {
+    const user: AuthUser = req.user as AuthUser;
     const postId = req.params?.postId;
     const content = req.body?.content;
 
-    if (!postId || !content) {
+    if (
+        !postId ||
+        typeof postId !== "string" ||
+        !content ||
+        typeof content !== "string"
+    ) {
         // Missing postId or content parameter
         return res
             .status(400)
@@ -323,13 +329,6 @@ export const commentOnPost = async (req: any, res: any) => {
                     false
                 )
             );
-    }
-
-    if (!user) {
-        // Check if user is authenticated
-        return res
-            .status(401)
-            .json(new ApiResponse(401, "Unauthorized", null, false));
     }
 
     try {
@@ -399,22 +398,22 @@ export const commentOnPost = async (req: any, res: any) => {
  * @param res Response object
  * @returns ApiResponse for like toggle action
  */
-export const toggleLike = async (req: any, res: any) => {
-    const user = req.user;
+export const toggleLike = async (req: AuthRequest, res: Response) => {
+    const user: AuthUser = req.user as AuthUser;
     const postId = req.params?.postId;
 
     // Check if postId is provided
-    if (!postId) {
+    if (!postId || typeof postId !== "string") {
         return res
             .status(400)
-            .json(new ApiResponse(400, "Post ID is required", null, false));
-    }
-
-    // Check if user is authenticated
-    if (!user) {
-        return res
-            .status(401)
-            .json(new ApiResponse(401, "Unauthorized", null, false));
+            .json(
+                new ApiResponse(
+                    400,
+                    "Post ID is required and must be a string",
+                    null,
+                    false
+                )
+            );
     }
 
     try {
@@ -487,91 +486,6 @@ export const toggleLike = async (req: any, res: any) => {
         }
     } catch (error) {
         console.log("Error in toggleLike:", error);
-        return res
-            .status(500)
-            .json(new ApiResponse(500, "Internal Server Error", null, false));
-    }
-};
-
-/**
- * Create a new post
- * @route POST /api/v2/post/create
- * @param req Request object
- * @param res Response object
- * @returns ApiResponse for post creation
- */
-export const createPost = async (req: any, res: any) => {
-    const user = req.user;
-    if (!user) {
-        return res
-            .status(401)
-            .json(new ApiResponse(401, "Unauthorized", null, false));
-    }
-
-    const { title, content, tags } = req.body;
-
-    // Basic Validation
-    if (!title || !content) {
-        return res
-            .status(400)
-            .json(
-                new ApiResponse(
-                    400,
-                    "Title and content are required",
-                    null,
-                    false
-                )
-            );
-    }
-
-    // Safe Tag Processing
-    // Ensure tags is an array, otherwise default to empty []
-    let processedTags: any[] = [];
-    if (Array.isArray(tags)) {
-        processedTags = tags.map((tag: string) => ({
-            where: { name: tag.trim().toLowerCase() },
-            create: { name: tag.trim().toLowerCase() },
-        }));
-    }
-
-    try {
-        const post = await prisma.post.create({
-            data: {
-                title,
-                content,
-                authorId: user.id,
-                tags:
-                    processedTags.length > 0
-                        ? {
-                              connectOrCreate: processedTags,
-                          }
-                        : undefined,
-            },
-            include: {
-                tags: {
-                    select: { name: true },
-                },
-            },
-        });
-
-        // Flatten tags for cleaner API response
-        const formattedPost = {
-            ...post,
-            tags: post.tags.map((t) => t.name),
-        };
-
-        return res
-            .status(201)
-            .json(
-                new ApiResponse(
-                    201,
-                    "Post created successfully",
-                    formattedPost,
-                    true
-                )
-            );
-    } catch (error) {
-        console.log("Error in createPost:", error);
         return res
             .status(500)
             .json(new ApiResponse(500, "Internal Server Error", null, false));

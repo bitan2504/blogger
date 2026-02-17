@@ -1,19 +1,19 @@
 import prisma from "../../db/prisma.db.js";
 import ApiResponse from "../../utils/ApiResponse.js";
-import express from "express";
+import { Request, Response, CookieOptions } from "express";
 import {
     generateAccessToken,
     generateRefreshToken,
+    RefreshTokenPayload,
+    verifyRefreshToken,
 } from "../../utils/AuthToken.js";
 import { hashPassword, comparePassword } from "../../utils/HashPassword.js";
-import fs from "fs";
-import uploadOnCloud from "../../utils/CloudinaryFileUpload.js";
-import jwt from "jsonwebtoken";
+import { AuthRequest, AuthUser } from "../../middlewares/auth.middleware.js";
 
 /**
  * Cookie Parser Options for Secure Cookies
  */
-export const securedCookieParserOptions: express.CookieOptions = {
+export const securedCookieParserOptions: CookieOptions = {
     secure: true,
     httpOnly: true,
     sameSite: "none",
@@ -26,10 +26,7 @@ export const securedCookieParserOptions: express.CookieOptions = {
  * @param res Express response object
  * @returns JSON response with new access token and refresh token
  */
-export const refreshToken = async (
-    req: express.Request,
-    res: express.Response
-) => {
+export const refreshToken = async (req: Request, res: Response) => {
     const refreshToken =
         req.headers.authorization?.split(" ")[1] || req.cookies.refreshToken;
 
@@ -40,10 +37,8 @@ export const refreshToken = async (
     }
 
     try {
-        const decoded: any = jwt.verify(
-            refreshToken,
-            process.env.JWT_REFRESH_TOKEN_SECRET!
-        );
+        const decoded: RefreshTokenPayload | null =
+            verifyRefreshToken(refreshToken);
 
         if (!decoded || !decoded.id) {
             return res
@@ -110,7 +105,7 @@ export const refreshToken = async (
  * @param res Express response object
  * @returns JSON response with registration status
  */
-export const registerUser = async (req: any, res: any) => {
+export const registerUser = async (req: Request, res: Response) => {
     const { username, password, fullname } = req.body;
 
     if ([username, password, fullname].some((field) => !field)) {
@@ -170,15 +165,11 @@ export const registerUser = async (req: any, res: any) => {
  * @param res Express response object
  * @returns JSON response with login status
  */
-export const loginUser = async (req: any, res: any) => {
+export const loginUser = async (req: Request, res: Response) => {
     const { uid, password } = req.body;
 
     // Check for missing fields
-    if (
-        [uid, password].some((field) => !field) ||
-        typeof uid !== "string" ||
-        typeof password !== "string"
-    ) {
+    if ([uid, password].some((field) => !field)) {
         return res
             .status(400)
             .json(new ApiResponse(400, "Missing credentials", null, false));
@@ -242,15 +233,8 @@ export const loginUser = async (req: any, res: any) => {
  * @param res Express response object
  * @returns JSON response with logout status
  */
-export const logoutUser = async (req: any, res: any) => {
-    const user = req.user;
-
-    if (!user) {
-        // No authenticated user found
-        return res
-            .status(401)
-            .json(new ApiResponse(401, "Unauthorized", null, false));
-    }
+export const logoutUser = async (req: AuthRequest, res: Response) => {
+    const user: AuthUser = req.user as AuthUser;
 
     try {
         // Invalidate the refresh token in the database
@@ -278,22 +262,12 @@ export const logoutUser = async (req: any, res: any) => {
  * @param res Express response object
  * @returns JSON response with post creation status
  */
-export const createPost = async (req: any, res: any) => {
-    const user = req.user;
+export const createPost = async (req: AuthRequest, res: Response) => {
+    const user: AuthUser = req.user as AuthUser;
     const { title, content } = req.body;
 
-    /**
-     * Input Validation
-     */
-    // Check for authenticated user
-    if (!user) {
-        return res
-            .status(401)
-            .json(new ApiResponse(401, "Unauthorized", null, false));
-    }
-
     // Validate required fields
-    if (!title || !content) {
+    if (![title, content].some((field) => !field)) {
         return res
             .status(400)
             .json(
@@ -343,20 +317,13 @@ export const createPost = async (req: any, res: any) => {
  * @param res Express response object
  * @returns JSON response with posts for the specified page
  */
-export const showPostsByPageNumber = async (req: any, res: any) => {
-    const user = req.user;
-    const pageNumber = parseInt(req.params.page) || 1;
-    const postsPerPage = parseInt(process.env.POST_PER_PAGE || "5");
-
-    /**
-     * Input Validation
-     */
-    // Check for authenticated user
-    if (!user) {
-        return res
-            .status(401)
-            .json(new ApiResponse(401, "Unauthorized", null, false));
-    }
+export const showPostsByPageNumber = async (
+    req: AuthRequest,
+    res: Response
+) => {
+    const user: AuthUser = req.user as AuthUser;
+    const pageNumber = parseInt(String(req.params.page) || "1");
+    const postsPerPage = parseInt(process.env.POST_PER_PAGE || "10");
 
     try {
         // Fetch posts with pagination
@@ -366,6 +333,7 @@ export const showPostsByPageNumber = async (req: any, res: any) => {
             take: postsPerPage,
             orderBy: { createdAt: "desc" },
         });
+
         if (!posts || posts.length === 0) {
             // No posts found
             return res
@@ -373,16 +341,9 @@ export const showPostsByPageNumber = async (req: any, res: any) => {
                 .json(new ApiResponse(404, "No posts found", null, false));
         }
 
-        return res
-            .status(200)
-            .json(
-                new ApiResponse(
-                    200,
-                    "Posts retrieved successfully",
-                    posts,
-                    true
-                )
-            );
+        res.status(200).json(
+            new ApiResponse(200, "Posts retrieved successfully", posts, true)
+        );
     } catch (error) {
         console.log(error);
         return res
@@ -398,15 +359,8 @@ export const showPostsByPageNumber = async (req: any, res: any) => {
  * @param res Express response object
  * @returns JSON response with user profile details
  */
-export const userProfile = async (req: any, res: any) => {
-    const user = req.user;
-
-    // Check for authenticated user
-    if (!user) {
-        return res
-            .status(401)
-            .json(new ApiResponse(401, "Unauthorized", null, false));
-    }
+export const userProfile = async (req: AuthRequest, res: Response) => {
+    const user: AuthUser = req.user as AuthUser;
 
     try {
         // Fetch user counts
@@ -489,11 +443,15 @@ export const userProfile = async (req: any, res: any) => {
  * @param res Express response object
  * @returns JSON response with public profile details
  */
-export const publicProfile = async (req: any, res: any) => {
+export const publicProfile = async (req: AuthRequest, res: Response) => {
     const { username } = req.params;
-    const user = req.user;
+    const user: AuthUser = req.user as AuthUser;
 
-    if (!username) {
+    if (
+        !username ||
+        typeof username !== "string" ||
+        username.trim().length === 0
+    ) {
         // Username parameter is missing
         return res
             .status(400)
@@ -605,17 +563,10 @@ export const publicProfile = async (req: any, res: any) => {
  * @param res Express response object
  * @returns JSON response with profile page posts
  */
-export const profilePagePosts = async (req: any, res: any) => {
-    const user = req.user;
-    const pageNumber = parseInt(req.params.page || "1");
-    const postsPerPage = parseInt(process.env.POST_PER_PAGE || "5");
-
-    // Validate user authentication
-    if (!user) {
-        return res
-            .status(401)
-            .json(new ApiResponse(401, "Unauthorized", null, false));
-    }
+export const profilePagePosts = async (req: AuthRequest, res: Response) => {
+    const user: AuthUser = req.user as AuthUser;
+    const pageNumber = parseInt(String(req.params.page) || "1");
+    const postsPerPage = parseInt(process.env.POST_PER_PAGE || "10");
 
     try {
         // Fetch posts with pagination
@@ -658,10 +609,12 @@ export const profilePagePosts = async (req: any, res: any) => {
     }
 };
 
-export const searchUsers = async (req: any, res: any) => {
-    const { query, page } = req.query;
-    const user = req.user;
-    if (!query || typeof query !== "string" || query.trim().length === 0) {
+export const searchUsers = async (req: AuthRequest, res: Response) => {
+    const user: AuthUser = req.user as AuthUser;
+    const query = String(req.query.query || "").trim();
+    const page = parseInt(String(req.query.page || "1"));
+
+    if (!query || query.length === 0) {
         return res
             .status(400)
             .json(
@@ -697,7 +650,7 @@ export const searchUsers = async (req: any, res: any) => {
                     select: { followerId: true },
                 },
             },
-            skip: ((parseInt(page) || 1) - 1) * 10,
+            skip: (page - 1) * 10,
             take: 10,
         });
 
